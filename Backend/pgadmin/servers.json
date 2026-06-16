@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "StoneProductShop",
+      "Group": "Docker",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "stone_product_shop",
+      "Username": "postgres",
+      "SSLMode": "prefer"
+    }
+  }
+}

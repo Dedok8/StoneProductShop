@@ -1,109 +1,102 @@
 services:
-  app:
-    command: sh -c "npx prisma migrate deploy && npm run start:dev"
-    build:
-      context: .
-      dockerfile: dockerfile
-      target: development
-    container_name: nestjs_app
-    restart: unless-stopped
-    ports:
-      - '${PORT:-3000}:3000'
-    env_file:
-      - .env
+  db:
+    image: postgres:16
+    restart: always
     environment:
-      POSTGRES_HOST: postgres
-      REDIS_HOST: redis
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    container_name: stone_product_shop-postgres
     volumes:
-      - .:/app
-      - /app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '${DB_PORT}:5432'
     networks:
-      - app_network
-
-  postgres:
-    image: postgres:16-alpine
-    container_name: nestjs_postgres
-    restart: unless-stopped
-    ports:
-      - '${POSTGRES_PORT:-5432}:5432'
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
-      POSTGRES_DB: ${POSTGRES_DB:-myapp}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - stone_product_shop-net
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-postgres}']
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME}']
       interval: 10s
       timeout: 5s
       retries: 5
+
+  prisma-migrate:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: stone_product_shop-prisma-migrate
+    command: npx prisma migrate deploy
+    environment:
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
-      - app_network
+      - stone_product_shop-net
+    restart: 'no'
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+    container_name: backend
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - '${PORT}:${PORT}'
+    depends_on:
+      db:
+        condition: service_healthy
+      prisma-migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./src:/backend/src
+      - ./prisma:/backend/prisma
+    networks:
+      - stone_product_shop-net
+    healthcheck:
+      test:
+        ['CMD-SHELL', 'curl -f http://localhost:${PORT}/healthCheck || exit 0']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
     restart: always
+    container_name: stone_product_shop-pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin123
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
     ports:
-      - '5050:80'
+      - '${PGADMIN_HOST_PORT}:${PGADMIN_CONTAINER_PORT}'
     depends_on:
-      - postgres
+      - db
     networks:
-      - app_network
+      - stone_product_shop-net
 
   redis:
-    image: redis:7-alpine
-    container_name: nestjs_redis
-    restart: unless-stopped
+    image: redis:alpine
+    container_name: stone_product_shop-redis
     ports:
-      - '${REDIS_PORT:-6379}:6379'
-    command: redis-server --requirepass ${REDIS_PASSWORD:-redissecret123} --appendonly yes
-    volumes:
-      - redis_data:/data
+      - '${REDIS_PORT}:${REDIS_PORT}'
+    restart: always
+    networks:
+      - stone_product_shop-net
     healthcheck:
-      test:
-        ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD:-redissecret123}', 'ping']
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
-      retries: 5
-    networks:
-      - app_network
-
-  prisma-studio:
-    build:
-      context: .
-      dockerfile: dockerfile
-      target: development
-    container_name: nestjs_prisma_studio
-    working_dir: /app
-    command: sh -c "./node_modules/.bin/prisma studio --port 5555 --hostname 0.0.0.0 --browser none"
-    ports:
-      - '5555:5555'
-    env_file:
-      - .env
-    volumes:
-      - .:/app
-      - /app/node_modules
-    depends_on:
-      postgres:
-        condition: service_healthy
-    profiles:
-      - studio
-    networks:
-      - app_network
-
-volumes:
-  postgres_data:
-  redis_data:
+      retries: 3
 
 networks:
-  app_network:
+  stone_product_shop-net:
     driver: bridge
+
+volumes:
+  pgdata:
