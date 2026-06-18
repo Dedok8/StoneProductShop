@@ -1,3 +1,6 @@
+import { UserService } from '@modules/user/application';
+import { UserRole } from '@modules/user/domain';
+import { UpdateUserDto } from '@modules/user/presentation/dto';
 import {
   Controller,
   Get,
@@ -7,11 +10,8 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-import { UserService } from '@modules/user/application';
-import { UserRole } from '@modules/user/domain';
 import { Roles } from '@shared/decorators';
 import { RolesGuard } from '@shared/guards';
-import { UpdateUserDto } from '@modules/user/presentation';
 
 @Controller('admin/users')
 @Roles(UserRole.ADMIN)

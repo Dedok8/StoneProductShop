@@ -60,7 +60,7 @@ export class PrismaService
     }
 
     const tablenames = await this.$queryRaw<{ tablename: string }[]>`
-    SELECT tablenames FROM pg_tables WHERE schemaname='public'
+    SELECT tablenames FROM pg_table WHERE schemaname='public'
     `;
 
     for (const { tablename } of tablenames) {

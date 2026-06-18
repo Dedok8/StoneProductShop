@@ -1,4 +1,4 @@
-import { UserRole } from '@modules/user/domain';
+import type { UserRole } from '@modules/user/domain';
 
 export interface AccessTokenPayload {
   sub: string;

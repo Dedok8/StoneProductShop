@@ -1,2 +1,3 @@
-export * from './dto/update-user.dto';
-export * from './dto/user.response.dto';
+export * from './dto';
+export * from './user.controller';
+export * from './admin-user.controller';

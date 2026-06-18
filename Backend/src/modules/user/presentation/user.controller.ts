@@ -1,3 +1,5 @@
+import { UserService } from '@modules/user/application';
+import { UpdateUserDto } from '@modules/user/presentation/dto';
 import {
   Controller,
   Get,
@@ -7,8 +9,6 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { UserService } from '@modules/user/application';
-import { UpdateUserDto } from '@modules/user/presentation';
 import { CurrentUser } from '@shared/decorators';
 
 @Controller('users')

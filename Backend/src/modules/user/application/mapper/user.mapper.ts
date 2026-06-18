@@ -1,5 +1,5 @@
-import { UserEntity } from '@modules/user/domain';
-import { UserResponseDto } from '@modules/user/presentation';
+import type { UserEntity } from '@modules/user/domain';
+import type { UserResponseDto } from '@modules/user/presentation';
 
 export class UserMapper {
   static toResponse(entity: UserEntity): UserResponseDto {
