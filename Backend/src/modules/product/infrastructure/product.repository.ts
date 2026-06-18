@@ -1,9 +1,9 @@
 import {
-  ICreateProductData,
+  ICreateProductDto,
   IProductRepository,
   ProductEntity,
   IFindManyProductsParams,
-  IUpdateProductData,
+  IUpdateProductDto,
 } from '@modules/product/domain';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
@@ -12,7 +12,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 export class ProductRepository implements IProductRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: ICreateProductData): Promise<ProductEntity> {
+  async create(data: ICreateProductDto): Promise<ProductEntity> {
     const created = await this.prisma.product.create({
       data: {
         name: data.name,
@@ -61,7 +61,7 @@ export class ProductRepository implements IProductRepository {
     return { items: items.map((item) => this.toEntity(item)), total };
   }
 
-  async update(id: string, data: IUpdateProductData): Promise<ProductEntity> {
+  async update(id: string, data: IUpdateProductDto): Promise<ProductEntity> {
     const updated = await this.prisma.product.update({
       where: { id },
       data,

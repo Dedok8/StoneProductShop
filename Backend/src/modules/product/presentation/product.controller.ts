@@ -29,13 +29,13 @@ interface IAuthenticatedUser {
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get('id')
+  @Get(':id')
   @ApiOperation({ summary: 'Get paginated list of products' })
   findMany(@Query() query: ProductQueryDto) {
     return this.productService.findMany(query);
   }
 
-  @Get('id')
+  @Get(':id')
   @ApiOperation({ summary: 'Get a product by id' })
   findById(@Param('id', ParseUUIDPipe) id: string) {
     return this.productService.findById(id);
