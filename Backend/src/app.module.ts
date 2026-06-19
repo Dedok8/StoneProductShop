@@ -1,4 +1,6 @@
 import { AuthModule } from '@modules/auth';
+import { CategoryModule } from '@modules/category/category.module';
+import { OrderModule } from '@modules/order/order.module';
 import { ProductModule } from '@modules/product';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
@@ -14,6 +16,8 @@ import { RedisModule } from '@shared/redis';
     AuthModule,
     UserModule,
     ProductModule,
+    CategoryModule,
+    OrderModule,
   ],
 })
 export class AppModule {}

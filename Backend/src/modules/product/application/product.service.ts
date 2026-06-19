@@ -1,11 +1,14 @@
 import { randomUUID } from 'crypto';
 
-import { ProductQueryDto } from '@modules/product/application/dto';
+import {
+  CreateProductDto,
+  ProductQueryDto,
+  UpdateProductDto,
+} from '@modules/product/application/dto';
 import { ProductCacheService } from '@modules/product/application/product-cache.service';
-import { ICreateProductDto, PRODUCT_REPOSITORY } from '@modules/product/domain';
+import { PRODUCT_REPOSITORY } from '@modules/product/domain';
 import type {
   IProductRepository,
-  IUpdateProductDto,
   ProductEntity,
 } from '@modules/product/domain';
 import {
@@ -24,7 +27,7 @@ export class ProductService {
     private readonly cache: ProductCacheService,
   ) {}
 
-  async create(dto: ICreateProductDto, ownerId: string) {
+  async create(dto: CreateProductDto, ownerId: string) {
     const slug = this.buildSlug(dto.name);
 
     const existing = await this.productRepo.findBySlug(slug);
@@ -62,7 +65,7 @@ export class ProductService {
     limit: number;
   }> {
     const cacheParams = {
-      typeId: query.typeId,
+      categoryId: query.categoryId,
       ownerId: query.ownerId,
       page: query.page,
       limit: query.limit,
@@ -74,7 +77,7 @@ export class ProductService {
     }
 
     const result = await this.productRepo.findMany({
-      typeId: query.typeId,
+      categoryId: query.categoryId,
       ownerId: query.ownerId,
       isActive: query.isActive ?? true,
       skip: query.skip,
@@ -88,7 +91,7 @@ export class ProductService {
 
   async update(
     id: string,
-    dto: IUpdateProductDto,
+    dto: UpdateProductDto,
     requester: { userId: string; role: string },
   ): Promise<ProductEntity> {
     const product = await this.productRepo.findById(id);

@@ -3,41 +3,41 @@ import type { ProductEntity } from '@modules/product/domain/entities';
 export interface IFindManyProductsParams {
   skip?: number;
   take?: number;
-  typeId?: string;
+  categoryId?: string;
   ownerId?: string;
   isActive?: boolean;
 }
 
-export interface ICreateProductDto {
+export interface ICreateProductData {
   name: string;
   slug: string;
   description?: string | null;
   price: number;
   stock?: number;
   images?: string[];
-  typeId: string;
+  categoryId: string;
   ownerId: string;
 }
 
-export interface IUpdateProductDto {
+export interface IUpdateProductData {
   name?: string;
   slug?: string;
   description?: string | null;
   price?: number;
   stock?: number;
   images?: string[];
-  typeId?: string;
+  categoryId?: string;
   isActive?: boolean;
 }
 
 export interface IProductRepository {
-  create(data: ICreateProductDto): Promise<ProductEntity>;
+  create(data: ICreateProductData): Promise<ProductEntity>;
   findById(id: string): Promise<ProductEntity | null>;
   findBySlug(slug: string): Promise<ProductEntity | null>;
   findMany(
     params: IFindManyProductsParams,
   ): Promise<{ items: ProductEntity[]; total: number }>;
-  update(id: string, data: IUpdateProductDto): Promise<ProductEntity>;
+  update(id: string, data: IUpdateProductData): Promise<ProductEntity>;
   delete(id: string): Promise<void>;
   decrementStock(id: string, quantity: number): Promise<ProductEntity>;
 }

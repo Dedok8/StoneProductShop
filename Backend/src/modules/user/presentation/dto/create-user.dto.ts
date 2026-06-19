@@ -29,7 +29,7 @@ export class CreateProductDto {
   readonly stock?: number;
 
   @IsUUID()
-  readonly typeId: string;
+  readonly categoryId: string;
 
   @IsArray()
   @IsOptional()

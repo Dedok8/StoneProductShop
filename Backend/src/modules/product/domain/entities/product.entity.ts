@@ -6,7 +6,7 @@ export class ProductEntity {
   readonly price: number;
   readonly stock: number;
   readonly images: string[];
-  readonly typeId: string;
+  readonly categoryId: string;
   readonly ownerId: string;
   readonly isActive: boolean;
   readonly createdAt: Date;
@@ -20,7 +20,7 @@ export class ProductEntity {
     price: number;
     stock: number;
     images: string[];
-    typeId: string;
+    categoryId: string;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
@@ -33,7 +33,7 @@ export class ProductEntity {
     this.price = props.price;
     this.stock = props.stock;
     this.images = props.images;
-    this.typeId = props.typeId;
+    this.categoryId = props.categoryId;
     this.ownerId = props.ownerId;
     this.isActive = props.isActive;
     this.createdAt = props.createdAt;
@@ -56,7 +56,7 @@ export class ProductEntity {
     price: number | string;
     stock: number;
     images: string[];
-    typeId: string;
+    categoryId: string;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;

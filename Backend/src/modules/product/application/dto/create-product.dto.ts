@@ -35,7 +35,7 @@ export class CreateProductDto {
 
   @ApiProperty({ example: 'a3f1c2e4-...' })
   @IsUUID()
-  readonly typeId: string;
+  readonly categoryId: string;
 
   @ApiPropertyOptional({ example: ['https://cdn.example.com/img1.jpg'] })
   @IsArray()

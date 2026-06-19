@@ -1,0 +1,1 @@
+export * from './caterory.controller'

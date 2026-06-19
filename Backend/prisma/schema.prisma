@@ -41,7 +41,7 @@ model User {
   @@map("users")
 }
 
-model Type {
+model Category  {
   id        String    @id @default(uuid())
   name      String    @unique
   slug      String    @unique
@@ -50,7 +50,7 @@ model Type {
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
-  @@map("types")
+  @@map("categories")
 }
 
 model Product {
@@ -62,8 +62,8 @@ model Product {
   stock       Int      @default(0)
   images      String[] @default([])
 
-  type        Type     @relation(fields: [typeId], references: [id])
-  typeId      String   @map("type_id")
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @map("category_id")
 
   owner       User     @relation(fields: [ownerId], references: [id])
   ownerId     String   @map("owner_id")
@@ -75,7 +75,7 @@ model Product {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("products")
-  @@index([typeId])
+  @@index([categoryId])  
   @@index([ownerId])
 }
 

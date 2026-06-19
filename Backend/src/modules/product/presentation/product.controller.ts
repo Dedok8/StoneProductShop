@@ -1,8 +1,9 @@
-import { ProductQueryDto, ProductService } from '@modules/product/application';
-import type {
-  ICreateProductDto,
-  IUpdateProductDto,
-} from '@modules/product/domain';
+import {
+  CreateProductDto,
+  ProductQueryDto,
+  ProductService,
+  UpdateProductDto,
+} from '@modules/product/application';
 import {
   Body,
   Controller,
@@ -46,7 +47,7 @@ export class ProductController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
   create(
-    @Body() dto: ICreateProductDto,
+    @Body() dto: CreateProductDto,
     @CurrentUser() user: IAuthenticatedUser,
   ) {
     return this.productService.create(dto, user.userId);
@@ -58,7 +59,7 @@ export class ProductController {
   @ApiOperation({ summary: 'Update a product (admin or owner only)' })
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: IUpdateProductDto,
+    @Body() dto: UpdateProductDto,
     @CurrentUser() user: IAuthenticatedUser,
   ) {
     return this.productService.update(id, dto, user);

@@ -1,9 +1,9 @@
 import {
-  ICreateProductDto,
+  ICreateProductData,
   IProductRepository,
   ProductEntity,
   IFindManyProductsParams,
-  IUpdateProductDto,
+  IUpdateProductData,
 } from '@modules/product/domain';
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@shared/prisma/prisma.service';
@@ -12,7 +12,7 @@ import { PrismaService } from '@shared/prisma/prisma.service';
 export class ProductRepository implements IProductRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: ICreateProductDto): Promise<ProductEntity> {
+  async create(data: ICreateProductData): Promise<ProductEntity> {
     const created = await this.prisma.product.create({
       data: {
         name: data.name,
@@ -21,7 +21,7 @@ export class ProductRepository implements IProductRepository {
         price: data.price,
         stock: data.stock ?? 0,
         images: data.images ?? [],
-        typeId: data.typeId,
+        categoryId: data.categoryId,
         ownerId: data.ownerId,
       },
     });
@@ -43,7 +43,7 @@ export class ProductRepository implements IProductRepository {
     params: IFindManyProductsParams,
   ): Promise<{ items: ProductEntity[]; total: number }> {
     const where = {
-      ...(params.typeId && { typeId: params.typeId }),
+      ...(params.categoryId && { categoryId: params.categoryId }),
       ...(params.ownerId && { ownerId: params.ownerId }),
       ...(params.isActive !== undefined && { isActive: params.isActive }),
     };
@@ -61,7 +61,7 @@ export class ProductRepository implements IProductRepository {
     return { items: items.map((item) => this.toEntity(item)), total };
   }
 
-  async update(id: string, data: IUpdateProductDto): Promise<ProductEntity> {
+  async update(id: string, data: IUpdateProductData): Promise<ProductEntity> {
     const updated = await this.prisma.product.update({
       where: { id },
       data,
@@ -91,7 +91,7 @@ export class ProductRepository implements IProductRepository {
     price: { toNumber(): number } | number;
     stock: number;
     images: string[];
-    typeId: string;
+    categoryId: string;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;

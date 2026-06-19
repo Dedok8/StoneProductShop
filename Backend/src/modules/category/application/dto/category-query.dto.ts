@@ -9,7 +9,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class ProductQueryDto {
+export class CategoryQueryDto {
   @ApiPropertyOptional({ example: 1, default: 1 })
   @Type(() => Number)
   @IsInt()
@@ -28,12 +28,7 @@ export class ProductQueryDto {
   @ApiPropertyOptional({ example: 'a3f1c2e4-...' })
   @IsUUID()
   @IsOptional()
-  readonly categoryId?: string;
-
-  @ApiPropertyOptional({ example: 'a3f1c2e4-...' })
-  @IsUUID()
-  @IsOptional()
-  readonly ownerId?: string;
+  readonly parentId?: string;
 
   @ApiPropertyOptional({ example: true })
   @Type(() => Boolean)

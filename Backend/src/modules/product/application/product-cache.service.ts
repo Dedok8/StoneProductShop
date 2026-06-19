@@ -20,12 +20,12 @@ export class ProductCacheService {
   }
 
   private listKey(params: {
-    typeId?: string;
+    categoryId?: string;
     ownerId?: string;
     page: number;
     limit: number;
   }): string {
-    return `product:list:${params.typeId ?? 'all'} : ${params.ownerId ?? 'all'} : ${params.page ?? 'all'} : ${params.limit ?? 'all'}`;
+    return `product:list:${params.categoryId ?? 'all'} : ${params.ownerId ?? 'all'} : ${params.page ?? 'all'} : ${params.limit ?? 'all'}`;
   }
 
   async getDetail(id: string): Promise<ProductEntity | undefined> {
@@ -41,7 +41,7 @@ export class ProductCacheService {
   }
 
   async getList(params: {
-    typeId?: string;
+    categoryId?: string;
     ownerId?: string;
     page: number;
     limit: number;
@@ -50,7 +50,7 @@ export class ProductCacheService {
   }
 
   async setList(
-    params: { typeId?: string; ownerId?: string; page: number; limit: number },
+    params: { categoryId?: string; ownerId?: string; page: number; limit: number },
     data: ICachedList,
   ): Promise<void> {
     await this.cache.set(this.listKey(params), data, this.LIST_TTL_MS);
