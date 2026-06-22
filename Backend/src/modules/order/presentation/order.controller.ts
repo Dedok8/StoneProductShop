@@ -65,7 +65,7 @@ export class OrderController {
     return this.orderService.cancel(id, user);
   }
 
-  @Get()
+  @Get('all')
   @UseGuards(RolesGuard)
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all orders (admin only)' })

@@ -2,6 +2,7 @@ import { CategoryEntity } from '@modules/category/domain/entities';
 import {
   ICategoryRepository,
   ICreateCategoryData,
+  IFindManyCategoryParams,
   IUpdateCategoryData,
 } from '@modules/category/domain/interfaces';
 import { Injectable } from '@nestjs/common';
@@ -32,9 +33,15 @@ export class CategoryRepository implements ICategoryRepository {
 
     return found ? this.toEntity(found) : null;
   }
-  async findMany(): Promise<{ items: CategoryEntity[]; total: number }> {
+  async findMany(
+    params: IFindManyCategoryParams,
+  ): Promise<{ items: CategoryEntity[]; total: number }> {
     const [items, total] = await this.prisma.$transaction([
-      this.prisma.category.findMany({ orderBy: { name: 'asc' } }),
+      this.prisma.category.findMany({
+        orderBy: { name: 'asc' },
+        skip: params.skip,
+        take: params.take,
+      }),
       this.prisma.category.count(),
     ]);
 

@@ -29,7 +29,9 @@ export class CategoryService {
 
     const existing = await this.categoryRepo.findBySlug(slug);
     if (existing) {
-      throw new ConflictException(`Product with slug "${slug}" already exists`);
+      throw new ConflictException(
+        `Category with slug "${slug}" already exists`,
+      );
     }
 
     return this.categoryRepo.create({ ...dto, slug });

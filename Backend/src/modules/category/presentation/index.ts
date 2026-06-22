@@ -1,1 +1,1 @@
-export * from './caterory.controller'
+export * from './category.controller'

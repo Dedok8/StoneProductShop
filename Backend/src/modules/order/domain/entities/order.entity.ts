@@ -36,7 +36,7 @@ export class OrderEntity {
     return this.items.reduce((sum, item) => sum + item.subTotal, 0);
   }
 
-  isOwnerBy(userId: string): boolean {
+  isOwnerById(userId: string): boolean {
     return this.userId === userId;
   }
 

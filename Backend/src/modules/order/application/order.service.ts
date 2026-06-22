@@ -4,9 +4,15 @@ import {
   type IOrderRepository,
   ORDER_REPOSITORY,
 } from '@modules/order/domain/interfaces/order-repository.interface';
-import { ForbiddenException, Inject, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '@shared/prisma';
 
+@Injectable()
 export class OrderService {
   constructor(
     @Inject(ORDER_REPOSITORY)
@@ -114,7 +120,7 @@ export class OrderService {
     requester: { userId: string; role: string },
   ): void {
     const isAdmin = requester.role === 'ADMIN';
-    const isOwner = order.isOwnerBy(requester.userId);
+    const isOwner = order.isOwnerById(requester.userId);
 
     if (!isAdmin && !isOwner) {
       throw new ForbiddenException('You do not have access to this order');

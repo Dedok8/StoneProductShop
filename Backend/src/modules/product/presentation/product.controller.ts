@@ -30,7 +30,7 @@ interface IAuthenticatedUser {
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
-  @Get(':id')
+  @Get('')
   @ApiOperation({ summary: 'Get paginated list of products' })
   findMany(@Query() query: ProductQueryDto) {
     return this.productService.findMany(query);

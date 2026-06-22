@@ -1,6 +1,6 @@
 import { OrderService } from '@modules/order/application';
 import { ORDER_REPOSITORY } from '@modules/order/domain/interfaces/order-repository.interface';
-import { OrderRepository } from '@modules/order/infrestructure/order.reposetory';
+import { OrderRepository } from '@modules/order/infrastructure/order.repository';
 import { OrderController } from '@modules/order/presentation';
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '@shared/prisma';
