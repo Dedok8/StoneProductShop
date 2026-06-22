@@ -15,15 +15,11 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
 
-   
-
     await app.init();
   }, 30000);
 
   it('/products (GET) — должен вернуть список продуктов', () => {
-    return request(app.getHttpServer())
-      .get('/products') 
-      .expect(200);
+    return request(app.getHttpServer()).get('/products').expect(200);
   });
 
   afterAll(async () => {
