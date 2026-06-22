@@ -1,8 +1,8 @@
+import { AccessTokenPayload } from '@modules/auth/domain';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ConfigService } from '@nestjs/config';
-import { AccessTokenPayload } from '@modules/auth/domain';
 
 @Injectable()
 export class JwtAccessStrategy extends PassportStrategy(

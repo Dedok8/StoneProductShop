@@ -1,7 +1,7 @@
 import { UserEntity, UserRepository, UserRole } from '@modules/user/domain';
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '@shared/prisma';
 import { User, Role as PrismaRole } from '@prisma/client';
+import { PrismaService } from '@shared/prisma';
 
 @Injectable()
 export class UserPrismaRepository extends UserRepository {
@@ -35,7 +35,8 @@ export class UserPrismaRepository extends UserRepository {
 
   async findAll(): Promise<UserEntity[]> {
     const users = await this.prisma.user.findMany();
-    return users.map(this.mapToEntity.bind(this));
+
+    return users.map((user) => this.mapToEntity(user));
   }
 
   async create(data: Partial<UserEntity>): Promise<UserEntity> {

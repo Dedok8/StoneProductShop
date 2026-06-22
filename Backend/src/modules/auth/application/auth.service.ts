@@ -1,13 +1,12 @@
+import { TokenService } from '@modules/auth/infrastructure';
+import { LoginDto, RegisterDto } from '@modules/auth/presentation/dto';
+import { UserRepository, UserRole } from '@modules/user/domain';
 import {
   ConflictException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UserRepository, UserRole } from '@modules/user/domain';
-
 import { HashService } from '@shared/services';
-import { TokenService } from '@modules/auth/infrastructure';
-import { LoginDto, RegisterDto } from '@modules/auth/presentation/dto';
 
 @Injectable()
 export class AuthService {
@@ -60,7 +59,7 @@ export class AuthService {
     }
 
     const user = await this.userRepo.findById(payload.sub);
-    if (!user || !user.refreshToken) {
+    if (!user?.refreshToken) {
       throw new UnauthorizedException('Invalid refresh token');
     }
 

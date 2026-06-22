@@ -1,4 +1,4 @@
-import type { UserRole } from "@modules/user/domain/user-role.enum";
+import type { UserRole } from '@modules/user/domain/user-role.enum';
 
 export class UserEntity {
   constructor(
@@ -9,5 +9,6 @@ export class UserEntity {
     public refreshToken: string | null,
     public readonly createdAt: Date,
     public updatedAt: Date,
+    
   ) {}
 }

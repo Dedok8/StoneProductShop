@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 import { AccessTokenPayload, RefreshTokenPayload } from '@modules/auth/domain';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import type { SignOptions } from 'jsonwebtoken';
 
 @Injectable()
@@ -34,6 +34,6 @@ export class TokenService {
   verifyRefreshToken(token: string): RefreshTokenPayload {
     return this.jwt.verify(token, {
       secret: this.config.get<string>('JWT_REFRESH_SECRET'),
-    }) as RefreshTokenPayload;
+    });
   }
 }

@@ -16,18 +16,18 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  getMe(@CurrentUser('id') id: string) {
+  getMe(@CurrentUser('sub') id: string) {
     return this.userService.getUser(id);
   }
 
   @Patch('me')
-  updateMe(@CurrentUser('id') id: string, @Body() data: UpdateUserDto) {
+  updateMe(@CurrentUser('sub') id: string, @Body() data: UpdateUserDto) {
     return this.userService.updateUser(id, data);
   }
 
   @Delete('me')
   @HttpCode(HttpStatus.NO_CONTENT)
-  deleteMe(@CurrentUser('id') id: string) {
+  deleteMe(@CurrentUser('sub') id: string) {
     return this.userService.deleteUser(id);
   }
 }

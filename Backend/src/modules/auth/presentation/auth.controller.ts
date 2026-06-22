@@ -1,3 +1,5 @@
+import { AuthService } from '@modules/auth/application';
+import { LoginDto, RegisterDto } from '@modules/auth/presentation/dto';
 import {
   Body,
   Controller,
@@ -9,11 +11,9 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import { AuthService } from '@modules/auth/application';
 import { CurrentUser } from '@shared/decorators';
 import { JwtAuthGuard } from '@shared/guards';
-import { LoginDto, RegisterDto } from '@modules/auth/presentation/dto';
+import type { Request, Response } from 'express';
 
 const REFRESH_COOKIE = 'refreshToken';
 
@@ -46,9 +46,8 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const token = req.cookies?.[REFRESH_COOKIE];
+    const token = req.cookies?.[REFRESH_COOKIE] as string | undefined;
     if (!token) throw new UnauthorizedException('No refresh token');
-
     const tokens = await this.authService.refresh(token);
     this.setRefreshCookie(res, tokens.refreshToken);
     return { accessToken: tokens.accessToken };

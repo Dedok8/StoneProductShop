@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserMapper } from '@modules/user/application/mapper/user.mapper';
 import { UserRepository } from '@modules/user/domain';
 import { UpdateUserDto } from '@modules/user/presentation/dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
