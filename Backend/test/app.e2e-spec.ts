@@ -15,17 +15,15 @@ describe('AppController (e2e)', () => {
 
     app = moduleFixture.createNestApplication();
 
-    // ⚠️ ЕСЛИ в main.ts у тебя есть префикс, раскомментируй строчку ниже:
-    // app.setGlobalPrefix('api');
+   
 
     await app.init();
-  }, 30000); // Расширенный таймаут на запуск базы/редиса
+  }, 30000);
 
-  // Тестируем реальный эндпоинт вместо несуществующего "/"
   it('/products (GET) — должен вернуть список продуктов', () => {
     return request(app.getHttpServer())
-      .get('/products') // Или '/api/products', если включил префикс выше
-      .expect(200); // Проверяем, что эндпоинт в принципе доступен
+      .get('/products') 
+      .expect(200);
   });
 
   afterAll(async () => {
