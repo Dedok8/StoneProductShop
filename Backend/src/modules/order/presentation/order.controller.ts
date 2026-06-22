@@ -47,6 +47,14 @@ export class OrderController {
     return this.orderService.findMyOrders(user.userId, query);
   }
 
+  @Get('all')
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get all orders (admin only)' })
+  findAll(@Query() query: OrderQueryDto) {
+    return this.orderService.findAll(query);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Get an order by id (owner or admin)' })
   findById(
@@ -63,14 +71,6 @@ export class OrderController {
     @CurrentUser() user: IAuthenticatedUser,
   ) {
     return this.orderService.cancel(id, user);
-  }
-
-  @Get('all')
-  @UseGuards(RolesGuard)
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all orders (admin only)' })
-  findAll(@Query() query: OrderQueryDto) {
-    return this.orderService.findAll(query);
   }
 
   @Patch(':id/status')
