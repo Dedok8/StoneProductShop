@@ -1,29 +1,34 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
+import type { TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+
+import { AppModule } from '../src/app.module';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: INestApplication;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
+
+    // ⚠️ ЕСЛИ в main.ts у тебя есть префикс, раскомментируй строчку ниже:
+    // app.setGlobalPrefix('api');
+
     await app.init();
-  });
+  }, 30000); // Расширенный таймаут на запуск базы/редиса
 
-  it('/ (GET)', () => {
+  // Тестируем реальный эндпоинт вместо несуществующего "/"
+  it('/products (GET) — должен вернуть список продуктов', () => {
     return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+      .get('/products') // Или '/api/products', если включил префикс выше
+      .expect(200); // Проверяем, что эндпоинт в принципе доступен
   });
 
-  afterEach(async () => {
+  afterAll(async () => {
     await app.close();
   });
 });

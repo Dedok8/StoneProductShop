@@ -1,8 +1,6 @@
 import type { ProductEntity } from '@modules/product/domain';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Inject, Injectable } from '@nestjs/common';
-import type { Cache } from 'cache-manager';
-
+import { Injectable } from '@nestjs/common';
+import { RedisCacheService } from '@shared/redis';
 interface ICachedList {
   items: ProductEntity[];
   total: number;
@@ -10,10 +8,10 @@ interface ICachedList {
 
 @Injectable()
 export class ProductCacheService {
-  private readonly DETAIL_TTL_MS = 5 * 60 * 1000;
-  private readonly LIST_TTL_MS = 60 * 1000;
+  private readonly DETAIL_TTL_SEC = 5 * 60;
+  private readonly LIST_TTL_SEC = 60;
 
-  constructor(@Inject(CACHE_MANAGER) private readonly cache: Cache) {}
+  constructor(private readonly cache: RedisCacheService) {}
 
   private detailKey(id: string): string {
     return `product:detail:${id}`;
@@ -28,16 +26,18 @@ export class ProductCacheService {
     return `product:list:${params.categoryId ?? 'all'} : ${params.ownerId ?? 'all'} : ${params.page ?? 'all'} : ${params.limit ?? 'all'}`;
   }
 
-  async getDetail(id: string): Promise<ProductEntity | undefined> {
-    return this.cache.get<ProductEntity>(this.detailKey(id));
+  async getDetail(id: string): Promise<ProductEntity | null> {
+    return this.cache.getJson<ProductEntity>(this.detailKey(id));
   }
 
   async setDetail(id: string, product: ProductEntity): Promise<void> {
-    await this.cache.set(this.detailKey(id), product, this.DETAIL_TTL_MS);
+    await this.cache.setJson(this.detailKey(id), product, this.DETAIL_TTL_SEC);
   }
 
   async invalidateDetail(id: string): Promise<void> {
-    await this.cache.del(this.detailKey(id));
+    await this.cache.deleteByPattern(this.detailKey(id));
+
+    await this.cache.deleteByPattern('product:list:*');
   }
 
   async getList(params: {
@@ -45,14 +45,19 @@ export class ProductCacheService {
     ownerId?: string;
     page: number;
     limit: number;
-  }): Promise<ICachedList | undefined> {
-    return this.cache.get<ICachedList>(this.listKey(params));
+  }): Promise<ICachedList | null> {
+    return this.cache.getJson<ICachedList>(this.listKey(params));
   }
 
   async setList(
-    params: { categoryId?: string; ownerId?: string; page: number; limit: number },
+    params: {
+      categoryId?: string;
+      ownerId?: string;
+      page: number;
+      limit: number;
+    },
     data: ICachedList,
   ): Promise<void> {
-    await this.cache.set(this.listKey(params), data, this.LIST_TTL_MS);
+    await this.cache.setJson(this.listKey(params), data, this.LIST_TTL_SEC);
   }
 }
