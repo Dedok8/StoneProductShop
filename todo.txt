@@ -1,0 +1,63 @@
+BUGproduct-cache.service.spec.ts — неправильный файл
+Файл product-cache.service.spec.ts содержит тесты для CategoryService, а не для ProductCacheService. Это означает что ProductCacheService вообще не покрыт тестами.
+// product-cache.service.spec.ts — КОД ВНУТРИ:
+describe('CategoryService', () => {  ← НЕПРАВИЛЬНО!
+
+BUGuser.mapper.spec.ts — дубликат user.service.spec.ts
+Файл user.mapper.spec.ts содержит точную копию тестов UserService. UserMapper вообще не тестируется.
+// user.mapper.spec.ts — КОД ВНУТРИ:
+describe('UserService', () => {  ← НЕПРАВИЛЬНО!
+
+
+//=======================================
+
+Метод create(data: Partial<UserEntity>) — это антипаттерн в DDD. Нет типовой безопасности. Используй выделенные интерфейсы CreateUserData и UpdateUserData, которые уже определены в user.types.ts но не используются.
+// user.repository.ts
+abstract create(data: Partial<UserEntity>): ...  ← нет проверки типов
+
+// user.types.ts — уже есть готовые типы, но они не используются!
+export interface CreateUserData { email, passwordHash, role? }
+export interface UpdateUserData { email?, passwordHash?, refreshToken? }
+
+WARNUserService.getAllUsers — неправильная проверка
+findAll() возвращает массив, который никогда не будет null — проверка бессмысленная. При пустой БД вернётся [], а не null.
+if (!users) {  ← никогда не будет true
+  throw new NotFoundException('...');
+}
+
+
+WARNOrderController — несоответствие интерфейса IAuthenticatedUser
+В OrderController объявлен interface IAuthenticatedUser { userId: string }, но CurrentUser декоратор возвращает AccessTokenPayload с полем sub, а не userId. Код не сломается, но типы неправильные.
+interface IAuthenticatedUser {
+  userId: string;  ← но JWT payload содержит 'sub', не 'userId'!
+}
+
+
+WARNAllExceptionsFilter — потеря деталей validation errors
+При ошибке валидации (400) class-validator возвращает массив сообщений. Фильтр приводит exceptionResponse.message к одной строке — пользователь видит только первую ошибку.
+message = (exceptionResponse as { message: string }).message
+// Если message — массив ['email must be...', 'password too short'] → только первое!
+
+WARNCI — postgres:15 в CI vs postgres:16 в docker-compose
+В ci.yml используется postgres:15-alpine, а в docker-compose.yml — postgres:16. Разные версии PostgreSQL могут давать разное поведение.
+
+WARNE2E — login возвращает 201, а не 200
+В auth.e2e-spec.ts тест ожидает 201 для POST /auth/login. Семантически правильно — 200 OK (пользователь не создаётся, только аутентифицируется). Нужно добавить @HttpCode(200) на login endpoint.
+
+
+//=========================================
+
+MISSINGНет тестов для ProductCacheService (файл занят CategoryService)
+Нужно написать: getDetail (hit/miss), setDetail, getList (hit/miss), invalidateDetail (проверить что deleteByPattern вызывается дважды).
+
+MISSINGНет тестов для UserMapper.toResponse
+Нужно проверить: что passwordHash и refreshToken не попадают в DTO, что поля id/email/role/createdAt маппятся корректно.
+
+MISSINGНет E2E тестов для Orders
+Полностью отсутствует orders.e2e-spec.ts. Это один из главных модулей с business-логикой (транзакции, stock decrement, статусы).
+
+MISSINGНет E2E тестов для Categories
+Отсутствует categories.e2e-spec.ts — CRUD операции с категориями не покрыты интеграционными тестами.
+
+MISSINGRedisCacheService не покрыт unit-тестами
+Нужно протестировать: setJson/getJson (parse error fallback), deleteByPattern с пустым массивом ключей.

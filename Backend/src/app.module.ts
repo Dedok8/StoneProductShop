@@ -7,6 +7,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from '@shared/prisma';
 import { RedisModule } from '@shared/redis';
+import { TestingModule } from 'src/testing/testing.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RedisModule } from '@shared/redis';
     ProductModule,
     CategoryModule,
     OrderModule,
+    ...(process.env.NODE_ENV === 'test' ? [TestingModule] : []),
   ],
 })
 export class AppModule {}

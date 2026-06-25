@@ -1,6 +1,11 @@
 import { AccessTokenPayload } from '@modules/auth/domain';
 import { UserRole } from '@modules/user/domain';
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from '@shared/decorators/roles.decorator';
 
@@ -19,6 +24,8 @@ export class RolesGuard implements CanActivate {
     const request = context
       .switchToHttp()
       .getRequest<{ user: AccessTokenPayload }>();
+
+    if (!request.user) throw new UnauthorizedException();
 
     return requiredRoles.includes(request.user.role);
   }

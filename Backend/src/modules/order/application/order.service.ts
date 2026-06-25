@@ -22,16 +22,26 @@ export class OrderService {
 
   async create(dto: CreateOrderDto, userId: string): Promise<OrderEntity> {
     const productIds = dto.items.map((item) => item.productId);
-    const product = await this.prisma.product.findMany({
+
+    const products = await this.prisma.product.findMany({
       where: { id: { in: productIds } },
     });
 
-    const priceMap = new Map(product.map((p) => [p.id, p.price.toNumber()]));
+    const foundIds = new Set(products.map((p) => p.id));
+    const missingIds = productIds.filter((id) => !foundIds.has(id));
+
+    if (missingIds.length > 0) {
+      throw new NotFoundException(
+        `Products not found: ${missingIds.join(', ')}`,
+      );
+    }
+
+    const priceMap = new Map(products.map((p) => [p.id, p.price.toNumber()]));
 
     const items = dto.items.map((item) => ({
       productId: item.productId,
       quantity: item.quantity,
-      price: priceMap.get(item.productId) ?? 0,
+      price: priceMap.get(item.productId)!,
     }));
 
     return this.orderRepo.create({ userId, items });

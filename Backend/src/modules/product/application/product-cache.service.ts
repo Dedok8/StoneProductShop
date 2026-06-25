@@ -16,14 +16,13 @@ export class ProductCacheService {
   private detailKey(id: string): string {
     return `product:detail:${id}`;
   }
-
   private listKey(params: {
     categoryId?: string;
     ownerId?: string;
     page: number;
     limit: number;
   }): string {
-    return `product:list:${params.categoryId ?? 'all'} : ${params.ownerId ?? 'all'} : ${params.page ?? 'all'} : ${params.limit ?? 'all'}`;
+    return `product:list:${params.categoryId ?? 'all'}:${params.ownerId ?? 'all'}:${params.page}:${params.limit}`;
   }
 
   async getDetail(id: string): Promise<ProductEntity | null> {

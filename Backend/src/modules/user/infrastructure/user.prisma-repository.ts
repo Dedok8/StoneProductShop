@@ -1,6 +1,10 @@
 import { UserEntity, UserRepository, UserRole } from '@modules/user/domain';
+import type {
+  CreateUserData,
+  UpdateUserData,
+} from '@modules/user/domain/user.types';
 import { Injectable } from '@nestjs/common';
-import { User, Role as PrismaRole } from '@prisma/client';
+import { User, Role as PrismaRole, Prisma } from '@prisma/client';
 import { PrismaService } from '@shared/prisma';
 
 @Injectable()
@@ -39,11 +43,11 @@ export class UserPrismaRepository extends UserRepository {
     return users.map((user) => this.mapToEntity(user));
   }
 
-  async create(data: Partial<UserEntity>): Promise<UserEntity> {
+  async create(data: CreateUserData): Promise<UserEntity> {
     const created = await this.prisma.user.create({
       data: {
-        email: data.email!,
-        passwordHash: data.passwordHash!,
+        email: data.email,
+        passwordHash: data.passwordHash,
         role: data.role as PrismaRole,
       },
     });
@@ -51,16 +55,19 @@ export class UserPrismaRepository extends UserRepository {
     return this.mapToEntity(created);
   }
 
-  async update(id: string, data: Partial<UserEntity>): Promise<UserEntity> {
-    const updated = await this.prisma.user.update({
-      where: { id },
-      data: {
-        ...data,
-        role: data.role,
-      },
-    });
-
-    return this.mapToEntity(updated);
+  async update(id: string, data: UpdateUserData): Promise<UserEntity | null> {
+    try {
+      const updated = await this.prisma.user.update({ where: { id }, data });
+      return this.mapToEntity(updated);
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2025'
+      ) {
+        return null;
+      }
+      throw e;
+    }
   }
 
   async delete(id: string): Promise<void> {

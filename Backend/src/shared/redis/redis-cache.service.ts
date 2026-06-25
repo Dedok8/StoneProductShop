@@ -25,10 +25,18 @@ export class RedisCacheService {
     }
   }
 
-  async deleteByPattern(pattern: string) {
-    const keys = await this.redis.keys(pattern);
-    if (keys.length) {
-      await this.redis.del(...keys);
-    }
+  async deleteByPattern(pattern: string): Promise<void> {
+    let cursor = '0';
+    do {
+      const [next, keys] = await this.redis.scan(
+        cursor,
+        'MATCH',
+        pattern,
+        'COUNT',
+        100,
+      );
+      cursor = next;
+      if (keys.length) await this.redis.del(...keys);
+    } while (cursor !== '0');
   }
 }
