@@ -1,6 +1,7 @@
 import type { ProductEntity } from '@modules/product/domain';
 import { Injectable } from '@nestjs/common';
 import { RedisCacheService } from '@shared/redis';
+
 interface ICachedList {
   items: ProductEntity[];
   total: number;
@@ -16,6 +17,7 @@ export class ProductCacheService {
   private detailKey(id: string): string {
     return `product:detail:${id}`;
   }
+
   private listKey(params: {
     categoryId?: string;
     ownerId?: string;
@@ -33,10 +35,11 @@ export class ProductCacheService {
     await this.cache.setJson(this.detailKey(id), product, this.DETAIL_TTL_SEC);
   }
 
-  async invalidateDetail(id: string): Promise<void> {
-    await this.cache.deleteByPattern(this.detailKey(id));
-
-    await this.cache.deleteByPattern('product:list:*');
+  async invalidateDetail(productId: string): Promise<void> {
+    await Promise.all([
+      this.cache.deleteByPattern(`product:detail:${productId}`),
+      this.cache.deleteByPattern(`product:list:*`),
+    ]);
   }
 
   async getList(params: {

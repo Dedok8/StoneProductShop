@@ -153,7 +153,7 @@ describe('UserService', () => {
     it('не должен вызывать delete если findById вернул null', async () => {
       mockUserRepo.findById.mockResolvedValue(null);
 
-      await service.delete('ghost-id').catch(() => {});
+      await service.delete('ghost-id').catch(() => undefined);
 
       expect(mockUserRepo.delete).not.toHaveBeenCalled();
     });

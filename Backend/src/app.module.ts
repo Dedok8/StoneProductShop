@@ -5,9 +5,9 @@ import { ProductModule } from '@modules/product';
 import { UserModule } from '@modules/user/user.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { HealthController } from '@shared/health';
 import { PrismaModule } from '@shared/prisma';
 import { RedisModule } from '@shared/redis';
-import { TestingModule } from 'src/testing/testing.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { TestingModule } from 'src/testing/testing.module';
     ProductModule,
     CategoryModule,
     OrderModule,
-    ...(process.env.NODE_ENV === 'test' ? [TestingModule] : []),
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}

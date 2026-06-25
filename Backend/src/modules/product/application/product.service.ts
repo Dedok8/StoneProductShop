@@ -11,6 +11,7 @@ import type {
   IProductRepository,
   ProductEntity,
 } from '@modules/product/domain';
+import { UserRole } from '@modules/user/domain';
 import {
   ConflictException,
   ForbiddenException,
@@ -131,7 +132,7 @@ export class ProductService {
     product: ProductEntity,
     requester: { userId: string; role: string },
   ): void {
-    const isAdmin = requester.role === 'ADMIN';
+    const isAdmin = requester.role === (UserRole.ADMIN as string);
     const isOwner = product.isOwnerById(requester.userId);
 
     if (!isAdmin && !isOwner) {

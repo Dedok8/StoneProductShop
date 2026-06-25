@@ -25,6 +25,10 @@ export class RedisCacheService {
     }
   }
 
+  async delete(key: string): Promise<void> {
+    await this.redis.del(key);
+  }
+
   async deleteByPattern(pattern: string): Promise<void> {
     let cursor = '0';
     do {

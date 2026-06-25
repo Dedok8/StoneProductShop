@@ -100,7 +100,7 @@ describe('CategoryService', () => {
     it('не вызывает create при конфликте', async () => {
       repo.findBySlug.mockResolvedValue(makeCategory());
 
-      await service.create(makeCreateDto()).catch(() => {});
+      await service.create(makeCreateDto()).catch(() => undefined);
 
       expect(repo.create).not.toHaveBeenCalled();
     });
@@ -219,7 +219,7 @@ describe('CategoryService', () => {
     it('не вызывает delete если не найдена', async () => {
       repo.findById.mockResolvedValue(null);
 
-      await service.delete('ghost').catch(() => {});
+      await service.delete('ghost').catch(() => undefined);
 
       expect(repo.delete).not.toHaveBeenCalled();
     });

@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="163" failures="0" errors="0" time="16.643">
+  <testsuite name="RedisService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="7.704" tests="7">
+    <testcase classname="RedisService onModuleInit підключається до Redis при ініціалізації" name="RedisService onModuleInit підключається до Redis при ініціалізації" time="0.019">
+    </testcase>
+    <testcase classname="RedisService onModuleInit кидає помилку якщо connect() провалився" name="RedisService onModuleInit кидає помилку якщо connect() провалився" time="0.025">
+    </testcase>
+    <testcase classname="RedisService onModuleDestroy викликає quit() при знищенні модуля" name="RedisService onModuleDestroy викликає quit() при знищенні модуля" time="0.004">
+    </testcase>
+    <testcase classname="RedisService config зчитує REDIS_HOST з ConfigService" name="RedisService config зчитує REDIS_HOST з ConfigService" time="0.003">
+    </testcase>
+    <testcase classname="RedisService config зчитує REDIS_PORT з ConfigService" name="RedisService config зчитує REDIS_PORT з ConfigService" time="0.003">
+    </testcase>
+    <testcase classname="RedisService config зчитує REDIS_PASSWORD з ConfigService" name="RedisService config зчитує REDIS_PASSWORD з ConfigService" time="0.002">
+    </testcase>
+    <testcase classname="RedisService error handling реєструє обробник події error під час конструктора" name="RedisService error handling реєструє обробник події error під час конструктора" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="CategoryService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="7.759" tests="17">
+    <testcase classname="CategoryService create успешно создаёт категорию" name="CategoryService create успешно создаёт категорию" time="0.03">
+    </testcase>
+    <testcase classname="CategoryService create генерирует slug из name с UUID суффиксом" name="CategoryService create генерирует slug из name с UUID суффиксом" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService create slug в нижнем регистре" name="CategoryService create slug в нижнем регистре" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService create slug заменяет пробелы на дефисы" name="CategoryService create slug заменяет пробелы на дефисы" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService create ConflictException если slug уже занят" name="CategoryService create ConflictException если slug уже занят" time="0.022">
+    </testcase>
+    <testcase classname="CategoryService create не вызывает create при конфликте" name="CategoryService create не вызывает create при конфликте" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService findById возвращает категорию по id" name="CategoryService findById возвращает категорию по id" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService findById NotFoundException если категория не найдена" name="CategoryService findById NotFoundException если категория не найдена" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService findMany возвращает список с пагинацией" name="CategoryService findMany возвращает список с пагинацией" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService findMany передаёт skip и take в репозиторий" name="CategoryService findMany передаёт skip и take в репозиторий" time="0.003">
+    </testcase>
+    <testcase classname="CategoryService update успешно обновляет категорию" name="CategoryService update успешно обновляет категорию" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService update обновляет slug если изменилось name" name="CategoryService update обновляет slug если изменилось name" time="0.001">
+    </testcase>
+    <testcase classname="CategoryService update НЕ обновляет slug если name не передан" name="CategoryService update НЕ обновляет slug если name не передан" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService update NotFoundException если категория не найдена" name="CategoryService update NotFoundException если категория не найдена" time="0.001">
+    </testcase>
+    <testcase classname="CategoryService delete успешно удаляет категорию" name="CategoryService delete успешно удаляет категорию" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService delete NotFoundException если категория не найдена" name="CategoryService delete NotFoundException если категория не найдена" time="0.002">
+    </testcase>
+    <testcase classname="CategoryService delete не вызывает delete если не найдена" name="CategoryService delete не вызывает delete если не найдена" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="UserService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:01" time="0.47" tests="10">
+    <testcase classname="UserService findById должен вернуть mapped DTO по id" name="UserService findById должен вернуть mapped DTO по id" time="0.005">
+    </testcase>
+    <testcase classname="UserService findById должен выбросить NotFoundException если пользователь не найден" name="UserService findById должен выбросить NotFoundException если пользователь не найден" time="0.012">
+    </testcase>
+    <testcase classname="UserService findById должен вызвать repo.findById с правильным id" name="UserService findById должен вызвать repo.findById с правильным id" time="0.003">
+    </testcase>
+    <testcase classname="UserService getAllUsers должен вернуть массив mapped DTO" name="UserService getAllUsers должен вернуть массив mapped DTO" time="0.004">
+    </testcase>
+    <testcase classname="UserService getAllUsers должен вернуть пустой массив если пользователей нет" name="UserService getAllUsers должен вернуть пустой массив если пользователей нет" time="0.002">
+    </testcase>
+    <testcase classname="UserService update должен обновить пользователя и вернуть DTO" name="UserService update должен обновить пользователя и вернуть DTO" time="0.012">
+    </testcase>
+    <testcase classname="UserService update должен выбросить NotFoundException если repo.update вернул null" name="UserService update должен выбросить NotFoundException если repo.update вернул null" time="0.002">
+    </testcase>
+    <testcase classname="UserService delete должен удалить пользователя" name="UserService delete должен удалить пользователя" time="0.001">
+    </testcase>
+    <testcase classname="UserService delete должен выбросить NotFoundException если пользователь не найден" name="UserService delete должен выбросить NotFoundException если пользователь не найден" time="0.001">
+    </testcase>
+    <testcase classname="UserService delete не должен вызывать delete если findById вернул null" name="UserService delete не должен вызывать delete если findById вернул null" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="AuthService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="8.334" tests="8">
+    <testcase classname="AuthService register должен зарегистрировать пользователя и вернуть токены" name="AuthService register должен зарегистрировать пользователя и вернуть токены" time="0.029">
+    </testcase>
+    <testcase classname="AuthService register должен выбросить ConflictException если email уже занят" name="AuthService register должен выбросить ConflictException если email уже занят" time="0.02">
+    </testcase>
+    <testcase classname="AuthService login должен вернуть токены при валидных данных" name="AuthService login должен вернуть токены при валидных данных" time="0.007">
+    </testcase>
+    <testcase classname="AuthService login должен выбросить UnauthorizedException если пользователь не найден" name="AuthService login должен выбросить UnauthorizedException если пользователь не найден" time="0.002">
+    </testcase>
+    <testcase classname="AuthService login должен выбросить UnauthorizedException при неверном пароле" name="AuthService login должен выбросить UnauthorizedException при неверном пароле" time="0.003">
+    </testcase>
+    <testcase classname="AuthService refresh должен выдать новые токены при валидном refresh token" name="AuthService refresh должен выдать новые токены при валидном refresh token" time="0.001">
+    </testcase>
+    <testcase classname="AuthService refresh должен выбросить UnauthorizedException при невалидном refresh token" name="AuthService refresh должен выбросить UnauthorizedException при невалидном refresh token" time="0.009">
+    </testcase>
+    <testcase classname="AuthService logout должен очистить refresh token" name="AuthService logout должен очистить refresh token" time="0.003">
+    </testcase>
+  </testsuite>
+  <testsuite name="OrderService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:01" time="0.561" tests="18">
+    <testcase classname="OrderService create успешно создаёт заказ с ценами из базы" name="OrderService create успешно создаёт заказ с ценами из базы" time="0.007">
+    </testcase>
+    <testcase classname="OrderService create передаёт цены из базы, не из dto" name="OrderService create передаёт цены из базы, не из dto" time="0.01">
+    </testcase>
+    <testcase classname="OrderService create передаёт userId в репозиторий" name="OrderService create передаёт userId в репозиторий" time="0.002">
+    </testcase>
+    <testcase classname="OrderService create price 0 якщо продукт не знайдено в базі" name="OrderService create price 0 якщо продукт не знайдено в базі" time="0.018">
+    </testcase>
+    <testcase classname="OrderService findById возвращает заказ владельцу" name="OrderService findById возвращает заказ владельцу" time="0.002">
+    </testcase>
+    <testcase classname="OrderService findById возвращает заказ администратору (не владелец)" name="OrderService findById возвращает заказ администратору (не владелец)" time="0.002">
+    </testcase>
+    <testcase classname="OrderService findById NotFoundException если заказ не найден" name="OrderService findById NotFoundException если заказ не найден" time="0.002">
+    </testcase>
+    <testcase classname="OrderService findById ForbiddenException если не владелец и не admin" name="OrderService findById ForbiddenException если не владелец и не admin" time="0.001">
+    </testcase>
+    <testcase classname="OrderService cancel успешно отменяет заказ со статусом PENDING" name="OrderService cancel успешно отменяет заказ со статусом PENDING" time="0.006">
+    </testcase>
+    <testcase classname="OrderService cancel ForbiddenException если заказ нельзя отменить (не PENDING)" name="OrderService cancel ForbiddenException если заказ нельзя отменить (не PENDING)" time="0.002">
+    </testcase>
+    <testcase classname="OrderService cancel NotFoundException если заказ не найден" name="OrderService cancel NotFoundException если заказ не найден" time="0.001">
+    </testcase>
+    <testcase classname="OrderService cancel ForbiddenException если не владелец" name="OrderService cancel ForbiddenException если не владелец" time="0.002">
+    </testcase>
+    <testcase classname="OrderService cancel не вызывает updateStatus при NotFoundException" name="OrderService cancel не вызывает updateStatus при NotFoundException" time="0.001">
+    </testcase>
+    <testcase classname="OrderService updateStatus успешно меняет статус заказа" name="OrderService updateStatus успешно меняет статус заказа" time="0.001">
+    </testcase>
+    <testcase classname="OrderService updateStatus NotFoundException если заказ не найден" name="OrderService updateStatus NotFoundException если заказ не найден" time="0.001">
+    </testcase>
+    <testcase classname="OrderService updateStatus не вызывает updateStatus при NotFoundException" name="OrderService updateStatus не вызывает updateStatus при NotFoundException" time="0.001">
+    </testcase>
+    <testcase classname="OrderService findMyOrders передаёт userId в репозиторий" name="OrderService findMyOrders передаёт userId в репозиторий" time="0.002">
+    </testcase>
+    <testcase classname="OrderService findMyOrders возвращает page и limit в ответе" name="OrderService findMyOrders возвращает page и limit в ответе" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="ParsePositiveIntPipe" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.192" tests="10">
+    <testcase classname="ParsePositiveIntPipe должен преобразовать &quot;42&quot; в число 42" name="ParsePositiveIntPipe должен преобразовать &quot;42&quot; в число 42" time="0.001">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен преобразовать &quot;1&quot; в число 1" name="ParsePositiveIntPipe должен преобразовать &quot;1&quot; в число 1" time="0">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен работать с большими числами" name="ParsePositiveIntPipe должен работать с большими числами" time="0">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен выбросить BadRequestException для &quot;0&quot; (ноль не позитивный)" name="ParsePositiveIntPipe должен выбросить BadRequestException для &quot;0&quot; (ноль не позитивный)" time="0.006">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен выбросить BadRequestException для отрицательного числа &quot;-5&quot;" name="ParsePositiveIntPipe должен выбросить BadRequestException для отрицательного числа &quot;-5&quot;" time="0.005">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен выбросить BadRequestException для нечислового значения &quot;abc&quot;" name="ParsePositiveIntPipe должен выбросить BadRequestException для нечислового значения &quot;abc&quot;" time="0.001">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен выбросить BadRequestException для пустой строки" name="ParsePositiveIntPipe должен выбросить BadRequestException для пустой строки" time="0.001">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe должен выбросить BadRequestException для &quot;1.5&quot; (дробное)" name="ParsePositiveIntPipe должен выбросить BadRequestException для &quot;1.5&quot; (дробное)" time="0">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe сообщение об ошибке содержит имя поля" name="ParsePositiveIntPipe сообщение об ошибке содержит имя поля" time="0.001">
+    </testcase>
+    <testcase classname="ParsePositiveIntPipe сообщение об ошибке содержит переданное значение" name="ParsePositiveIntPipe сообщение об ошибке содержит переданное значение" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="TokenService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.382" tests="9">
+    <testcase classname="TokenService signAccessToken подписывает токен с правильным payload и конфигурацией" name="TokenService signAccessToken подписывает токен с правильным payload и конфигурацией" time="0.001">
+    </testcase>
+    <testcase classname="TokenService signAccessToken использует JWT_ACCESS_SECRET из конфига" name="TokenService signAccessToken использует JWT_ACCESS_SECRET из конфига" time="0.001">
+    </testcase>
+    <testcase classname="TokenService signAccessToken использует JWT_ACCESS_EXPIRES_IN из конфига" name="TokenService signAccessToken использует JWT_ACCESS_EXPIRES_IN из конфига" time="0.001">
+    </testcase>
+    <testcase classname="TokenService signRefreshToken подписывает refresh токен с правильными параметрами" name="TokenService signRefreshToken подписывает refresh токен с правильными параметрами" time="0.001">
+    </testcase>
+    <testcase classname="TokenService signRefreshToken refresh токен содержит только sub — не email и не role" name="TokenService signRefreshToken refresh токен содержит только sub — не email и не role" time="0">
+    </testcase>
+    <testcase classname="TokenService signRefreshToken использует другой секрет чем access токен" name="TokenService signRefreshToken использует другой секрет чем access токен" time="0.001">
+    </testcase>
+    <testcase classname="TokenService verifyRefreshToken верифицирует токен и возвращает payload" name="TokenService verifyRefreshToken верифицирует токен и возвращает payload" time="0">
+    </testcase>
+    <testcase classname="TokenService verifyRefreshToken пробрасывает ошибку если токен истёк" name="TokenService verifyRefreshToken пробрасывает ошибку если токен истёк" time="0.011">
+    </testcase>
+    <testcase classname="TokenService verifyRefreshToken пробрасывает ошибку если токен невалиден" name="TokenService verifyRefreshToken пробрасывает ошибку если токен невалиден" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="RolesGuard" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.267" tests="4">
+    <testcase classname="RolesGuard должен пропустить запрос если роли не указаны" name="RolesGuard должен пропустить запрос если роли не указаны" time="0">
+    </testcase>
+    <testcase classname="RolesGuard должен разрешить ADMIN доступ к защищённому эндпоинту" name="RolesGuard должен разрешить ADMIN доступ к защищённому эндпоинту" time="0">
+    </testcase>
+    <testcase classname="RolesGuard должен запретить USER доступ к ADMIN эндпоинту" name="RolesGuard должен запретить USER доступ к ADMIN эндпоинту" time="0">
+    </testcase>
+    <testcase classname="RolesGuard должен разрешить если роль совпадает с одной из нескольких" name="RolesGuard должен разрешить если роль совпадает с одной из нескольких" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Money" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.107" tests="17">
+    <testcase classname="Money constructor creates a money value with a supported currency" name="Money constructor creates a money value with a supported currency" time="0.001">
+    </testcase>
+    <testcase classname="Money constructor throws when amount is negative" name="Money constructor throws when amount is negative" time="0.013">
+    </testcase>
+    <testcase classname="Money constructor throws when currency is not supported" name="Money constructor throws when currency is not supported" time="0.003">
+    </testcase>
+    <testcase classname="Money add adds money values with the same currency" name="Money add adds money values with the same currency" time="0.001">
+    </testcase>
+    <testcase classname="Money add throws when adding different currencies" name="Money add throws when adding different currencies" time="0.001">
+    </testcase>
+    <testcase classname="Money subtract subtracts money values with the same currency" name="Money subtract subtracts money values with the same currency" time="0.001">
+    </testcase>
+    <testcase classname="Money subtract throws when subtracting different currencies" name="Money subtract throws when subtracting different currencies" time="0.001">
+    </testcase>
+    <testcase classname="Money subtract throws when subtraction result would be negative" name="Money subtract throws when subtraction result would be negative" time="0.001">
+    </testcase>
+    <testcase classname="Money multiply multiplies amount and rounds to two decimals" name="Money multiply multiplies amount and rounds to two decimals" time="0.001">
+    </testcase>
+    <testcase classname="Money multiply throws when factor is negative" name="Money multiply throws when factor is negative" time="0.001">
+    </testcase>
+    <testcase classname="Money comparison checks whether money is greater than another value with the same currency" name="Money comparison checks whether money is greater than another value with the same currency" time="0">
+    </testcase>
+    <testcase classname="Money comparison checks whether money is less than another value with the same currency" name="Money comparison checks whether money is less than another value with the same currency" time="0.001">
+    </testcase>
+    <testcase classname="Money comparison throws when comparing different currencies" name="Money comparison throws when comparing different currencies" time="0.002">
+    </testcase>
+    <testcase classname="Money equals returns true for equal amount and currency" name="Money equals returns true for equal amount and currency" time="0">
+    </testcase>
+    <testcase classname="Money equals returns false for different amounts" name="Money equals returns false for different amounts" time="0.001">
+    </testcase>
+    <testcase classname="Money equals returns false for different currencies" name="Money equals returns false for different currencies" time="0.001">
+    </testcase>
+    <testcase classname="Money toString formats amount with currency" name="Money toString formats amount with currency" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="UserMapper" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.109" tests="7">
+    <testcase classname="UserMapper toResponse маппит id, email, role, createdAt из entity в DTO" name="UserMapper toResponse маппит id, email, role, createdAt из entity в DTO" time="0.002">
+    </testcase>
+    <testcase classname="UserMapper toResponse не включает passwordHash в ответ (security)" name="UserMapper toResponse не включает passwordHash в ответ (security)" time="0">
+    </testcase>
+    <testcase classname="UserMapper toResponse не включает refreshToken в ответ (security)" name="UserMapper toResponse не включает refreshToken в ответ (security)" time="0.001">
+    </testcase>
+    <testcase classname="UserMapper toResponse не включает updatedAt в ответ" name="UserMapper toResponse не включает updatedAt в ответ" time="0">
+    </testcase>
+    <testcase classname="UserMapper toResponse корректно маппит роль USER" name="UserMapper toResponse корректно маппит роль USER" time="0.001">
+    </testcase>
+    <testcase classname="UserMapper toResponse корректно маппит роль ADMIN" name="UserMapper toResponse корректно маппит роль ADMIN" time="0">
+    </testcase>
+    <testcase classname="UserMapper toResponse DTO содержит ровно 4 поля: id, email, role, createdAt" name="UserMapper toResponse DTO содержит ровно 4 поля: id, email, role, createdAt" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProductMapper" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.112" tests="8">
+    <testcase classname="ProductMapper toResponse должен корректно маппить entity в DTO" name="ProductMapper toResponse должен корректно маппить entity в DTO" time="0.002">
+    </testcase>
+    <testcase classname="ProductMapper toResponse должен включать вычисляемое поле isInStock = true когда stock &gt; 0" name="ProductMapper toResponse должен включать вычисляемое поле isInStock = true когда stock &gt; 0" time="0">
+    </testcase>
+    <testcase classname="ProductMapper toResponse должен включать вычисляемое поле isInStock = false когда stock = 0" name="ProductMapper toResponse должен включать вычисляемое поле isInStock = false когда stock = 0" time="0">
+    </testcase>
+    <testcase classname="ProductMapper toResponse должен корректно обрабатывать description = null" name="ProductMapper toResponse должен корректно обрабатывать description = null" time="0.001">
+    </testcase>
+    <testcase classname="ProductMapper toResponse должен корректно маппить пустой массив images" name="ProductMapper toResponse должен корректно маппить пустой массив images" time="0">
+    </testcase>
+    <testcase classname="ProductMapper toResponse не должен содержать лишних полей (нет passwordHash, refreshToken и т.д.)" name="ProductMapper toResponse не должен содержать лишних полей (нет passwordHash, refreshToken и т.д.)" time="0.001">
+    </testcase>
+    <testcase classname="ProductMapper toResponseList должен маппить массив entities в массив DTO" name="ProductMapper toResponseList должен маппить массив entities в массив DTO" time="0">
+    </testcase>
+    <testcase classname="ProductMapper toResponseList должен вернуть пустой массив для пустого input" name="ProductMapper toResponseList должен вернуть пустой массив для пустого input" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProductEntity" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:25:02" time="0.07" tests="5">
+    <testcase classname="ProductEntity creates an entity with the provided properties" name="ProductEntity creates an entity with the provided properties" time="0.004">
+    </testcase>
+    <testcase classname="ProductEntity returns true when product is in stock" name="ProductEntity returns true when product is in stock" time="0">
+    </testcase>
+    <testcase classname="ProductEntity returns false when product is out of stock" name="ProductEntity returns false when product is out of stock" time="0">
+    </testcase>
+    <testcase classname="ProductEntity checks whether the provided user id belongs to the owner" name="ProductEntity checks whether the provided user id belongs to the owner" time="0.001">
+    </testcase>
+    <testcase classname="ProductEntity creates an entity from persistence and converts string price to number" name="ProductEntity creates an entity from persistence and converts string price to number" time="0">
+    </testcase>
+  </testsuite>
+  <testsuite name="PrismaService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="9.251" tests="9">
+    <testcase classname="PrismaService onModuleInit підключається до БД при ініціалізації" name="PrismaService onModuleInit підключається до БД при ініціалізації" time="1.356">
+    </testcase>
+    <testcase classname="PrismaService onModuleInit реєструє обробники warn та error подій" name="PrismaService onModuleInit реєструє обробники warn та error подій" time="0.064">
+    </testcase>
+    <testcase classname="PrismaService onModuleInit реєструє обробник query тільки в development" name="PrismaService onModuleInit реєструє обробник query тільки в development" time="0.004">
+    </testcase>
+    <testcase classname="PrismaService onModuleInit НЕ реєструє обробник query в production" name="PrismaService onModuleInit НЕ реєструє обробник query в production" time="0.004">
+    </testcase>
+    <testcase classname="PrismaService onModuleDestroy відключається від БД при знищенні модуля" name="PrismaService onModuleDestroy відключається від БД при знищенні модуля" time="0.005">
+    </testcase>
+    <testcase classname="PrismaService onCleanDatabase очищає таблиці в тестовому середовищі" name="PrismaService onCleanDatabase очищає таблиці в тестовому середовищі" time="0.004">
+    </testcase>
+    <testcase classname="PrismaService onCleanDatabase кидає помилку якщо NODE_ENV !== test" name="PrismaService onCleanDatabase кидає помилку якщо NODE_ENV !== test" time="0.014">
+    </testcase>
+    <testcase classname="PrismaService onCleanDatabase пропускає таблицю _prisma_migrations" name="PrismaService onCleanDatabase пропускає таблицю _prisma_migrations" time="0.003">
+    </testcase>
+    <testcase classname="PrismaService onCleanDatabase використовує TRUNCATE CASCADE RESTART IDENTITY" name="PrismaService onCleanDatabase використовує TRUNCATE CASCADE RESTART IDENTITY" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="RedisCacheService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="9.452" tests="11">
+    <testcase classname="RedisCacheService setJson сохраняет значение с TTL при его наличии" name="RedisCacheService setJson сохраняет значение с TTL при его наличии" time="0.017">
+    </testcase>
+    <testcase classname="RedisCacheService setJson сохраняет значение без TTL если не передан" name="RedisCacheService setJson сохраняет значение без TTL если не передан" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService setJson сериализует объект в JSON-строку" name="RedisCacheService setJson сериализует объект в JSON-строку" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService getJson возвращает распарсенный объект при наличии ключа" name="RedisCacheService getJson возвращает распарсенный объект при наличии ключа" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService getJson возвращает null если ключ не найден" name="RedisCacheService getJson возвращает null если ключ не найден" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService getJson возвращает null если JSON невалидный (parse error fallback)" name="RedisCacheService getJson возвращает null если JSON невалидный (parse error fallback)" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService getJson не бросает исключение при невалидном JSON" name="RedisCacheService getJson не бросает исключение при невалидном JSON" time="0.001">
+    </testcase>
+    <testcase classname="RedisCacheService deleteByPattern удаляет ключи найденные через SCAN" name="RedisCacheService deleteByPattern удаляет ключи найденные через SCAN" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService deleteByPattern не вызывает del если ключей нет" name="RedisCacheService deleteByPattern не вызывает del если ключей нет" time="0.002">
+    </testcase>
+    <testcase classname="RedisCacheService deleteByPattern итерирует несколько страниц SCAN до cursor === &quot;0&quot;" name="RedisCacheService deleteByPattern итерирует несколько страниц SCAN до cursor === &quot;0&quot;" time="0.001">
+    </testcase>
+    <testcase classname="RedisCacheService deleteByPattern использует SCAN вместо KEYS (не вызывает redis.keys)" name="RedisCacheService deleteByPattern использует SCAN вместо KEYS (не вызывает redis.keys)" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProductCacheService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="9.472" tests="10">
+    <testcase classname="ProductCacheService getDetail возвращает продукт из кеша (cache hit)" name="ProductCacheService getDetail возвращает продукт из кеша (cache hit)" time="0.018">
+    </testcase>
+    <testcase classname="ProductCacheService getDetail возвращает null при cache miss" name="ProductCacheService getDetail возвращает null при cache miss" time="0.002">
+    </testcase>
+    <testcase classname="ProductCacheService setDetail сохраняет продукт с правильным ключом и TTL 300 секунд" name="ProductCacheService setDetail сохраняет продукт с правильным ключом и TTL 300 секунд" time="0.002">
+    </testcase>
+    <testcase classname="ProductCacheService getList возвращает список продуктов из кеша (cache hit)" name="ProductCacheService getList возвращает список продуктов из кеша (cache hit)" time="0.001">
+    </testcase>
+    <testcase classname="ProductCacheService getList возвращает null при cache miss" name="ProductCacheService getList возвращает null при cache miss" time="0.005">
+    </testcase>
+    <testcase classname="ProductCacheService getList формирует ключ с &quot;all&quot; если categoryId/ownerId не переданы" name="ProductCacheService getList формирует ключ с &quot;all&quot; если categoryId/ownerId не переданы" time="0.001">
+    </testcase>
+    <testcase classname="ProductCacheService setList сохраняет список с правильным ключом и TTL 60 секунд" name="ProductCacheService setList сохраняет список с правильным ключом и TTL 60 секунд" time="0.002">
+    </testcase>
+    <testcase classname="ProductCacheService invalidateDetail вызывает deleteByPattern для конкретного продукта" name="ProductCacheService invalidateDetail вызывает deleteByPattern для конкретного продукта" time="0.001">
+    </testcase>
+    <testcase classname="ProductCacheService invalidateDetail вызывает deleteByPattern для инвалидации всех списков" name="ProductCacheService invalidateDetail вызывает deleteByPattern для инвалидации всех списков" time="0.003">
+    </testcase>
+    <testcase classname="ProductCacheService invalidateDetail вызывает deleteByPattern ровно 2 раза (detail + list)" name="ProductCacheService invalidateDetail вызывает deleteByPattern ровно 2 раза (detail + list)" time="0.002">
+    </testcase>
+  </testsuite>
+  <testsuite name="ProductService" errors="0" failures="0" skipped="0" timestamp="2026-06-25T21:24:53" time="12.805" tests="13">
+    <testcase classname="ProductService create creates a product when the generated slug is unique" name="ProductService create creates a product when the generated slug is unique" time="0.021">
+    </testcase>
+    <testcase classname="ProductService create throws ConflictException when the generated slug already exists" name="ProductService create throws ConflictException when the generated slug already exists" time="0.016">
+    </testcase>
+    <testcase classname="ProductService findById returns a product from cache when it exists" name="ProductService findById returns a product from cache when it exists" time="0.005">
+    </testcase>
+    <testcase classname="ProductService findById loads a product from repository and stores it in cache on cache miss" name="ProductService findById loads a product from repository and stores it in cache on cache miss" time="0.004">
+    </testcase>
+    <testcase classname="ProductService findById throws NotFoundException when the product does not exist" name="ProductService findById throws NotFoundException when the product does not exist" time="0.004">
+    </testcase>
+    <testcase classname="ProductService findMany returns cached list results with the requested pagination metadata" name="ProductService findMany returns cached list results with the requested pagination metadata" time="0.003">
+    </testcase>
+    <testcase classname="ProductService findMany loads list results from repository and caches them on cache miss" name="ProductService findMany loads list results from repository and caches them on cache miss" time="0.002">
+    </testcase>
+    <testcase classname="ProductService update updates a product and invalidates cache when requester is the owner" name="ProductService update updates a product and invalidates cache when requester is the owner" time="0.002">
+    </testcase>
+    <testcase classname="ProductService update allows an admin to update a product owned by another user" name="ProductService update allows an admin to update a product owned by another user" time="0.004">
+    </testcase>
+    <testcase classname="ProductService update throws ForbiddenException when requester is neither owner nor admin" name="ProductService update throws ForbiddenException when requester is neither owner nor admin" time="0.002">
+    </testcase>
+    <testcase classname="ProductService update throws NotFoundException when product does not exist" name="ProductService update throws NotFoundException when product does not exist" time="0.002">
+    </testcase>
+    <testcase classname="ProductService delete deletes a product and invalidates cache when requester can modify it" name="ProductService delete deletes a product and invalidates cache when requester can modify it" time="0.001">
+    </testcase>
+    <testcase classname="ProductService delete throws NotFoundException when product does not exist" name="ProductService delete throws NotFoundException when product does not exist" time="0.002">
+    </testcase>
+  </testsuite>
+</testsuites>

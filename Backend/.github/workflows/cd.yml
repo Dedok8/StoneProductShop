@@ -70,22 +70,7 @@ jobs:
           STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
             https://stoneshop.your-domain.com/health)
           if [ "$STATUS" != "200" ]; then
-            echo "❌ Health check failed: HTTP $STATUS"
+            echo " Health check failed: HTTP $STATUS"
             exit 1
           fi
-          echo "✅ Service is healthy"
-
-      # ─── Telegram notification on success ───────────────
-      - name: Notify on success
-        if: success()
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d text="✅ StoneProductShop deployed successfully to production%0ABranch: ${{ github.ref_name }}%0ACommit: ${{ github.sha }}"
-
-      - name: Notify on failure
-        if: failure()
-        run: |
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d text="❌ Deploy FAILED%0ABranch: ${{ github.ref_name }}%0ACommit: ${{ github.sha }}"
+          echo " Service is healthy"

@@ -34,6 +34,7 @@ describe('ProductCacheService', () => {
   const cache = {
     getJson: jest.fn(),
     setJson: jest.fn(),
+    delete: jest.fn(),
     deleteByPattern: jest.fn(),
   };
 

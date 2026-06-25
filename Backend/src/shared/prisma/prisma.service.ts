@@ -60,13 +60,15 @@ export class PrismaService
     }
 
     const tablenames = await this.$queryRaw<{ tablename: string }[]>`
-    SELECT tablenames FROM pg_table WHERE schemaname='public'
-    `;
+    SELECT tablename
+      FROM pg_tables
+      WHERE schemaname='public'
+      `;
 
     for (const { tablename } of tablenames) {
       if (tablename !== '_prisma_migrations') {
         await this.$executeRawUnsafe(
-          `TRUNCATE TABLE "public"."${tablename}" CASCADE;`,
+          `TRUNCATE TABLE "${tablename}" CASCADE RESTART IDENTITY;`,
         );
       }
     }

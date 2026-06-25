@@ -4,7 +4,7 @@ import type {
   UpdateUserData,
 } from '@modules/user/domain/user.types';
 import { Injectable } from '@nestjs/common';
-import { User, Role as PrismaRole, Prisma } from '@prisma/client';
+import { Prisma, User, Role as PrismaRole } from '@prisma/client';
 import { PrismaService } from '@shared/prisma';
 
 @Injectable()
@@ -55,9 +55,15 @@ export class UserPrismaRepository extends UserRepository {
     return this.mapToEntity(created);
   }
 
+  // Returns null if the user does not exist (Prisma P2025),
+  // matching the abstract UserRepository contract.
   async update(id: string, data: UpdateUserData): Promise<UserEntity | null> {
     try {
-      const updated = await this.prisma.user.update({ where: { id }, data });
+      const updated = await this.prisma.user.update({
+        where: { id },
+        data,
+      });
+
       return this.mapToEntity(updated);
     } catch (e) {
       if (

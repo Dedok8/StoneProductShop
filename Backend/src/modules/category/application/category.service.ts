@@ -25,15 +25,14 @@ export class CategoryService {
   ) {}
 
   async create(dto: CreateCategoryDto): Promise<CategoryEntity> {
-    const slug = this.buildSlug(dto.name);
-
-    const existing = await this.categoryRepo.findBySlug(slug);
+    const existing = await this.categoryRepo.findBySlug(dto.name);
     if (existing) {
       throw new ConflictException(
-        `Category with slug "${slug}" already exists`,
+        `Category with name "${dto.name}" already exists`,
       );
     }
 
+    const slug = this.buildSlug(dto.name);
     return this.categoryRepo.create({ ...dto, slug });
   }
 

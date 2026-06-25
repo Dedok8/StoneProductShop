@@ -25,6 +25,7 @@ export interface ICategoryRepository {
   findMany(
     params: IFindManyCategoryParams,
   ): Promise<{ items: CategoryEntity[]; total: number }>;
+  findByName(name: string): Promise<CategoryEntity | null>;
   update(id: string, data: IUpdateCategoryData): Promise<CategoryEntity>;
   delete(id: string): Promise<void>;
 }

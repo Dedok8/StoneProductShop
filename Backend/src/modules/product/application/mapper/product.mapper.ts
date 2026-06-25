@@ -1,4 +1,4 @@
-import type { ProductResponseDto } from '@modules/product/application/dto/product-responce.dto';
+import type { ProductResponseDto } from '@modules/product/application/dto/product-response.dto';
 import type { ProductEntity } from '@modules/product/domain/entities';
 
 export class ProductMapper {

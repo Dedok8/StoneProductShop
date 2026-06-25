@@ -1,8 +1,8 @@
 import { ProductQueryDto } from '@modules/product/application/dto';
+import type { CreateProductDto } from '@modules/product/application/dto';
 import { ProductCacheService } from '@modules/product/application/product-cache.service';
 import { ProductService } from '@modules/product/application/product.service';
 import { PRODUCT_REPOSITORY, ProductEntity } from '@modules/product/domain';
-import type { CreateProductDto } from '@modules/product/application/dto';
 import {
   ConflictException,
   ForbiddenException,

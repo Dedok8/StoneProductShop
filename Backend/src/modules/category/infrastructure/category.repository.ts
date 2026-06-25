@@ -5,22 +5,34 @@ import {
   IFindManyCategoryParams,
   IUpdateCategoryData,
 } from '@modules/category/domain/interfaces';
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@shared/prisma';
 
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
+  private readonly logger = new Logger(PrismaService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async create(data: ICreateCategoryData): Promise<CategoryEntity> {
-    const created = await this.prisma.category.create({
-      data: {
-        name: data.name,
-        slug: data.slug,
-      },
-    });
+    try {
+      const created = await this.prisma.category.create({ data });
+      return this.toEntity(created);
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError &&
+        e.code === 'P2002'
+      ) {
+      
+        throw new ConflictException(
+          'Category with this name or slug already exists',
+        );
+      }
 
-    return this.toEntity(created);
+      this.logger.error(e);
+      throw e;
+    }
   }
 
   async findById(id: string): Promise<CategoryEntity | null> {
@@ -55,6 +67,13 @@ export class CategoryRepository implements ICategoryRepository {
     });
 
     return this.toEntity(updated);
+  }
+
+  async findByName(name: string): Promise<CategoryEntity | null> {
+    const category = await this.prisma.category.findUnique({
+      where: { name },
+    });
+    return category ? this.toEntity(category) : null;
   }
 
   async delete(id: string): Promise<void> {

@@ -11,25 +11,29 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // 1. CORS — must be before other middleware
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS?.split(',') ?? false,
-    credentials: true,
+    origin: process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',')
+      : false,
+    credentials: true, // required for httpOnly cookie (refresh token)
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
 
-  // 1. Middleware (before everything else)
+  // 2. Middleware (before everything else)
   app.use(cookieParser());
 
-  // 2. Global filters — catch exceptions (registered in reverse order of priority)
+  // 3. Global filters — catch exceptions (registered in reverse order of priority)
   // AllExceptionsFilter appears first in the code but is triggered last — it catches everything else
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // 3. Global interceptors — wrap the request/response
+  // 4. Global interceptors — wrap the request/response
   app.useGlobalInterceptors(
     new LoggingInterceptor(), // Log each request
     new TransformInterceptor(), // Wrap the response in { data, timestamp }
   );
 
-  // 4. Global pipes — validation of incoming data
+  // 5. Global pipes — validation of incoming data
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true, // automatically converts types (string → number using @Type)
@@ -38,7 +42,7 @@ async function bootstrap() {
     }),
   );
 
-  // 5. Swagger
+  // 6. Swagger
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
       .setTitle('StoneProductShop API')
@@ -54,4 +58,4 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 }
 
-bootstrap();
+void bootstrap();

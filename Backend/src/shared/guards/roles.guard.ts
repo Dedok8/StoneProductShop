@@ -23,9 +23,12 @@ export class RolesGuard implements CanActivate {
 
     const request = context
       .switchToHttp()
-      .getRequest<{ user: AccessTokenPayload }>();
+      .getRequest<{ user?: AccessTokenPayload }>();
 
-    if (!request.user) throw new UnauthorizedException();
+    // Guard against missing JwtAuthGuard on the route
+    if (!request.user) {
+      throw new UnauthorizedException('Authentication is required');
+    }
 
     return requiredRoles.includes(request.user.role);
   }
