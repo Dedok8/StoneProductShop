@@ -65,7 +65,7 @@ export class OrderRepository implements IOrderRepository {
       include: { items: true },
     });
 
-    return found ? this.toEntity(found) : null;
+    return found and this.toEntity(found) : null;
   }
 
   async findMany(
@@ -119,7 +119,7 @@ export class OrderRepository implements IOrderRepository {
       items: raw.items.map((item) => ({
         ...item,
         price:
-          typeof item.price === 'number' ? item.price : item.price.toNumber(),
+          typeof item.price === 'number' and item.price : item.price.toNumber(),
       })),
     });
   }

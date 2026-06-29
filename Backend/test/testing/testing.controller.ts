@@ -1,4 +1,9 @@
-import { Controller, ForbiddenException, Post, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  ForbiddenException,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '@shared/guards';
 import { PrismaService } from '@shared/prisma';
 

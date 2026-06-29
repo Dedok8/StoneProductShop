@@ -5,8 +5,6 @@ import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-// ─── Фабрика ──────────────────────────────────────────────────────────────
-
 const makeUserEntity = (overrides = {}) => ({
   id: 'uuid-1',
   email: 'test@test.com',
@@ -18,12 +16,9 @@ const makeUserEntity = (overrides = {}) => ({
   ...overrides,
 });
 
-// ─── Тесты ────────────────────────────────────────────────────────────────
-
 describe('UserService', () => {
   let service: UserService;
 
-  // ✅ Мокируем именно UserRepository, а не PrismaService
   const mockUserRepo = {
     findById: jest.fn(),
     findAll: jest.fn(),
@@ -45,20 +40,17 @@ describe('UserService', () => {
     jest.clearAllMocks();
   });
 
-  // ─── findById ─────────────────────────────────────────────────────────────
-
   describe('findById', () => {
     it('должен вернуть mapped DTO по id', async () => {
       mockUserRepo.findById.mockResolvedValue(makeUserEntity());
 
       const result = await service.findById('uuid-1');
 
-      // UserMapper.toResponse убирает passwordHash и refreshToken
       expect(result.id).toBe('uuid-1');
       expect(result.email).toBe('test@test.com');
       expect(result.role).toBe(UserRole.USER);
-      expect(result).not.toHaveProperty('passwordHash'); // ⚠️ security
-      expect(result).not.toHaveProperty('refreshToken'); // ⚠️ security
+      expect(result).not.toHaveProperty('passwordHash');
+      expect(result).not.toHaveProperty('refreshToken');
     });
 
     it('должен выбросить NotFoundException если пользователь не найден', async () => {
@@ -78,8 +70,6 @@ describe('UserService', () => {
     });
   });
 
-  // ─── getAllUsers ───────────────────────────────────────────────────────────
-
   describe('getAllUsers', () => {
     it('должен вернуть массив mapped DTO', async () => {
       mockUserRepo.findAll.mockResolvedValue([
@@ -90,7 +80,7 @@ describe('UserService', () => {
       const result = await service.getAllUsers();
 
       expect(result).toHaveLength(2);
-      // Убеждаемся, что passwordHash не утёк ни в одном элементе
+
       result.forEach((u) => {
         expect(u).not.toHaveProperty('passwordHash');
         expect(u).not.toHaveProperty('refreshToken');
@@ -106,11 +96,8 @@ describe('UserService', () => {
     });
   });
 
-  // ─── update ───────────────────────────────────────────────────────────────
-
   describe('update', () => {
     it('должен обновить пользователя и вернуть DTO', async () => {
-      // ✅ update() вызывает repo.update, который возвращает обновлённую entity
       mockUserRepo.update.mockResolvedValue(
         makeUserEntity({ email: 'new@test.com' }),
       );
@@ -129,8 +116,6 @@ describe('UserService', () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
-
-  // ─── delete ───────────────────────────────────────────────────────────────
 
   describe('delete', () => {
     it('должен удалить пользователя', async () => {

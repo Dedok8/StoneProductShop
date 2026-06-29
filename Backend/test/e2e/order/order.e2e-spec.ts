@@ -11,8 +11,6 @@ import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { cleanDatabase, prisma } from 'test/config/setup';
 
-// ─── Типи відповідей ──────────────────────────────────────────────────────
-
 interface OrderItemBody {
   price: number;
 }
@@ -41,8 +39,6 @@ describe('Orders (e2e)', () => {
   let productId: string;
   let orderId: string;
 
-  // ─── Налаштування застосунку ─────────────────────────────────────────────
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -62,18 +58,14 @@ describe('Orders (e2e)', () => {
     await app.close();
   });
 
-  // ─── Підготовка даних ────────────────────────────────────────────────────
-
   beforeEach(async () => {
     await cleanDatabase();
 
-    // Категорія
     const category = await prisma.category.create({
       data: { name: 'E2E Orders Cat', slug: 'e2e-orders-cat' },
     });
     categoryId = category.id;
 
-    // Користувачі
     const userRes = await request(app.getHttpServer() as Server)
       .post('/auth/register')
       .send({
@@ -102,7 +94,6 @@ describe('Orders (e2e)', () => {
       role: UserRole.ADMIN,
     });
 
-    // Продукт зі stock
     const productRes = await request(app.getHttpServer() as Server)
       .post('/products')
       .set('Authorization', `Bearer ${userToken}`)
@@ -117,7 +108,6 @@ describe('Orders (e2e)', () => {
     const { id: pId } = productRes.body as { id: string };
     productId = pId;
 
-    // Замовлення для подальших тестів
     const orderRes = await request(app.getHttpServer() as Server)
       .post('/orders')
       .set('Authorization', `Bearer ${userToken}`)
@@ -127,10 +117,8 @@ describe('Orders (e2e)', () => {
     orderId = oId;
   });
 
-  // ─── POST /orders ─────────────────────────────────────────────────────────
-
   describe('POST /orders', () => {
-    it('створює замовлення з ціною з бази', async () => {
+    it('creates an order with the price from the database', async () => {
       const res = await request(app.getHttpServer() as Server)
         .post('/orders')
         .set('Authorization', `Bearer ${userToken}`)
@@ -144,14 +132,14 @@ describe('Orders (e2e)', () => {
       expect(body.status).toBe('PENDING');
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .post('/orders')
         .send({ items: [{ productId, quantity: 1 }] })
         .expect(401);
     });
 
-    it('повертає 400 при порожньому масиві items', async () => {
+    it('returns 400 for an empty items array', async () => {
       await request(app.getHttpServer() as Server)
         .post('/orders')
         .set('Authorization', `Bearer ${userToken}`)
@@ -159,7 +147,7 @@ describe('Orders (e2e)', () => {
         .expect(400);
     });
 
-    it('повертає 400 при quantity < 1', async () => {
+    it('returns 400 when quantity is less than 1', async () => {
       await request(app.getHttpServer() as Server)
         .post('/orders')
         .set('Authorization', `Bearer ${userToken}`)
@@ -167,7 +155,7 @@ describe('Orders (e2e)', () => {
         .expect(400);
     });
 
-    it('повертає 404 якщо продукт не існує', async () => {
+    it('returns 404 if the product does not exist', async () => {
       await request(app.getHttpServer() as Server)
         .post('/orders')
         .set('Authorization', `Bearer ${userToken}`)
@@ -179,7 +167,7 @@ describe('Orders (e2e)', () => {
         .expect(404);
     });
 
-    it('зменшує stock продукту після замовлення', async () => {
+    it('decrements the product stock after an order', async () => {
       await request(app.getHttpServer() as Server)
         .post('/orders')
         .set('Authorization', `Bearer ${userToken}`)
@@ -189,15 +177,13 @@ describe('Orders (e2e)', () => {
       const product = await prisma.product.findUnique({
         where: { id: productId },
       });
-      // Початковий stock 10, у beforeEach вже створено замовлення на 2, тут ще 3 -> 5
+
       expect(product!.stock).toBe(5);
     });
   });
 
-  // ─── GET /orders/mine ─────────────────────────────────────────────────────
-
   describe('GET /orders/mine', () => {
-    it('повертає замовлення поточного користувача', async () => {
+    it("returns the current user's orders", async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/orders/mine')
         .set('Authorization', `Bearer ${userToken}`)
@@ -209,7 +195,7 @@ describe('Orders (e2e)', () => {
       expect(body.items[0].userId).toBeDefined();
     });
 
-    it('не повертає замовлення інших користувачів', async () => {
+    it("does not return other users' orders", async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/orders/mine')
         .set('Authorization', `Bearer ${anotherUserToken}`)
@@ -219,17 +205,15 @@ describe('Orders (e2e)', () => {
       expect(body.total).toBe(0);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .get('/orders/mine')
         .expect(401);
     });
   });
 
-  // ─── GET /orders/all (admin) ──────────────────────────────────────────────
-
   describe('GET /orders/all', () => {
-    it('дозволяє admin бачити всі замовлення', async () => {
+    it('allows admin to see all orders', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/orders/all')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -239,24 +223,22 @@ describe('Orders (e2e)', () => {
       expect(body.total).toBeGreaterThan(0);
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .get('/orders/all')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(403);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .get('/orders/all')
         .expect(401);
     });
   });
 
-  // ─── GET /orders/:id ──────────────────────────────────────────────────────
-
   describe('GET /orders/:id', () => {
-    it('власник може отримати своє замовлення', async () => {
+    it('owner can retrieve their own order', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get(`/orders/${orderId}`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -266,7 +248,7 @@ describe('Orders (e2e)', () => {
       expect(body.id).toBe(orderId);
     });
 
-    it('admin може отримати будь-яке замовлення', async () => {
+    it('admin can retrieve any order', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get(`/orders/${orderId}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -276,14 +258,14 @@ describe('Orders (e2e)', () => {
       expect(body.id).toBe(orderId);
     });
 
-    it('повертає 403 якщо не власник і не admin', async () => {
+    it('returns 403 if not the owner and not an admin', async () => {
       await request(app.getHttpServer() as Server)
         .get(`/orders/${orderId}`)
         .set('Authorization', `Bearer ${anotherUserToken}`)
         .expect(403);
     });
 
-    it('повертає 404 для неіснуючого замовлення', async () => {
+    it('returns 404 for a non-existent order', async () => {
       await request(app.getHttpServer() as Server)
         .get('/orders/00000000-0000-4000-8000-000000000000')
         .set('Authorization', `Bearer ${userToken}`)
@@ -291,10 +273,8 @@ describe('Orders (e2e)', () => {
     });
   });
 
-  // ─── PATCH /orders/:id/cancel ─────────────────────────────────────────────
-
   describe('PATCH /orders/:id/cancel', () => {
-    it('власник може скасувати PENDING замовлення', async () => {
+    it('owner can cancel a PENDING order', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/cancel`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -304,7 +284,7 @@ describe('Orders (e2e)', () => {
       expect(body.status).toBe('CANCELLED');
     });
 
-    it('admin може скасувати будь-яке PENDING замовлення', async () => {
+    it('admin can cancel any PENDING order', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/cancel`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -314,14 +294,14 @@ describe('Orders (e2e)', () => {
       expect(body.status).toBe('CANCELLED');
     });
 
-    it('повертає 403 якщо не власник', async () => {
+    it('returns 403 if not the owner', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/cancel`)
         .set('Authorization', `Bearer ${anotherUserToken}`)
         .expect(403);
     });
 
-    it('повертає 404 для неіснуючого замовлення', async () => {
+    it('returns 404 for a non-existent order', async () => {
       await request(app.getHttpServer() as Server)
         .patch('/orders/00000000-0000-4000-8000-000000000000/cancel')
         .set('Authorization', `Bearer ${userToken}`)
@@ -329,10 +309,8 @@ describe('Orders (e2e)', () => {
     });
   });
 
-  // ─── PATCH /orders/:id/status (admin) ────────────────────────────────────
-
   describe('PATCH /orders/:id/status', () => {
-    it('admin може змінити статус замовлення', async () => {
+    it('admin can change the order status', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/status`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -343,7 +321,7 @@ describe('Orders (e2e)', () => {
       expect(body.status).toBe('PAID');
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/status`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -351,7 +329,7 @@ describe('Orders (e2e)', () => {
         .expect(403);
     });
 
-    it('повертає 400 для невалідного статусу', async () => {
+    it('returns 400 for an invalid status', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/orders/${orderId}/status`)
         .set('Authorization', `Bearer ${adminToken}`)

@@ -104,7 +104,7 @@ export class ProductService {
     this.assertCanModify(product, requester);
 
     const updateDate = dto.name
-      ? { ...dto, slug: this.buildSlug(dto.name) }
+      and { ...dto, slug: this.buildSlug(dto.name) }
       : dto;
 
     const updated = await this.productRepo.update(id, updateDate);

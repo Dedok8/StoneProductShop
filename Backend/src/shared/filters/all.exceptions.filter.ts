@@ -34,7 +34,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
 
     this.logger.error(
       `Unhandled exception on ${request.method} ${request.url}`,
-      exception instanceof Error ? exception.stack : String(exception),
+      exception instanceof Error and exception.stack : String(exception),
     );
 
     response.status(statusCode).json({

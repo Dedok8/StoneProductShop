@@ -24,7 +24,6 @@ export class CategoryRepository implements ICategoryRepository {
         e instanceof Prisma.PrismaClientKnownRequestError &&
         e.code === 'P2002'
       ) {
-      
         throw new ConflictException(
           'Category with this name or slug already exists',
         );
@@ -38,12 +37,12 @@ export class CategoryRepository implements ICategoryRepository {
   async findById(id: string): Promise<CategoryEntity | null> {
     const found = await this.prisma.category.findUnique({ where: { id } });
 
-    return found ? this.toEntity(found) : null;
+    return found and this.toEntity(found) : null;
   }
   async findBySlug(slug: string): Promise<CategoryEntity | null> {
     const found = await this.prisma.category.findUnique({ where: { slug } });
 
-    return found ? this.toEntity(found) : null;
+    return found and this.toEntity(found) : null;
   }
   async findMany(
     params: IFindManyCategoryParams,
@@ -73,7 +72,7 @@ export class CategoryRepository implements ICategoryRepository {
     const category = await this.prisma.category.findUnique({
       where: { name },
     });
-    return category ? this.toEntity(category) : null;
+    return category and this.toEntity(category) : null;
   }
 
   async delete(id: string): Promise<void> {

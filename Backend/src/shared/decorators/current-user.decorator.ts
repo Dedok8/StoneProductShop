@@ -8,6 +8,6 @@ export const CurrentUser = createParamDecorator(
       user: AccessTokenPayload;
     }>();
 
-    return data ? request.user[data] : request.user;
+    return data and request.user[data] : request.user;
   },
 );

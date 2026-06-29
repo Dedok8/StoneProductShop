@@ -8,8 +8,6 @@ import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { cleanDatabase, prisma } from 'test/config/setup';
 
-// ─── Типи відповідей ──────────────────────────────────────────────────────
-
 interface ProductBody {
   id: string;
   name: string;
@@ -86,7 +84,7 @@ describe('Products (e2e)', () => {
   });
 
   describe('POST /products', () => {
-    it('дозволяє автентифікованому користувачу створити продукт', async () => {
+    it('allows an authenticated user to create a product', async () => {
       const res = await request(app.getHttpServer() as Server)
         .post('/products')
         .set('Authorization', `Bearer ${userToken}`)
@@ -103,14 +101,14 @@ describe('Products (e2e)', () => {
       expect(body.categoryId).toBe(categoryId);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .post('/products')
         .send({ ...createProductDto, categoryId })
         .expect(401);
     });
 
-    it("повертає 400 для від'ємної ціни", async () => {
+    it('returns 400 for a negative price', async () => {
       await request(app.getHttpServer() as Server)
         .post('/products')
         .set('Authorization', `Bearer ${userToken}`)
@@ -118,7 +116,7 @@ describe('Products (e2e)', () => {
         .expect(400);
     });
 
-    it('повертає 400 для порожнього імені', async () => {
+    it('returns 400 for an empty name', async () => {
       await request(app.getHttpServer() as Server)
         .post('/products')
         .set('Authorization', `Bearer ${userToken}`)
@@ -128,7 +126,7 @@ describe('Products (e2e)', () => {
   });
 
   describe('GET /products', () => {
-    it('повертає пагінований список продуктів', async () => {
+    it('returns a paginated list of products', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/products')
         .expect(200);
@@ -142,7 +140,7 @@ describe('Products (e2e)', () => {
   });
 
   describe('GET /products/:id', () => {
-    it('повертає продукт за id', async () => {
+    it('returns a product by id', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get(`/products/${productId}`)
         .expect(200);
@@ -151,13 +149,13 @@ describe('Products (e2e)', () => {
       expect(body.id).toBe(productId);
     });
 
-    it('повертає 404 для відсутнього UUID', async () => {
+    it('returns 404 for a missing UUID', async () => {
       await request(app.getHttpServer() as Server)
         .get('/products/00000000-0000-4000-8000-000000000000')
         .expect(404);
     });
 
-    it('повертає 400 для невалідного UUID', async () => {
+    it('returns 400 for an invalid UUID', async () => {
       await request(app.getHttpServer() as Server)
         .get('/products/not-a-uuid')
         .expect(400);
@@ -165,7 +163,7 @@ describe('Products (e2e)', () => {
   });
 
   describe('PATCH /products/:id', () => {
-    it('дозволяє власнику оновити продукт', async () => {
+    it('allows the owner to update a product', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch(`/products/${productId}`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -176,7 +174,7 @@ describe('Products (e2e)', () => {
       expect(body.price).toBe(999);
     });
 
-    it('повертає 403 коли інший користувач намагається оновити продукт', async () => {
+    it('returns 403 when another user tries to update the product', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/products/${productId}`)
         .set('Authorization', `Bearer ${anotherUserToken}`)
@@ -184,7 +182,7 @@ describe('Products (e2e)', () => {
         .expect(403);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/products/${productId}`)
         .send({ price: 1 })
@@ -193,21 +191,21 @@ describe('Products (e2e)', () => {
   });
 
   describe('DELETE /products/:id', () => {
-    it('дозволяє власнику видалити продукт', async () => {
+    it('allows the owner to delete a product', async () => {
       await request(app.getHttpServer() as Server)
         .delete(`/products/${productId}`)
         .set('Authorization', `Bearer ${userToken}`)
         .expect(200);
     });
 
-    it('повертає 403 коли інший користувач намагається видалити продукт', async () => {
+    it('returns 403 when another user tries to delete the product', async () => {
       await request(app.getHttpServer() as Server)
         .delete(`/products/${productId}`)
         .set('Authorization', `Bearer ${anotherUserToken}`)
         .expect(403);
     });
 
-    it('повертає 404 для відсутнього продукту', async () => {
+    it('returns 404 for a missing product', async () => {
       await request(app.getHttpServer() as Server)
         .delete('/products/00000000-0000-4000-8000-000000000000')
         .set('Authorization', `Bearer ${userToken}`)

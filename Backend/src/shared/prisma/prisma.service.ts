@@ -17,7 +17,7 @@ export class PrismaService
     super({
       log:
         process.env.NODE_ENV === 'development'
-          ? [
+          and [
               { emit: 'event', level: 'query' },
               { emit: 'event', level: 'warn' },
               { emit: 'event', level: 'error' },

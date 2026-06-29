@@ -1,11 +1,8 @@
-// src/modules/category/application/category.service.spec.ts
 import { CATEGORY_REPOSITORY } from '@modules/category/domain/interfaces';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 
 import { CategoryService } from './category.service';
-
-// ─── Фабрики ──────────────────────────────────────────────────────────────
 
 const makeCategory = (overrides = {}) => ({
   id: 'cat-1',
@@ -20,8 +17,6 @@ const makeCreateDto = (overrides = {}) => ({
   name: 'Natural Stone',
   ...overrides,
 });
-
-// ─── Тесты ────────────────────────────────────────────────────────────────
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -46,8 +41,6 @@ describe('CategoryService', () => {
     service = module.get(CategoryService);
     jest.clearAllMocks();
   });
-
-  // ─── create ───────────────────────────────────────────────────────────────
 
   describe('create', () => {
     it('успешно создаёт категорию', async () => {
@@ -106,8 +99,6 @@ describe('CategoryService', () => {
     });
   });
 
-  // ─── findById ─────────────────────────────────────────────────────────────
-
   describe('findById', () => {
     it('возвращает категорию по id', async () => {
       repo.findById.mockResolvedValue(makeCategory());
@@ -125,8 +116,6 @@ describe('CategoryService', () => {
       );
     });
   });
-
-  // ─── findMany ─────────────────────────────────────────────────────────────
 
   describe('findMany', () => {
     it('возвращает список с пагинацией', async () => {
@@ -151,8 +140,6 @@ describe('CategoryService', () => {
       expect(repo.findMany).toHaveBeenCalledWith({ skip: 5, take: 5 });
     });
   });
-
-  // ─── update ───────────────────────────────────────────────────────────────
 
   describe('update', () => {
     it('успешно обновляет категорию', async () => {
@@ -198,8 +185,6 @@ describe('CategoryService', () => {
       );
     });
   });
-
-  // ─── delete ───────────────────────────────────────────────────────────────
 
   describe('delete', () => {
     it('успешно удаляет категорию', async () => {

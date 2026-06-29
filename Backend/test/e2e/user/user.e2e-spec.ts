@@ -10,8 +10,6 @@ import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { cleanDatabase } from 'test/config/setup';
 
-// ─── Типи відповідей ──────────────────────────────────────────────────────
-
 interface UserBody {
   id: string;
   email: string;
@@ -58,7 +56,7 @@ describe('Users (e2e)', () => {
   });
 
   describe('GET /users/me', () => {
-    it('повертає профіль поточного користувача', async () => {
+    it('returns the current user profile', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/users/me')
         .set('Authorization', `Bearer ${userToken}`)
@@ -69,7 +67,7 @@ describe('Users (e2e)', () => {
       expect(body).not.toHaveProperty('passwordHash');
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .get('/users/me')
         .expect(401);
@@ -77,7 +75,7 @@ describe('Users (e2e)', () => {
   });
 
   describe('PATCH /users/me', () => {
-    it('оновлює профіль поточного користувача', async () => {
+    it('updates the current user profile', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch('/users/me')
         .set('Authorization', `Bearer ${userToken}`)
@@ -88,7 +86,7 @@ describe('Users (e2e)', () => {
       expect(body.email).toBe('updated@test.com');
     });
 
-    it('повертає 400 для невалідного email', async () => {
+    it('returns 400 for an invalid email', async () => {
       await request(app.getHttpServer() as Server)
         .patch('/users/me')
         .set('Authorization', `Bearer ${userToken}`)
@@ -98,14 +96,14 @@ describe('Users (e2e)', () => {
   });
 
   describe('DELETE /users/me', () => {
-    it('видаляє профіль поточного користувача', async () => {
+    it('deletes the current user profile', async () => {
       await request(app.getHttpServer() as Server)
         .delete('/users/me')
         .set('Authorization', `Bearer ${userToken}`)
         .expect(204);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .delete('/users/me')
         .expect(401);
@@ -113,7 +111,7 @@ describe('Users (e2e)', () => {
   });
 
   describe('GET /admin/users', () => {
-    it('дозволяє admin отримати список користувачів', async () => {
+    it('allows admin to retrieve the list of users', async () => {
       const adminToken = tokenService.signAccessToken({
         sub: 'admin-id',
         email: 'admin@test.com',
@@ -134,13 +132,13 @@ describe('Users (e2e)', () => {
       );
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .get('/admin/users')
         .expect(401);
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .get('/admin/users')
         .set('Authorization', `Bearer ${userToken}`)

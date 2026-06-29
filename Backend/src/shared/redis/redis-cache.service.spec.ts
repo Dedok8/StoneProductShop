@@ -4,8 +4,6 @@ import { Test } from '@nestjs/testing';
 import { RedisCacheService } from './redis-cache.service';
 import { RedisService } from './redis.service';
 
-// ─── Тесты ────────────────────────────────────────────────────────────────
-
 describe('RedisCacheService', () => {
   let service: RedisCacheService;
 
@@ -27,8 +25,6 @@ describe('RedisCacheService', () => {
     service = module.get(RedisCacheService);
     jest.clearAllMocks();
   });
-
-  // ─── setJson ────────────────────────────────────────────────────────────
 
   describe('setJson', () => {
     it('сохраняет значение с TTL при его наличии', async () => {
@@ -72,8 +68,6 @@ describe('RedisCacheService', () => {
     });
   });
 
-  // ─── getJson ────────────────────────────────────────────────────────────
-
   describe('getJson', () => {
     it('возвращает распарсенный объект при наличии ключа', async () => {
       const stored = { id: '1', name: 'Granite' };
@@ -106,8 +100,6 @@ describe('RedisCacheService', () => {
       await expect(service.getJson('broken-key')).resolves.toBeNull();
     });
   });
-
-  // ─── deleteByPattern ────────────────────────────────────────────────────
 
   describe('deleteByPattern', () => {
     it('удаляет ключи найденные через SCAN', async () => {

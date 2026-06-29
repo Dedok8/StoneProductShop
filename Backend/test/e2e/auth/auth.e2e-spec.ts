@@ -38,7 +38,7 @@ describe('Auth (e2e)', () => {
   });
 
   describe('POST /auth/register', () => {
-    it('реєструє нового користувача та повертає access token', async () => {
+    it('registers a new user and returns an access token', async () => {
       const res = await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send(registerDto)
@@ -48,21 +48,21 @@ describe('Auth (e2e)', () => {
       expect(res.headers['set-cookie']).toBeDefined();
     });
 
-    it('повертає 400 для невалідного email', async () => {
+    it('returns 400 for an invalid email', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send({ ...registerDto, email: 'not-an-email' })
         .expect(400);
     });
 
-    it('повертає 400 для занадто короткого пароля', async () => {
+    it('returns 400 for a too-short password', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send({ ...registerDto, password: '123' })
         .expect(400);
     });
 
-    it('повертає 409 коли email вже зайнятий', async () => {
+    it('returns 409 when the email is already taken', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send(registerDto)
@@ -83,7 +83,7 @@ describe('Auth (e2e)', () => {
         .expect(201);
     });
 
-    it('повертає access token для валідних даних', async () => {
+    it('returns an access token for valid credentials', async () => {
       const res = await request(app.getHttpServer() as Server)
         .post('/auth/login')
         .send({ email: registerDto.email, password: registerDto.password })
@@ -93,21 +93,21 @@ describe('Auth (e2e)', () => {
       expect(res.headers['set-cookie']).toBeDefined();
     });
 
-    it('повертає 401 для неправильного пароля', async () => {
+    it('returns 401 for a wrong password', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/login')
         .send({ email: registerDto.email, password: 'wrong-password' })
         .expect(401);
     });
 
-    it('повертає 401 для невідомого користувача', async () => {
+    it('returns 401 for an unknown user', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/login')
         .send({ email: 'ghost@test.com', password: registerDto.password })
         .expect(401);
     });
 
-    it('повертає 400 для порожнього тіла', async () => {
+    it('returns 400 for an empty body', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/login')
         .send({})
@@ -116,7 +116,7 @@ describe('Auth (e2e)', () => {
   });
 
   describe('POST /auth/refresh', () => {
-    it('оновлює токени якщо refresh cookie валідний', async () => {
+    it('refreshes tokens when the refresh cookie is valid', async () => {
       const login = await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send(registerDto)
@@ -126,7 +126,7 @@ describe('Auth (e2e)', () => {
       const cookieHeader = Array.isArray(cookies)
         ? cookies.join('; ')
         : (cookies ?? '');
-        
+
       const res = await request(app.getHttpServer() as Server)
         .post('/auth/refresh')
         .set('Cookie', cookieHeader)
@@ -135,7 +135,7 @@ describe('Auth (e2e)', () => {
       expect(res.body).toHaveProperty('accessToken');
     });
 
-    it('повертає 401 без refresh cookie', async () => {
+    it('returns 401 without a refresh cookie', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/refresh')
         .expect(401);
@@ -143,7 +143,7 @@ describe('Auth (e2e)', () => {
   });
 
   describe('POST /auth/logout', () => {
-    it('розлогінює автентифікованого користувача', async () => {
+    it('logs out an authenticated user', async () => {
       const register = await request(app.getHttpServer() as Server)
         .post('/auth/register')
         .send(registerDto)
@@ -157,7 +157,7 @@ describe('Auth (e2e)', () => {
         .expect(204);
     });
 
-    it('повертає 401 без access token', async () => {
+    it('returns 401 without an access token', async () => {
       await request(app.getHttpServer() as Server)
         .post('/auth/logout')
         .expect(401);

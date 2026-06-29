@@ -46,9 +46,9 @@ describe('Money', () => {
     });
 
     it('throws when subtraction result would be negative', () => {
-      expect(() => new Money(100, 'EUR').subtract(new Money(125, 'EUR'))).toThrow(
-        Error,
-      );
+      expect(() =>
+        new Money(100, 'EUR').subtract(new Money(125, 'EUR')),
+      ).toThrow(Error);
     });
   });
 

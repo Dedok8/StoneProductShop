@@ -10,8 +10,6 @@ import { AppModule } from 'src/app.module';
 import request from 'supertest';
 import { cleanDatabase } from 'test/config/setup';
 
-// ─── Типи відповідей ──────────────────────────────────────────────────────
-
 interface CategoryBody {
   id: string;
   name: string;
@@ -33,8 +31,6 @@ describe('category (e2e)', () => {
   let userToken: string;
   let categoryId: string;
 
-  // ─── Налаштування застосунку ─────────────────────────────────────────────
-
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -52,8 +48,6 @@ describe('category (e2e)', () => {
   afterAll(async () => {
     await app.close();
   });
-
-  // ─── Підготовка даних ────────────────────────────────────────────────────
 
   beforeEach(async () => {
     await cleanDatabase();
@@ -75,7 +69,6 @@ describe('category (e2e)', () => {
     const { accessToken } = userRes.body as { accessToken: string };
     userToken = accessToken;
 
-    // Створюємо категорію для тестів update/delete
     const categoryRes = await request(app.getHttpServer() as Server)
       .post('/category')
       .set('Authorization', `Bearer ${adminToken}`)
@@ -85,10 +78,8 @@ describe('category (e2e)', () => {
     categoryId = categoryBody.id;
   });
 
-  // ─── POST /category ──────────────────────────────────────────────────────
-
   describe('POST /category', () => {
-    it('admin може створити категорію', async () => {
+    it('admin can create a category', async () => {
       const res = await request(app.getHttpServer() as Server)
         .post('/category')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -101,7 +92,7 @@ describe('category (e2e)', () => {
       expect(body.slug).toMatch(/^granite-[a-f0-9]{8}$/);
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .post('/category')
         .set('Authorization', `Bearer ${userToken}`)
@@ -109,14 +100,14 @@ describe('category (e2e)', () => {
         .expect(403);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .post('/category')
         .send({ name: 'Marble' })
         .expect(401);
     });
 
-    it('повертає 400 для порожнього імені', async () => {
+    it('returns 400 for an empty name', async () => {
       await request(app.getHttpServer() as Server)
         .post('/category')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -124,14 +115,13 @@ describe('category (e2e)', () => {
         .expect(400);
     });
 
-    it('повертає 409 при дублюванні імені', async () => {
+    it('returns 409 on duplicate name', async () => {
       await request(app.getHttpServer() as Server)
         .post('/category')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ name: 'Unique Stone' })
         .expect(201);
 
-      // Другий запит з тим самим іменем має повернути 409
       await request(app.getHttpServer() as Server)
         .post('/category')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -140,10 +130,8 @@ describe('category (e2e)', () => {
     });
   });
 
-  // ─── GET /category ───────────────────────────────────────────────────────
-
   describe('GET /category', () => {
-    it('повертає список категорій (публічний endpoint)', async () => {
+    it('returns the list of categories (public endpoint)', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get('/category')
         .expect(200);
@@ -155,7 +143,7 @@ describe('category (e2e)', () => {
       expect(body.limit).toBe(20);
     });
 
-    it('повертає порожній список якщо категорій немає', async () => {
+    it('returns an empty list when there are no categories', async () => {
       await cleanDatabase();
 
       const res = await request(app.getHttpServer() as Server)
@@ -168,10 +156,8 @@ describe('category (e2e)', () => {
     });
   });
 
-  // ─── GET /category/:id ───────────────────────────────────────────────────
-
   describe('GET /category/:id', () => {
-    it('повертає категорію за id', async () => {
+    it('returns a category by id', async () => {
       const res = await request(app.getHttpServer() as Server)
         .get(`/category/${categoryId}`)
         .expect(200);
@@ -181,23 +167,21 @@ describe('category (e2e)', () => {
       expect(body.name).toBe('Natural Stone');
     });
 
-    it('повертає 404 для неіснуючої категорії', async () => {
+    it('returns 404 for a non-existent category', async () => {
       await request(app.getHttpServer() as Server)
         .get('/category/00000000-0000-4000-8000-000000000000')
         .expect(404);
     });
 
-    it('повертає 400 для невалідного UUID', async () => {
+    it('returns 400 for an invalid UUID', async () => {
       await request(app.getHttpServer() as Server)
         .get('/category/not-a-uuid')
         .expect(400);
     });
   });
 
-  // ─── PATCH /category/:id ─────────────────────────────────────────────────
-
   describe('PATCH /category/:id', () => {
-    it('admin може оновити категорію', async () => {
+    it('admin can update a category', async () => {
       const res = await request(app.getHttpServer() as Server)
         .patch(`/category/${categoryId}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -209,7 +193,7 @@ describe('category (e2e)', () => {
       expect(body.slug).toMatch(/^premium-natural-stone-[a-f0-9]{8}$/);
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/category/${categoryId}`)
         .set('Authorization', `Bearer ${userToken}`)
@@ -217,14 +201,14 @@ describe('category (e2e)', () => {
         .expect(403);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .patch(`/category/${categoryId}`)
         .send({ name: 'Hack' })
         .expect(401);
     });
 
-    it('повертає 404 для неіснуючої категорії', async () => {
+    it('returns 404 for a non-existent category', async () => {
       await request(app.getHttpServer() as Server)
         .patch('/category/00000000-0000-4000-8000-000000000000')
         .set('Authorization', `Bearer ${adminToken}`)
@@ -233,10 +217,8 @@ describe('category (e2e)', () => {
     });
   });
 
-  // ─── DELETE /category/:id ────────────────────────────────────────────────
-
   describe('DELETE /category/:id', () => {
-    it('admin може видалити категорію', async () => {
+    it('admin can delete a category', async () => {
       await request(app.getHttpServer() as Server)
         .delete(`/category/${categoryId}`)
         .set('Authorization', `Bearer ${adminToken}`)
@@ -247,20 +229,20 @@ describe('category (e2e)', () => {
         .expect(404);
     });
 
-    it('повертає 403 для звичайного користувача', async () => {
+    it('returns 403 for a regular user', async () => {
       await request(app.getHttpServer() as Server)
         .delete(`/category/${categoryId}`)
         .set('Authorization', `Bearer ${userToken}`)
         .expect(403);
     });
 
-    it('повертає 401 без токена', async () => {
+    it('returns 401 without a token', async () => {
       await request(app.getHttpServer() as Server)
         .delete(`/category/${categoryId}`)
         .expect(401);
     });
 
-    it('повертає 404 для неіснуючої категорії', async () => {
+    it('returns 404 for a non-existent category', async () => {
       await request(app.getHttpServer() as Server)
         .delete('/category/00000000-0000-4000-8000-000000000000')
         .set('Authorization', `Bearer ${adminToken}`)

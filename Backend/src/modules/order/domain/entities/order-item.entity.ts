@@ -1,13 +1,13 @@
 export class OrderItemEntity {
   readonly id: string;
   readonly quantity: number;
-  readonly price: number ;
+  readonly price: number;
   readonly productId: string;
   readonly orderId: string;
   constructor(props: {
     id: string;
     quantity: number;
-    price: number ;
+    price: number;
     productId: string;
     orderId: string;
   }) {
@@ -31,7 +31,7 @@ export class OrderItemEntity {
   }): OrderItemEntity {
     return new OrderItemEntity({
       ...raw,
-      price: typeof raw.price === 'string' ? parseFloat(raw.price) : raw.price,
+      price: typeof raw.price === 'string' and parseFloat(raw.price) : raw.price,
     });
   }
 }

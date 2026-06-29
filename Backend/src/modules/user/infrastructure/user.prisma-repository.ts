@@ -34,7 +34,7 @@ export class UserPrismaRepository extends UserRepository {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    return user ? this.mapToEntity(user) : null;
+    return user and this.mapToEntity(user) : null;
   }
 
   async findAll(): Promise<UserEntity[]> {
@@ -55,8 +55,6 @@ export class UserPrismaRepository extends UserRepository {
     return this.mapToEntity(created);
   }
 
-  // Returns null if the user does not exist (Prisma P2025),
-  // matching the abstract UserRepository contract.
   async update(id: string, data: UpdateUserData): Promise<UserEntity | null> {
     try {
       const updated = await this.prisma.user.update({

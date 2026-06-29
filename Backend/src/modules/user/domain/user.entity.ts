@@ -9,6 +9,5 @@ export class UserEntity {
     public refreshToken: string | null,
     public readonly createdAt: Date,
     public updatedAt: Date,
-    
   ) {}
 }

@@ -5,8 +5,6 @@ import { RedisCacheService } from '@shared/redis';
 
 import { ProductCacheService } from './product-cache.service';
 
-// ─── Фабрика ──────────────────────────────────────────────────────────────
-
 const makeProductEntity = (
   overrides: Partial<ConstructorParameters<typeof ProductEntity>[0]> = {},
 ): ProductEntity =>
@@ -25,8 +23,6 @@ const makeProductEntity = (
     updatedAt: new Date('2026-01-01'),
     ...overrides,
   });
-
-// ─── Тесты ────────────────────────────────────────────────────────────────
 
 describe('ProductCacheService', () => {
   let service: ProductCacheService;
@@ -50,8 +46,6 @@ describe('ProductCacheService', () => {
     jest.clearAllMocks();
   });
 
-  // ─── getDetail ──────────────────────────────────────────────────────────
-
   describe('getDetail', () => {
     it('возвращает продукт из кеша (cache hit)', async () => {
       const product = makeProductEntity();
@@ -72,8 +66,6 @@ describe('ProductCacheService', () => {
     });
   });
 
-  // ─── setDetail ──────────────────────────────────────────────────────────
-
   describe('setDetail', () => {
     it('сохраняет продукт с правильным ключом и TTL 300 секунд', async () => {
       const product = makeProductEntity();
@@ -88,8 +80,6 @@ describe('ProductCacheService', () => {
       );
     });
   });
-
-  // ─── getList ────────────────────────────────────────────────────────────
 
   describe('getList', () => {
     const listParams = {
@@ -128,8 +118,6 @@ describe('ProductCacheService', () => {
     });
   });
 
-  // ─── setList ────────────────────────────────────────────────────────────
-
   describe('setList', () => {
     it('сохраняет список с правильным ключом и TTL 60 секунд', async () => {
       const params = {
@@ -150,8 +138,6 @@ describe('ProductCacheService', () => {
       );
     });
   });
-
-  // ─── invalidateDetail ───────────────────────────────────────────────────
 
   describe('invalidateDetail', () => {
     it('вызывает deleteByPattern для конкретного продукта', async () => {

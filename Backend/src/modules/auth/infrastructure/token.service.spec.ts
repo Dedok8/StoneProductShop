@@ -24,8 +24,6 @@ describe('TokenService', () => {
     );
   });
 
-  // ─── signAccessToken ──────────────────────────────────────────────────────
-
   describe('signAccessToken', () => {
     it('подписывает токен с правильным payload и конфигурацией', () => {
       configMock.get
@@ -72,8 +70,6 @@ describe('TokenService', () => {
     });
   });
 
-  // ─── signRefreshToken ─────────────────────────────────────────────────────
-
   describe('signRefreshToken', () => {
     it('подписывает refresh токен с правильными параметрами', () => {
       configMock.get
@@ -96,7 +92,6 @@ describe('TokenService', () => {
 
       service.signRefreshToken({ sub: 'user-1' });
 
-      // payload должен быть только { sub }
       const [payload] = jwtMock.sign.mock.calls[0];
       expect(payload).toEqual({ sub: 'user-1' });
       expect(payload).not.toHaveProperty('email');
@@ -125,8 +120,6 @@ describe('TokenService', () => {
       expect(refreshOpts.secret).toBe('refresh-secret');
     });
   });
-
-  // ─── verifyRefreshToken ───────────────────────────────────────────────────
 
   describe('verifyRefreshToken', () => {
     it('верифицирует токен и возвращает payload', () => {

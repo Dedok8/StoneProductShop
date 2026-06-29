@@ -5,8 +5,6 @@ import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '@shared/prisma';
 
-// ─── Фабрики ──────────────────────────────────────────────────────────────
-
 const makeOrderItem = (overrides = {}) => ({
   id: 'item-1',
   quantity: 2,
@@ -36,8 +34,6 @@ const makeRequester = (overrides = {}) => ({
   ...overrides,
 });
 
-// ─── Тесты ────────────────────────────────────────────────────────────────
-
 describe('OrderService', () => {
   let service: OrderService;
 
@@ -64,8 +60,6 @@ describe('OrderService', () => {
     service = module.get(OrderService);
     jest.clearAllMocks();
   });
-
-  // ─── create ───────────────────────────────────────────────────────────────
 
   describe('create', () => {
     it('успешно создаёт заказ с ценами из базы', async () => {
@@ -128,15 +122,11 @@ describe('OrderService', () => {
     });
   });
 
-  // ─── findById ─────────────────────────────────────────────────────────────
-
   describe('findById', () => {
     it('возвращает заказ владельцу', async () => {
       repo.findById.mockResolvedValue(makeOrder());
 
       await service.cancel('order-1', makeRequester());
-
-      // expect(result.id).toBe('order-1');
     });
 
     it('возвращает заказ администратору (не владелец)', async () => {
@@ -163,8 +153,6 @@ describe('OrderService', () => {
       ).rejects.toThrow(ForbiddenException);
     });
   });
-
-  // ─── cancel ───────────────────────────────────────────────────────────────
 
   describe('cancel', () => {
     it('успешно отменяет заказ со статусом PENDING', async () => {
@@ -219,8 +207,6 @@ describe('OrderService', () => {
     });
   });
 
-  // ─── updateStatus (admin) ─────────────────────────────────────────────────
-
   describe('updateStatus', () => {
     it('успешно меняет статус заказа', async () => {
       repo.findById.mockResolvedValue(makeOrder());
@@ -254,8 +240,6 @@ describe('OrderService', () => {
       expect(repo.updateStatus).not.toHaveBeenCalled();
     });
   });
-
-  // ─── findMyOrders ─────────────────────────────────────────────────────────
 
   describe('findMyOrders', () => {
     it('передаёт userId в репозиторий', async () => {

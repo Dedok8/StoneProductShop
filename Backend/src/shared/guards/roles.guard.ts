@@ -25,7 +25,6 @@ export class RolesGuard implements CanActivate {
       .switchToHttp()
       .getRequest<{ user?: AccessTokenPayload }>();
 
-    // Guard against missing JwtAuthGuard on the route
     if (!request.user) {
       throw new UnauthorizedException('Authentication is required');
     }

@@ -3,8 +3,6 @@ import { Test } from '@nestjs/testing';
 
 import { PrismaService } from './prisma.service';
 
-// ─── Тести ────────────────────────────────────────────────────────────────
-
 describe('PrismaService', () => {
   let service: PrismaService;
 
@@ -16,8 +14,6 @@ describe('PrismaService', () => {
     service = module.get(PrismaService);
     jest.clearAllMocks();
   });
-
-  // ─── Ініціалізація ────────────────────────────────────────────────────────
 
   describe('onModuleInit', () => {
     it('підключається до БД при ініціалізації', async () => {
@@ -38,7 +34,6 @@ describe('PrismaService', () => {
 
       await service.onModuleInit();
 
-      // $on має бути викликаний для 'warn' і 'error' (мінімум 2 рази)
       const eventNames = onSpy.mock.calls.map(([event]) => event);
       expect(eventNames).toContain('warn');
       expect(eventNames).toContain('error');
@@ -79,8 +74,6 @@ describe('PrismaService', () => {
     });
   });
 
-  // ─── Завершення ───────────────────────────────────────────────────────────
-
   describe('onModuleDestroy', () => {
     it('відключається від БД при знищенні модуля', async () => {
       const disconnectSpy = jest
@@ -93,26 +86,24 @@ describe('PrismaService', () => {
     });
   });
 
-  // ─── onCleanDatabase ──────────────────────────────────────────────────────
-
   describe('onCleanDatabase', () => {
     it('очищає таблиці в тестовому середовищі', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'test';
 
-      // Мокуємо $queryRaw і $executeRawUnsafe
-      jest.spyOn(service, '$queryRaw').mockResolvedValue([
-        { tablename: 'User' },
-        { tablename: 'Product' },
-        { tablename: '_prisma_migrations' }, // має бути пропущена
-      ]);
+      jest
+        .spyOn(service, '$queryRaw')
+        .mockResolvedValue([
+          { tablename: 'User' },
+          { tablename: 'Product' },
+          { tablename: '_prisma_migrations' },
+        ]);
       const execSpy = jest
         .spyOn(service, '$executeRawUnsafe')
         .mockResolvedValue(0);
 
       await service.onCleanDatabase();
 
-      // _prisma_migrations не повинна бути в TRUNCATE
       const calledTables = execSpy.mock.calls.map(([sql]) => sql);
       expect(calledTables.some((s) => s.includes('"User"'))).toBe(true);
       expect(calledTables.some((s) => s.includes('"Product"'))).toBe(true);

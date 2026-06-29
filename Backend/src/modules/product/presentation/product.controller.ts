@@ -46,10 +46,7 @@ export class ProductController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
-  create(
-    @Body() dto: CreateProductDto,
-    @CurrentUser('sub') ownerId: string,
-  ) {
+  create(@Body() dto: CreateProductDto, @CurrentUser('sub') ownerId: string) {
     return this.productService.create(dto, ownerId);
   }
 

@@ -3,8 +3,6 @@ import { UserEntity } from '@modules/user/domain/user.entity';
 
 import { UserMapper } from './user.mapper';
 
-// ─── Фабрика ──────────────────────────────────────────────────────────────
-
 const makeUserEntity = (
   overrides: Partial<{
     id: string;
@@ -25,8 +23,6 @@ const makeUserEntity = (
     overrides.createdAt ?? new Date('2024-01-01'),
     overrides.updatedAt ?? new Date('2024-01-02'),
   );
-
-// ─── Тесты ────────────────────────────────────────────────────────────────
 
 describe('UserMapper', () => {
   describe('toResponse', () => {

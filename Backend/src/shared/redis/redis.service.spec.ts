@@ -4,11 +4,6 @@ import { Test } from '@nestjs/testing';
 
 import { RedisService } from './redis.service';
 
-// ─── Мок ioredis ──────────────────────────────────────────────────────────
-//
-// RedisService extends Redis, тому MockRedis має бути справжнім класом
-// з усіма методами, щоб NestJS міг інстанціювати його коректно.
-
 const mockOn = jest.fn().mockReturnThis();
 const mockConnect = jest.fn().mockResolvedValue(undefined);
 const mockQuit = jest.fn().mockResolvedValue(undefined);
@@ -25,8 +20,6 @@ jest.mock('ioredis', () => {
   return { default: MockRedis, __esModule: true };
 });
 
-// ─── Фабрика ConfigService ────────────────────────────────────────────────
-
 const makeConfigService = (overrides: Record<string, unknown> = {}) => ({
   get: jest.fn((key: string, defaultValue?: unknown) => {
     const config: Record<string, unknown> = {
@@ -39,14 +32,10 @@ const makeConfigService = (overrides: Record<string, unknown> = {}) => ({
   }),
 });
 
-// ─── Тести ────────────────────────────────────────────────────────────────
-
 describe('RedisService', () => {
   let service: RedisService;
   let configService: ReturnType<typeof makeConfigService>;
 
-  // Конфігурація зчитується в конструкторі — тому configService
-  // потрібен ДО compile() і очищати моки треба ПІСЛЯ перевірок config.
   beforeEach(async () => {
     configService = makeConfigService();
 
@@ -58,15 +47,11 @@ describe('RedisService', () => {
     }).compile();
 
     service = module.get(RedisService);
-    // НЕ викликаємо jest.clearAllMocks() тут —
-    // config-тести перевіряють виклики з конструктора.
   });
 
   afterEach(() => {
     jest.clearAllMocks();
   });
-
-  // ─── Ініціалізація ────────────────────────────────────────────────────────
 
   describe('onModuleInit', () => {
     it('підключається до Redis при ініціалізації', async () => {
@@ -89,8 +74,6 @@ describe('RedisService', () => {
     });
   });
 
-  // ─── Завершення ───────────────────────────────────────────────────────────
-
   describe('onModuleDestroy', () => {
     it('викликає quit() при знищенні модуля', async () => {
       const quitSpy = jest.spyOn(service, 'quit').mockResolvedValue('OK');
@@ -100,10 +83,6 @@ describe('RedisService', () => {
       expect(quitSpy).toHaveBeenCalledTimes(1);
     });
   });
-
-  // ─── Конфігурація ─────────────────────────────────────────────────────────
-  // Виклики configService.get() відбуваються в конструкторі RedisService,
-  // тому перевіряємо їх одразу після compile() — до clearAllMocks().
 
   describe('config', () => {
     it('зчитує REDIS_HOST з ConfigService', () => {
@@ -119,12 +98,8 @@ describe('RedisService', () => {
     });
   });
 
-  // ─── Обробка подій ────────────────────────────────────────────────────────
-
   describe('error handling', () => {
     it('реєструє обробник події error під час конструктора', () => {
-      // this.on('error', ...) викликається в конструкторі RedisService.
-      // Оскільки MockRedis.on — це mockOn, перевіряємо його виклики.
       const errorCalls = mockOn.mock.calls.filter(
         ([event]) => event === 'error',
       );
