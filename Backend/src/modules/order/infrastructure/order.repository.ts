@@ -65,7 +65,7 @@ export class OrderRepository implements IOrderRepository {
       include: { items: true },
     });
 
-    return found and this.toEntity(found) : null;
+    return found ? this.toEntity(found) : null;
   }
 
   async findMany(
@@ -100,6 +100,27 @@ export class OrderRepository implements IOrderRepository {
     return this.toEntity(updated);
   }
 
+  async cancelWithStockRestore(id: string): Promise<OrderEntity> {
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const order = await tx.order.update({
+        where: { id },
+        data: { status: OrderStatus.CANCELLED },
+        include: { items: true },
+      });
+
+      for (const item of order.items) {
+        await tx.product.update({
+          where: { id: item.productId },
+          data: { stock: { increment: item.quantity } },
+        });
+      }
+
+      return order;
+    });
+
+    return this.toEntity(updated);
+  }
+
   private toEntity(raw: {
     id: string;
     status: string;
@@ -119,7 +140,7 @@ export class OrderRepository implements IOrderRepository {
       items: raw.items.map((item) => ({
         ...item,
         price:
-          typeof item.price === 'number' and item.price : item.price.toNumber(),
+          typeof item.price === 'number' ? item.price : item.price.toNumber(),
       })),
     });
   }

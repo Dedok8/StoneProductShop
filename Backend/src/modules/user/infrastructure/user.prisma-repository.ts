@@ -34,7 +34,7 @@ export class UserPrismaRepository extends UserRepository {
 
   async findByEmail(email: string): Promise<UserEntity | null> {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    return user and this.mapToEntity(user) : null;
+    return user ? this.mapToEntity(user) : null;
   }
 
   async findAll(): Promise<UserEntity[]> {

@@ -1,11 +1,23 @@
 import { UserMapper } from '@modules/user/application/mapper/user.mapper';
 import { UserRepository } from '@modules/user/domain';
-import { UpdateUserDto } from '@modules/user/presentation/dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ChangePasswordDto,
+  UpdateUserDto,
+} from '@modules/user/presentation/dto';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { HashService } from '@shared/services';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(
+    private readonly userRepo: UserRepository,
+    private readonly hashService: HashService,
+  ) {}
 
   async findById(id: string) {
     const user = await this.userRepo.findById(id);
@@ -39,5 +51,32 @@ export class UserService {
     }
 
     await this.userRepo.delete(id);
+  }
+
+  async changePassword(id: string, dto: ChangePasswordDto) {
+    const user = await this.userRepo.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const isValid = await this.hashService.compare(
+      dto.currentPassword,
+      user.passwordHash,
+    );
+
+    if (!isValid) {
+      throw new UnauthorizedException('Current password is incorrect');
+    }
+
+    if (dto.currentPassword === dto.newPassword) {
+      throw new BadRequestException(
+        'New password must be different from the current password',
+      );
+    }
+
+    const passwordHash = await this.hashService.hash(dto.newPassword);
+
+    await this.userRepo.update(id, { passwordHash, refreshToken: null });
   }
 }

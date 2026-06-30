@@ -34,26 +34,3 @@ CMD ["node", "dist/main"]
 # # Use Node.js 20 as the base image (required by NestJS 11 / Node 20+ deps)
 # FROM node:20
 
-# # Set the working directory inside the container
-# WORKDIR /backend
-
-# # Copy package.json and package-lock.json first (to leverage Docker caching)
-# COPY package.json package-lock.json ./
-
-# # Install all dependencies (including dev, needed for start:dev / nest build)
-# RUN npm ci
-
-# # Copy the rest of the application code (overwritten by volume mount in dev)
-# COPY . .
-
-# # Generate Prisma Client
-# RUN npx prisma generate
-
-# # Build the application (used for prod-style image layer; dev overrides CMD via compose if needed)
-# RUN npm run build
-
-# # Expose port 3000 for the application
-# EXPOSE 3000
-
-# # Start the application in development mode (live-reload)
-# CMD ["npm", "run", "start:dev"]

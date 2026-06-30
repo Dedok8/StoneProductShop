@@ -52,7 +52,7 @@ jobs:
             npm run build
             npx prisma migrate deploy
             pm2 restart stoneshop-backend || pm2 start dist/main.js --name stoneshop-backend
-            echo "✅ Deployed successfully"
+            echo " Deployed successfully"
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
 

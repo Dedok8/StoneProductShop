@@ -1,5 +1,8 @@
 import { UserService } from '@modules/user/application';
-import { UpdateUserDto } from '@modules/user/presentation/dto';
+import {
+  ChangePasswordDto,
+  UpdateUserDto,
+} from '@modules/user/presentation/dto';
 import {
   Controller,
   Get,
@@ -26,6 +29,15 @@ export class UserController {
   @Patch('me')
   updateMe(@CurrentUser('sub') id: string, @Body() data: UpdateUserDto) {
     return this.userService.update(id, data);
+  }
+
+  @Patch('me/password')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  changePassword(
+    @CurrentUser('sub') id: string,
+    @Body() dto: ChangePasswordDto,
+  ) {
+    return this.userService.changePassword(id, dto);
   }
 
   @Delete('me')

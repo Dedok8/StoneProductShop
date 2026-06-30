@@ -113,7 +113,7 @@ export class OrderService {
       );
     }
 
-    return this.orderRepo.updateStatus(id, OrderStatus.CANCELLED);
+    return this.orderRepo.cancelWithStockRestore(id);
   }
 
   async updateStatus(id: string, status: OrderStatus): Promise<OrderEntity> {

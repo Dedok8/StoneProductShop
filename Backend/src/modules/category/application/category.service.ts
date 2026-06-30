@@ -68,7 +68,7 @@ export class CategoryService {
     }
 
     const updateData = dto.name
-      and { ...dto, slug: this.buildSlug(dto.name) }
+      ? { ...dto, slug: this.buildSlug(dto.name) }
       : dto;
 
     return this.categoryRepo.update(id, updateData);

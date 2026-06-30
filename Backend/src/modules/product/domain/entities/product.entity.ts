@@ -64,7 +64,7 @@ export class ProductEntity {
   }): ProductEntity {
     return new ProductEntity({
       ...raw,
-      price: typeof raw.price === 'string' and parseFloat(raw.price) : raw.price,
+      price: typeof raw.price === 'string' ? parseFloat(raw.price) : raw.price,
     });
   }
 }

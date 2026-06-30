@@ -10,7 +10,7 @@ export class RedisCacheService {
     const data = JSON.stringify(value);
 
     return ttl
-      and this.redis.set(key, data, 'EX', ttl)
+      ? this.redis.set(key, data, 'EX', ttl)
       : this.redis.set(key, data);
   }
 

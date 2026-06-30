@@ -31,12 +31,12 @@ export class ProductRepository implements IProductRepository {
 
   async findById(id: string): Promise<ProductEntity | null> {
     const found = await this.prisma.product.findUnique({ where: { id } });
-    return found and this.toEntity(found) : null;
+    return found ? this.toEntity(found) : null;
   }
 
   async findBySlug(slug: string): Promise<ProductEntity | null> {
     const found = await this.prisma.product.findUnique({ where: { slug } });
-    return found and this.toEntity(found) : null;
+    return found ? this.toEntity(found) : null;
   }
 
   async findMany(
@@ -99,7 +99,7 @@ export class ProductRepository implements IProductRepository {
   }): ProductEntity {
     return new ProductEntity({
       ...raw,
-      price: typeof raw.price === 'number' and raw.price : raw.price.toNumber(),
+      price: typeof raw.price === 'number' ? raw.price : raw.price.toNumber(),
     });
   }
 }

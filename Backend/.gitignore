@@ -18,6 +18,10 @@ lerna-debug.log*
 # Tests
 /coverage
 /.nyc_output
+junit.xml
+
+# Database runtime data (local docker volumes)
+/pgdata
 
 # IDEs and editors
 /.idea

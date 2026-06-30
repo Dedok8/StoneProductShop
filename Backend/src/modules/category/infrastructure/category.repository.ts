@@ -37,12 +37,12 @@ export class CategoryRepository implements ICategoryRepository {
   async findById(id: string): Promise<CategoryEntity | null> {
     const found = await this.prisma.category.findUnique({ where: { id } });
 
-    return found and this.toEntity(found) : null;
+    return found ? this.toEntity(found) : null;
   }
   async findBySlug(slug: string): Promise<CategoryEntity | null> {
     const found = await this.prisma.category.findUnique({ where: { slug } });
 
-    return found and this.toEntity(found) : null;
+    return found ? this.toEntity(found) : null;
   }
   async findMany(
     params: IFindManyCategoryParams,
@@ -72,7 +72,7 @@ export class CategoryRepository implements ICategoryRepository {
     const category = await this.prisma.category.findUnique({
       where: { name },
     });
-    return category and this.toEntity(category) : null;
+    return category ? this.toEntity(category) : null;
   }
 
   async delete(id: string): Promise<void> {

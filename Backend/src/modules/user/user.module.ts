@@ -6,11 +6,13 @@ import {
   UserController,
 } from '@modules/user/presentation';
 import { Module } from '@nestjs/common';
+import { HashService } from '@shared/services';
 
 @Module({
   controllers: [AdminUserController, UserController],
   providers: [
     UserService,
+    HashService,
     { provide: UserRepository, useClass: UserPrismaRepository },
   ],
   exports: [UserService, UserRepository],

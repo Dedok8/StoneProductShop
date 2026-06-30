@@ -11,16 +11,20 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '@shared/decorators';
 import { JwtAuthGuard } from '@shared/guards';
 import type { Request, Response } from 'express';
 
 const REFRESH_COOKIE = 'refreshToken';
 
+const AUTH_THROTTLE = { default: { limit: 5, ttl: 60_000 } };
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Throttle(AUTH_THROTTLE)
   @Post('register')
   async register(
     @Body() dto: RegisterDto,
@@ -31,6 +35,7 @@ export class AuthController {
     return { accessToken: tokens.accessToken };
   }
 
+  @Throttle(AUTH_THROTTLE)
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
@@ -42,6 +47,7 @@ export class AuthController {
     return { accessToken: tokens.accessToken };
   }
 
+  @Throttle(AUTH_THROTTLE)
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(

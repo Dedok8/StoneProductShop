@@ -1,19 +1,22 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AllExceptionsFilter } from '@shared/filters';
 import { LoggingInterceptor } from '@shared/interceptors/logging.interceptor';
 import { TransformInterceptor } from '@shared/interceptors/transform.interceptor';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
 
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(helmet());
+
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS
-      and process.env.ALLOWED_ORIGINS.split(',')
+      ? process.env.ALLOWED_ORIGINS.split(',')
       : false,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -35,6 +38,14 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  // API versioning: routes become /api/v1/... unless a controller/route
+  // overrides its own version.
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+    prefix: 'api/v',
+  });
 
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()

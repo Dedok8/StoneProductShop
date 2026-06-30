@@ -25,6 +25,7 @@ export interface IOrderRepository {
     params: IFindManyOrdersParams,
   ): Promise<{ items: OrderEntity[]; total: number }>;
   updateStatus(id: string, status: OrderStatus): Promise<OrderEntity>;
+  cancelWithStockRestore(id: string): Promise<OrderEntity>;
 }
 
 export const ORDER_REPOSITORY = Symbol('ORDER_REPOSITORY');
