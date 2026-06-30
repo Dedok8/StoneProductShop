@@ -1,4 +1,4 @@
-import { FRONT_ROUTES } from "@/shared/config/routes/frontRoutes";
+import { FRONT_ROUTES } from "@/shared";
 
 import type { FC } from "react";
 

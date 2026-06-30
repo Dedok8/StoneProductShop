@@ -51,13 +51,13 @@ export const FRONT_ROUTES = {
     },
 
     ProductDetail: {
-      path: (id: string) => `/products/${id}`, 
-      template: "/products/:id", 
+      path: (id: string) => `/products/${id}`,
+      template: "/products/:id",
       meta: { title: "Product", isInMenu: false, requireAuth: false },
     },
     OrderDetail: {
       path: (id: string) => `/orders/${id}`,
-      template: "/orders/:id", 
+      template: "/orders/:id",
       meta: { title: "Order", isInMenu: false, requireAuth: true },
     },
 
@@ -67,7 +67,7 @@ export const FRONT_ROUTES = {
         title: "Users",
         isInMenu: true,
         requireAuth: true,
-        roles: ["admin"],
+        roles: ["ADMIN"],
         order: 10,
         icon: "users",
       },
@@ -78,7 +78,7 @@ export const FRONT_ROUTES = {
         title: "Products",
         isInMenu: true,
         requireAuth: true,
-        roles: ["admin"],
+        roles: ["ADMIN"],
         order: 11,
         icon: "box",
       },

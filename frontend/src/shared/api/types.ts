@@ -16,9 +16,11 @@ export interface IRegisterRequest {
   name: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
 export interface IAuthResponse {
+  user: IUser;
   accessToken: string;
 }
 

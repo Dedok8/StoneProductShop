@@ -1,3 +1,3 @@
 export * from "./appRouterRoutes";
-export * from "./authCheckLoader";
+export * from "./bootSessionLoader";
 export * from "./Router";

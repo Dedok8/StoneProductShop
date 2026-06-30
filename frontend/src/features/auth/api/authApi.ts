@@ -25,6 +25,9 @@ export const authApi = baseApi.injectEndpoints({
         url: API_ROUTES.auth.refresh,
         method: "POST",
       }),
+      transformResponse: (response: IApiResponse<IAuthResponse>) => {
+        return response.data;
+      },
     }),
 
     register: build.mutation<
