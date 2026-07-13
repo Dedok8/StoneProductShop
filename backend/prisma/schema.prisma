@@ -1,0 +1,114 @@
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
+ 
+}
+
+datasource db {
+  provider = "postgresql"
+
+}
+
+enum Role {
+  USER
+  MANAGER
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  SHIPPED
+  COMPLETED
+  CANCELLED
+}
+
+model User {
+  id           String    @id @default(uuid())
+  name         String    @unique
+  email        String    @unique
+  passwordHash String    @map("password_hash")
+  role         Role      @default(USER)
+  refreshToken String?   @map("refresh_token")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  products     Product[]
+  orders       Order[]
+
+  @@map("users")
+}
+
+model Category  {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  products  Product[]
+
+
+  isActive  Boolean  @default(true)
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  stock       Int      @default(0)
+  images      String[] @default([])
+
+  category   Category @relation(fields: [categoryId], references: [id])
+  categoryId String   @map("category_id")
+
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     String   @map("owner_id")
+
+  orderItems  OrderItem[]
+
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("products")
+  @@index([categoryId])  
+  @@index([ownerId])
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  status    OrderStatus @default(PENDING)
+  items     OrderItem[]
+
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @map("user_id")
+
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
+
+  @@map("orders")
+  @@index([userId])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String   @map("product_id")
+
+  order     Order    @relation(fields: [orderId], references: [id])
+  orderId   String   @map("order_id")
+
+  @@map("order_items")
+  @@index([productId])
+  @@index([orderId])
+}

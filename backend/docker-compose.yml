@@ -1,0 +1,116 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    container_name: stone_product_shop-postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '127.0.0.1:${DB_PORT}:5432'
+    networks:
+      - stone_product_shop-net
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prisma-migrate:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: development
+    container_name: stone_product_shop-prisma-migrate
+    command: sh -c "npx prisma migrate deploy"
+    environment:
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+    volumes:
+      - ./prisma:/backend/prisma
+
+      - /backend/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - stone_product_shop-net
+    restart: 'no'
+
+  app:
+    build:
+      context: .
+      dockerfile: dockerfile
+      target: development
+    container_name: backend
+    env_file:
+      - .env
+    environment:
+      - PORT=${PORT}
+      - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
+      - REDIS_HOST=redis
+      - REDIS_PORT=${REDIS_PORT}
+    ports:
+      - '${PORT}:${PORT}'
+
+    depends_on:
+      db:
+        condition: service_healthy
+      prisma-migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./src:/backend/src
+      - ./prisma:/backend/prisma
+      - /backend/node_modules
+      - /backend/src/generated
+    networks:
+      - stone_product_shop-net
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -f http://localhost:${PORT}/health || exit 1']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: stone_product_shop-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - '127.0.0.1:${PGADMIN_HOST_PORT}:${PGADMIN_CONTAINER_PORT}'
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - stone_product_shop-net
+
+  redis:
+    image: redis:alpine
+    container_name: stone_product_shop-redis
+    command: ['redis-server', '--requirepass', '${REDIS_PASSWORD}']
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - '127.0.0.1:${REDIS_PORT}:${REDIS_PORT}'
+    restart: always
+    networks:
+      - stone_product_shop-net
+    healthcheck:
+      test: ['CMD', 'redis-cli', '-a', '${REDIS_PASSWORD}', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  stone_product_shop-net:
+    driver: bridge
+
+volumes:
+  pgdata:

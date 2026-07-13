@@ -1,0 +1,35 @@
+# ---------- Base ----------
+FROM node:20-slim AS base
+WORKDIR /backend
+RUN apt-get update -y && apt-get install -y openssl curl && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json ./
+
+# ---------- Development ----------
+FROM base AS development
+ARG DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+ENV DATABASE_URL=$DATABASE_URL
+RUN npm ci
+COPY . .
+RUN npx prisma generate
+EXPOSE 3000
+CMD ["npm", "run", "start:dev"]
+
+# ---------- Build ----------
+FROM base AS build
+ARG DATABASE_URL="postgresql://user:pass@localhost:5432/db"
+ENV DATABASE_URL=$DATABASE_URL
+RUN npm ci
+COPY . .
+RUN npx prisma generate
+RUN npm run build
+
+# ---------- Production ----------
+FROM node:20-slim AS production
+WORKDIR /backend
+ENV NODE_ENV=production
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
+COPY --from=build /backend/dist ./dist
+COPY --from=build /backend/prisma ./prisma
+EXPOSE 3000
+CMD ["node", "dist/main"]
