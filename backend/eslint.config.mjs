@@ -3,6 +3,7 @@ import prettier from 'eslint-config-prettier';
 import importPlugin from 'eslint-plugin-import';
 import unusedImports from 'eslint-plugin-unused-imports';
 import tseslint from 'typescript-eslint';
+import jest from 'eslint-plugin-jest';
 
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', 'coverage', 'generated'] },
@@ -62,6 +63,14 @@ export default tseslint.config(
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       eqeqeq: ['error', 'always'],
       'prefer-const': 'error',
+    },
+  },
+  {
+    files: ['**/*.spec.ts', 'test/**/*.ts'],
+    plugins: { jest },
+    rules: {
+      '@typescript-eslint/unbound-method': 'off',
+      'jest/unbound-method': 'error',
     },
   },
   prettier,
