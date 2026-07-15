@@ -24,7 +24,7 @@ const makeProduct = (overrides: Partial<ProductEntity> = {}): ProductEntity =>
     ...overrides,
   });
 
-describe('ProductService', () => {
+describe('productService', () => {
   let service: ProductService;
   let repository: MockProxy<IProductRepository>;
 
@@ -51,7 +51,7 @@ describe('ProductService', () => {
     });
 
     it('throws a NotFoundException if the product is not found', async () => {
-      repository.findById.mockResolvedValue(makeProduct());
+      repository.findById.mockResolvedValue(null);
 
       await expect(service.findById('missing')).rejects.toThrow(
         NotFoundException,
@@ -69,7 +69,7 @@ describe('ProductService', () => {
     });
 
     it('throws a NotFoundException if the slug is not found', async () => {
-      repository.findBySlug.mockResolvedValue(makeProduct());
+      repository.findBySlug.mockResolvedValue(null);
 
       await expect(service.findBySlug('unknown')).rejects.toThrow(
         NotFoundException,
@@ -87,7 +87,7 @@ describe('ProductService', () => {
     });
 
     it('throws a NotFoundException if the name is not found', async () => {
-      repository.findByName.mockResolvedValue(makeProduct());
+      repository.findByName.mockResolvedValue(null);
 
       await expect(service.findByName('unknown')).rejects.toThrow(
         NotFoundException,
@@ -115,132 +115,132 @@ describe('ProductService', () => {
           totalPages: 1,
         }),
       );
-
-      it('sets the default page/limit values if the query does not include them', async () => {
-        repository.findAll.mockResolvedValue({ items: [], total: 0 });
-
-        const result = await service.findAll({});
-
-        expect(result.meta.page).toBe(1);
-        expect(result.meta.limit).toBe(20);
-        expect(result.items).toEqual([]);
-      });
     });
 
-    describe('create', () => {
-      const dto = {
-        name: 'Granite Slab',
-        slug: 'granite-slab',
-        price: 15000,
-        stock: 10,
-        images: ['https://example.com/1.jpg'],
-        categoryId: 'cat-1',
-      } as Parameters<ProductService['create']>[0];
+    it('sets the default page/limit values if the query does not include them', async () => {
+      repository.findAll.mockResolvedValue({ items: [], total: 0 });
 
-      it('Creates a product with the specified ownerId, provided the name and slug are available', async () => {
-        repository.findByName.mockResolvedValue(null);
-        repository.findBySlug.mockResolvedValue(null);
-        repository.create.mockResolvedValue(makeProduct());
+      const result = await service.findAll({});
 
-        const result = await service.create(dto, 'owner-1');
+      expect(result.meta.page).toBe(1);
+      expect(result.meta.limit).toBe(20);
+      expect(result.items).toEqual([]);
+    });
+  });
 
-        expect(repository.create).toHaveBeenCalledWith({
-          ...dto,
-          ownerId: 'owner-1',
-        });
-        expect(result.id).toBe('product-1');
+  describe('create', () => {
+    const dto = {
+      name: 'Granite Slab',
+      slug: 'granite-slab',
+      price: 15000,
+      stock: 10,
+      images: ['https://example.com/1.jpg'],
+      categoryId: 'cat-1',
+    } as Parameters<ProductService['create']>[0];
+
+    it('creates a product with the specified ownerId, provided the name and slug are available', async () => {
+      repository.findByName.mockResolvedValue(null);
+      repository.findBySlug.mockResolvedValue(null);
+      repository.create.mockResolvedValue(makeProduct());
+
+      const result = await service.create(dto, 'owner-1');
+
+      expect(repository.create).toHaveBeenCalledWith({
+        ...dto,
+        ownerId: 'owner-1',
       });
-
-      it('throws a ConflictException if the product name is already taken', async () => {
-        repository.findByName.mockResolvedValue(makeProduct());
-
-        await expect(service.create(dto, 'owner-1')).rejects.toThrow(
-          ConflictException,
-        );
-        expect(repository.create).not.toHaveBeenCalled();
-      });
-
-      it('throws a ConflictException if the slug is already taken', async () => {
-        repository.findByName.mockResolvedValue(null);
-        repository.findBySlug.mockResolvedValue(makeProduct());
-
-        await expect(service.create(dto, 'owner-1')).rejects.toThrow(
-          ConflictException,
-        );
-        expect(repository.create).not.toHaveBeenCalled();
-      });
+      expect(result.id).toBe('product-1');
     });
 
-    describe('update', () => {
-      it('updates the product if the new name/slug is available', async () => {
-        repository.findByName.mockResolvedValue(null);
-        repository.findBySlug.mockResolvedValue(null);
-        repository.update.mockResolvedValue(makeProduct({ price: 20000 }));
+    it('throws a ConflictException if the product name is already taken', async () => {
+      repository.findByName.mockResolvedValue(makeProduct());
 
-        const result = await service.update('product-1', { price: 20000 });
-
-        expect(repository.update).toHaveBeenCalledWith('product-1', {
-          price: 20000,
-        });
-        expect(result.price).toBe(20000);
-      });
-
-      it('throws a ConflictException if the new name is already taken by another product', async () => {
-        repository.findByName.mockResolvedValue(
-          makeProduct({ id: 'other-prod' }),
-        );
-
-        await expect(
-          service.update('prod-1', { name: 'Taken' }),
-        ).rejects.toThrow(ConflictException);
-      });
-
-      it('throws a ConflictException if the new slug is already taken by another product', async () => {
-        repository.findByName.mockResolvedValue(null);
-        repository.findBySlug.mockResolvedValue(
-          makeProduct({ id: 'other-prod' }),
-        );
-
-        await expect(
-          service.update('prod-1', { slug: 'taken-slug' }),
-        ).rejects.toThrow(ConflictException);
-      });
-
-      it('throws a NotFoundException if the item to be updated does not exist', async () => {
-        repository.update.mockResolvedValue(null);
-
-        await expect(service.update('missing', { stock: 5 })).rejects.toThrow(
-          NotFoundException,
-        );
-      });
-
-      it('Does not check for uniqueness if name/slug are not provided', async () => {
-        repository.update.mockResolvedValue(makeProduct({ stock: 5 }));
-
-        await service.update('prod-1', { stock: 5 });
-
-        expect(repository.findByName).not.toHaveBeenCalled();
-        expect(repository.findBySlug).not.toHaveBeenCalled();
-      });
+      await expect(service.create(dto, 'owner-1')).rejects.toThrow(
+        ConflictException,
+      );
+      expect(repository.create).not.toHaveBeenCalled();
     });
 
-    describe('delete', () => {
-      it('deletes the product if it exists', async () => {
-        repository.findById.mockResolvedValue(makeProduct());
+    it('throws a ConflictException if the slug is already taken', async () => {
+      repository.findByName.mockResolvedValue(null);
+      repository.findBySlug.mockResolvedValue(makeProduct());
 
-        await service.delete('prod-1');
+      await expect(service.create(dto, 'owner-1')).rejects.toThrow(
+        ConflictException,
+      );
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+  });
 
-        expect(repository.delete).toHaveBeenCalledWith('product-1');
+  describe('update', () => {
+    it('updates the product if the new name/slug is available', async () => {
+      repository.findByName.mockResolvedValue(null);
+      repository.findBySlug.mockResolvedValue(null);
+      repository.update.mockResolvedValue(makeProduct({ price: 20000 }));
+
+      const result = await service.update('product-1', { price: 20000 });
+
+      expect(repository.update).toHaveBeenCalledWith('product-1', {
+        price: 20000,
       });
+      expect(result.price).toBe(20000);
+    });
 
-      it('Throws a NotFoundException and does not call `delete` if the product is not found', async () => {
-        repository.findById.mockResolvedValue(null);
+    it('throws a ConflictException if the new name is already taken by another product', async () => {
+      repository.findByName.mockResolvedValue(
+        makeProduct({ id: 'other-prod' }),
+      );
 
-        await expect(service.delete('missing')).rejects.toThrow(
-          NotFoundException,
-        );
-        expect(repository.delete).not.toHaveBeenCalled();
-      });
+      await expect(service.update('prod-1', { name: 'Taken' })).rejects.toThrow(
+        ConflictException,
+      );
+    });
+
+    it('throws a ConflictException if the new slug is already taken by another product', async () => {
+      repository.findByName.mockResolvedValue(null);
+      repository.findBySlug.mockResolvedValue(
+        makeProduct({ id: 'other-prod' }),
+      );
+
+      await expect(
+        service.update('prod-1', { slug: 'taken-slug' }),
+      ).rejects.toThrow(ConflictException);
+    });
+
+    it('throws a NotFoundException if the item to be updated does not exist', async () => {
+      repository.update.mockResolvedValue(null);
+
+      await expect(service.update('missing', { stock: 5 })).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('does not check for uniqueness if name/slug are not provided', async () => {
+      repository.update.mockResolvedValue(makeProduct({ stock: 5 }));
+
+      await service.update('prod-1', { stock: 5 });
+
+      expect(repository.findByName).not.toHaveBeenCalled();
+      expect(repository.findBySlug).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('delete', () => {
+    it('deletes the product if it exists', async () => {
+      repository.findById.mockResolvedValue(makeProduct());
+
+      await service.delete('prod-1');
+
+      expect(repository.delete).toHaveBeenCalledWith('product-1');
+    });
+
+    it('throws a NotFoundException and does not call `delete` if the product is not found', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(service.delete('missing')).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(repository.delete).not.toHaveBeenCalled();
     });
   });
 });

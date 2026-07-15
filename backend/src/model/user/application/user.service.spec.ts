@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -12,7 +13,7 @@ import type { IUserRepository } from '@/model/user/domain';
 import type { UserRepository } from '@/model/user/infrastructure';
 import { makeUser, UserRole, type HashService } from '@/shared';
 
-describe('userService', () => {
+describe('UserService', () => {
   let service: UserService;
   let repository: MockProxy<IUserRepository>;
   let hashService: MockProxy<HashService>;
@@ -132,7 +133,7 @@ describe('userService', () => {
     it('throws a ConflictException if the email address is already taken', async () => {
       repository.findByEmail.mockResolvedValue(makeUser());
 
-      await expect(service.create(dto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(dto)).rejects.toThrow(ConflictException);
       expect(repository.create).not.toHaveBeenCalled();
       expect(hashService.hash).not.toHaveBeenCalled();
     });
@@ -245,7 +246,7 @@ describe('userService', () => {
       expect(repository.update).not.toHaveBeenCalled();
     });
 
-    it('Throws a BadRequestException if the new password matches the old one (based on the DTO value)', async () => {
+    it('throws a BadRequestException if the new password matches the old one (based on the DTO value)', async () => {
       repository.findById.mockResolvedValue(makeUser());
       hashService.compare.mockResolvedValue(true);
 

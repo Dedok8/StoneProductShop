@@ -185,7 +185,7 @@ describe('categoryService', () => {
 
       await expect(
         service.update('category-1', { name: 'Taken' }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(ConflictException);
     });
 
     it('throws a ConflictException if the new slug is already taken by another record', async () => {
@@ -196,10 +196,10 @@ describe('categoryService', () => {
 
       await expect(
         service.update('category-1', { slug: 'taken-slug' }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(ConflictException);
     });
 
-    it('Throws a NotFoundException if the category to be updated does not exist', async () => {
+    it('throws a NotFoundException if the category to be updated does not exist', async () => {
       repository.update.mockResolvedValue(null);
 
       await expect(
@@ -207,7 +207,7 @@ describe('categoryService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('Does not check for uniqueness if name/slug are not provided', async () => {
+    it('does not check for uniqueness if name/slug are not provided', async () => {
       repository.update.mockResolvedValue(makeCategory({ isActive: false }));
 
       await service.update('category-1', { isActive: false });
@@ -226,7 +226,7 @@ describe('categoryService', () => {
       expect(repository.delete).toHaveBeenCalledWith('category-1');
     });
 
-    it('Throws a NotFoundException and does not call `delete` if the category is not found', async () => {
+    it('throws a NotFoundException and does not call `delete` if the category is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.delete('missing')).rejects.toThrow(

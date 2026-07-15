@@ -38,7 +38,7 @@ const makeOrder = (
     ...overrides,
   });
 
-describe('OrderService', () => {
+describe('orderService', () => {
   let service: OrderService;
   let repository: MockProxy<IOrderRepository>;
 
@@ -79,7 +79,7 @@ describe('OrderService', () => {
       );
     });
 
-    it('Throws a NotFoundException if the userId does not match the owner (attempt to pass off someone else order as your own)', async () => {
+    it('throws a NotFoundException if the userId does not match the owner (attempt to pass off someone else order as your own)', async () => {
       const order = makeOrder({ userId: 'owner-A' });
       repository.findById.mockResolvedValue(order);
 
@@ -130,7 +130,7 @@ describe('OrderService', () => {
   });
 
   describe('updateStatus', () => {
-    it('Changes the order status from PENDING to PAID (allowed transition)', async () => {
+    it('changes the order status from PENDING to PAID (allowed transition)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );
@@ -163,7 +163,7 @@ describe('OrderService', () => {
       expect(result.status).toBe(OrderStatus.CANCELLED);
     });
 
-    it('Throws a BadRequestException if an invalid transition occurs (PENDING → SHIPPED)', async () => {
+    it('throws a BadRequestException if an invalid transition occurs (PENDING → SHIPPED)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );
@@ -174,7 +174,7 @@ describe('OrderService', () => {
       expect(repository.updateStatus).not.toHaveBeenCalled();
     });
 
-    it('Throws a BadRequestException when attempting to change the status of a completed order', async () => {
+    it('throws a BadRequestException when attempting to change the status of a completed order', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.COMPLETED }),
       );
@@ -184,7 +184,7 @@ describe('OrderService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('Throws a BadRequestException when attempting to change the status of a canceled order', async () => {
+    it('throws a BadRequestException when attempting to change the status of a canceled order', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.CANCELLED }),
       );
@@ -203,7 +203,7 @@ describe('OrderService', () => {
       expect(repository.updateStatus).not.toHaveBeenCalled();
     });
 
-    it('Throws a NotFoundException if the order disappears between `findById` and `updateStatus` (race condition)', async () => {
+    it('throws a NotFoundException if the order disappears between `findById` and `updateStatus` (race condition)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );

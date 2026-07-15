@@ -1,7 +1,6 @@
 import type { ConfigService } from '@nestjs/config';
 import type { JwtService } from '@nestjs/jwt';
-import { mock } from 'jest-mock-extended';
-import type { MockProxy } from 'jest-mock-extended';
+import { mock, type MockProxy } from 'jest-mock-extended';
 
 import { TokenService } from '@/model/auth/application/token/token.service';
 import { makeUser } from '@/shared';
@@ -55,11 +54,12 @@ describe('TokenService', () => {
       await expect(service.signAccessToken(makeUser())).rejects.toThrow(
         'JWT_ACCESS_SECRET is not defined',
       );
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
   });
 
   describe('signRefreshToken', () => {
-    it('Signs the refresh token only with the sub (without email or role) and settings from ConfigService', async () => {
+    it('signs the refresh token only with the sub (without email or role) and settings from ConfigService', async () => {
       const user = makeUser();
 
       config.getOrThrow.mockReturnValue('refresh-secret');
@@ -72,7 +72,7 @@ describe('TokenService', () => {
       expect(config.get).toHaveBeenCalledWith('JWT_REFRESH_EXPIRES_IN');
       expect(jwtService.signAsync).toHaveBeenCalledWith(
         { sub: user.id },
-        { secret: 'refresh-secret ', expireIn: '7d' },
+        { secret: 'refresh-secret', expiresIn: '7d' },
       );
       expect(result).toBe('signed-refresh-token');
     });
@@ -88,6 +88,17 @@ describe('TokenService', () => {
 
       expect(payload).not.toHaveProperty('email');
       expect(payload).not.toHaveProperty('role');
+    });
+
+    it('throws an error if JWT_REFRESH_SECRET is not configured', async () => {
+      config.getOrThrow.mockImplementation(() => {
+        throw new Error('JWT_REFRESH_SECRET is not defined');
+      });
+
+      await expect(service.signRefreshToken(makeUser())).rejects.toThrow(
+        'JWT_REFRESH_SECRET is not defined',
+      );
+      expect(jwtService.signAsync).not.toHaveBeenCalled();
     });
   });
 });
