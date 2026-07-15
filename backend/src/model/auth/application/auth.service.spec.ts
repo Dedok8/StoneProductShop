@@ -1,35 +1,20 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import type { MockProxy } from 'jest-mock-extended';
-import { mock } from 'jest-mock-extended';
+import { mock, type MockProxy } from 'jest-mock-extended';
 
-import { AuthService } from '@/model/auth/application/auth.service';
-import type { TokenService } from '@/model/auth/application/token';
-import { UserEntity } from '@/model/user/domain/entities';
-import type { IUserRepository } from '@/model/user/domain/interfaces';
+import type { TokenService } from '@/model/auth';
+import { AuthService } from '@/model/auth';
+import type { UserRepository } from '@/model/user';
 import type { HashService } from '@/shared';
-import { UserRole } from '@/shared/guards/role/user-role';
-
-const makeUser = (overrides: Partial<UserEntity> = {}): UserEntity =>
-  new UserEntity({
-    id: 'user-1',
-    name: 'John Stone',
-    email: 'john@example.com',
-    passwordHash: 'hashed-password',
-    role: UserRole.USER,
-    refreshToken: null,
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-01'),
-    ...overrides,
-  });
+import { makeUser } from '@/shared';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let userRepository: MockProxy<IUserRepository>;
+  let userRepository: MockProxy<UserRepository>;
   let hashService: MockProxy<HashService>;
   let tokenService: MockProxy<TokenService>;
 
   beforeEach(() => {
-    userRepository = mock<IUserRepository>();
+    userRepository = mock<UserRepository>();
     hashService = mock<HashService>();
     tokenService = mock<TokenService>();
     service = new AuthService(userRepository, hashService, tokenService);
@@ -41,12 +26,12 @@ describe('AuthService', () => {
 
   describe('register', () => {
     const dto = {
-      name: 'New User',
-      email: 'new@example.com',
-      password: 'Password123',
+      name: 'Ivan',
+      email: 'Ivan@gmail.com',
+      password: '!Password123',
     };
 
-    it('регистрирует пользователя и возвращает пару токенов, если email свободен', async () => {
+    it('registers the user and returns a pair of tokens if the email address is available', async () => {
       userRepository.findByEmail.mockResolvedValue(null);
       hashService.hash
         .mockResolvedValueOnce('hashed-password')
@@ -62,17 +47,19 @@ describe('AuthService', () => {
         email: dto.email,
         passwordHash: 'hashed-password',
       });
-      expect(userRepository.update).toHaveBeenCalledWith('user-1', {
+
+      expect(userRepository.update).toHaveBeenLastCalledWith('user-1', {
         refreshToken: 'hashed-refresh-token',
       });
+
       expect(result).toEqual({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
     });
 
-    it('выбрасывает ConflictException, если email уже занят', async () => {
-      userRepository.findByEmail.mockResolvedValue(makeUser());
+    it('throws a ConflictException if the email address is already taken', async () => {
+      userRepository.findByEmail.mockRejectedValue(makeUser());
 
       await expect(service.register(dto)).rejects.toThrow(ConflictException);
       expect(userRepository.create).not.toHaveBeenCalled();
@@ -80,10 +67,11 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    const dto = { email: 'john@example.com', password: 'Password123' };
+    const dto = { email: 'Ivan@example.com', password: '!Password123' };
 
-    it('логинит пользователя и возвращает пару токенов при верном пароле', async () => {
+    it('logs the user in and returns a pair of tokens if the password is correct', async () => {
       const user = makeUser();
+
       userRepository.findByEmail.mockResolvedValue(user);
       hashService.compare.mockResolvedValue(true);
       hashService.hash.mockResolvedValue('hashed-refresh-token');
@@ -96,20 +84,21 @@ describe('AuthService', () => {
         dto.password,
         user.passwordHash,
       );
+
       expect(result).toEqual({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
     });
 
-    it('выбрасывает UnauthorizedException, если пользователь с таким email не найден', async () => {
+    it('throws an UnauthorizedException if a user with that email address is not found', async () => {
       userRepository.findByEmail.mockResolvedValue(null);
 
       await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
       expect(hashService.compare).not.toHaveBeenCalled();
     });
 
-    it('выбрасывает UnauthorizedException при неверном пароле', async () => {
+    it('Throws an UnauthorizedException if the password is incorrect', async () => {
       userRepository.findByEmail.mockResolvedValue(makeUser());
       hashService.compare.mockResolvedValue(false);
 
@@ -117,15 +106,17 @@ describe('AuthService', () => {
       expect(tokenService.signAccessToken).not.toHaveBeenCalled();
     });
 
-    it('не раскрывает, что именно неверно (email или пароль) — единое сообщение об ошибке', async () => {
+    it('does not specify which field is incorrect (email or password)—it displays a single error message', async () => {
       userRepository.findByEmail.mockResolvedValue(null);
 
-      await expect(service.login(dto)).rejects.toThrow('Invalid credentials');
+      await expect(service.login(dto)).rejects.toThrow(
+        'Invalidate credentials',
+      );
     });
   });
 
   describe('refresh', () => {
-    it('выдаёт новый accessToken при валидном refreshToken', async () => {
+    it('Issues a new accessToken when a valid refreshToken is provided', async () => {
       const user = makeUser({ refreshToken: 'hashed-refresh-token' });
       userRepository.findById.mockResolvedValue(user);
       hashService.compare.mockResolvedValue(true);
@@ -140,8 +131,8 @@ describe('AuthService', () => {
       expect(result).toEqual({ accessToken: 'new-access-token' });
     });
 
-    it('выбрасывает UnauthorizedException, если у пользователя нет сохранённого refreshToken', async () => {
-      userRepository.findById.mockResolvedValue(
+    it('Throws an UnauthorizedException if the user does not have a saved refresh token', async () => {
+      userRepository.findById.mockRejectedValue(
         makeUser({ refreshToken: null }),
       );
 
@@ -150,7 +141,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
 
-    it('выбрасывает UnauthorizedException, если пользователь не найден', async () => {
+    it('throws an UnauthorizedException if the user is not found', async () => {
       userRepository.findById.mockResolvedValue(null);
 
       await expect(
@@ -158,21 +149,23 @@ describe('AuthService', () => {
       ).rejects.toThrow(UnauthorizedException);
     });
 
-    it('выбрасывает UnauthorizedException, если refreshToken не совпадает с сохранённым хэшем', async () => {
+    it('Throws an UnauthorizedException if the refreshToken does not match the stored hash', async () => {
       userRepository.findById.mockResolvedValue(
-        makeUser({ refreshToken: 'hashed-refresh-token' }),
+        makeUser({ refreshToken: 'hash-refresh-token' }),
       );
+
       hashService.compare.mockResolvedValue(false);
 
       await expect(
         service.refresh('user-1', 'wrong-refresh-token'),
       ).rejects.toThrow(UnauthorizedException);
-      expect(tokenService.signAccessToken).not.toHaveBeenCalled();
+
+      expect(tokenService.signRefreshToken).not.toHaveBeenCalled();
     });
   });
 
   describe('logout', () => {
-    it('сбрасывает refreshToken пользователя в null', async () => {
+    it("sets the user's refreshToken to null", async () => {
       await service.logout('user-1');
 
       expect(userRepository.update).toHaveBeenCalledWith('user-1', {

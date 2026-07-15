@@ -9,3 +9,4 @@ export * from './prisma';
 export * from './redis';
 export * from './dto';
 export * from './utils';
+export * from './test';

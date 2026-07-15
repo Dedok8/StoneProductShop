@@ -19,8 +19,6 @@ interface UserPayload {
   email: string;
   role: string;
   createdAt: string;
-  // поле не должно приходить с бэка вообще — держим опциональным
-  // только для явной проверки, что оно отсутствует
   passwordHash?: unknown;
 }
 

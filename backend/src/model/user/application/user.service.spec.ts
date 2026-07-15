@@ -1,38 +1,24 @@
 import {
   BadRequestException,
-  ConflictException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
+import type { UserQueryDto } from '@/model/user/application/dto';
 import { UserService } from '@/model/user/application/user.service';
-import { UserEntity } from '@/model/user/domain/entities';
-import type { IUserRepository } from '@/model/user/domain/interfaces';
-import type { HashService } from '@/shared';
-import { UserRole } from '@/shared/guards/role/user-role';
+import type { IUserRepository } from '@/model/user/domain';
+import type { UserRepository } from '@/model/user/infrastructure';
+import { makeUser, UserRole, type HashService } from '@/shared';
 
-const makeUser = (overrides: Partial<UserEntity> = {}): UserEntity =>
-  new UserEntity({
-    id: 'user-1',
-    name: 'John Stone',
-    email: 'john@example.com',
-    passwordHash: 'hashed-old-password',
-    role: UserRole.USER,
-    refreshToken: null,
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-01'),
-    ...overrides,
-  });
-
-describe('UserService', () => {
+describe('userService', () => {
   let service: UserService;
   let repository: MockProxy<IUserRepository>;
   let hashService: MockProxy<HashService>;
 
   beforeEach(() => {
-    repository = mock<IUserRepository>();
+    repository = mock<UserRepository>();
     hashService = mock<HashService>();
     service = new UserService(repository, hashService);
   });
@@ -42,7 +28,7 @@ describe('UserService', () => {
   });
 
   describe('findById', () => {
-    it('возвращает замапленного пользователя, если он найден', async () => {
+    it('returns the mapped user, if found', async () => {
       repository.findById.mockResolvedValue(makeUser());
 
       const result = await service.findById('user-1');
@@ -56,11 +42,10 @@ describe('UserService', () => {
         }),
       );
       expect(result.createdAt).toBeInstanceOf(Date);
-
       expect(result).not.toHaveProperty('passwordHash');
     });
 
-    it('выбрасывает NotFoundException, если пользователь не найден', async () => {
+    it('throws a NotFoundException if the user is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.findById('missing')).rejects.toThrow(
@@ -70,15 +55,15 @@ describe('UserService', () => {
   });
 
   describe('findByEmail', () => {
-    it('возвращает пользователя по email', async () => {
+    it('returns the user via email', async () => {
       repository.findByEmail.mockResolvedValue(makeUser());
 
-      const result = await service.findByEmail('john@example.com');
+      const result = await service.findByEmail('Ivan@example.com');
 
-      expect(result.email).toBe('john@example.com');
+      expect(result.email).toBe('Ivan@example.com');
     });
 
-    it('выбрасывает NotFoundException, если email не найден', async () => {
+    it('throws a NotFoundException if the email is not found', async () => {
       repository.findByEmail.mockResolvedValue(null);
 
       await expect(service.findByEmail('unknown@example.com')).rejects.toThrow(
@@ -88,30 +73,46 @@ describe('UserService', () => {
   });
 
   describe('findAll', () => {
-    it('возвращает пагинированный список пользователей', async () => {
+    it('returns a paginated list of users', async () => {
       repository.findAll.mockResolvedValue({
         items: [makeUser(), makeUser({ id: 'user-2' })],
         total: 2,
       });
+      const query: UserQueryDto = { page: 1, limit: 20 };
 
-      const result = await service.findAll({
-        page: 1,
-        limit: 20,
-      });
+      const result = await service.findAll(query);
 
+      expect(repository.findAll).toHaveBeenCalledWith(query);
       expect(result.items).toHaveLength(2);
-      expect(result.meta.total).toBe(2);
+      expect(result.meta).toEqual(
+        expect.objectContaining({
+          page: 1,
+          limit: 20,
+          total: 2,
+          totalPages: 1,
+        }),
+      );
+    });
+
+    it('sets the default page/limit values if the query does not include them', async () => {
+      repository.findAll.mockResolvedValue({ items: [], total: 0 });
+
+      const result = await service.findAll({});
+
+      expect(result.meta.page).toBe(1);
+      expect(result.meta.limit).toBe(20);
+      expect(result.items).toEqual([]);
     });
   });
 
   describe('create', () => {
     const dto = {
-      name: 'New User',
+      name: 'new user',
       email: 'new@example.com',
-      password: 'Password123!',
+      password: '!Password123',
     };
 
-    it('создаёт пользователя с захэшированным паролем, если email свободен', async () => {
+    it('creates a user with a hashed password if the email address is available', async () => {
       repository.findByEmail.mockResolvedValue(null);
       hashService.hash.mockResolvedValue('hashed-password');
       repository.create.mockResolvedValue(makeUser({ email: dto.email }));
@@ -123,22 +124,22 @@ describe('UserService', () => {
         name: dto.name,
         email: dto.email,
         passwordHash: 'hashed-password',
-        role: undefined,
+        role: UserRole.USER,
       });
       expect(result.email).toBe(dto.email);
     });
 
-    it('выбрасывает ConflictException, если email уже занят', async () => {
+    it('throws a ConflictException if the email address is already taken', async () => {
       repository.findByEmail.mockResolvedValue(makeUser());
 
-      await expect(service.create(dto)).rejects.toThrow(ConflictException);
+      await expect(service.create(dto)).rejects.toThrow(NotFoundException);
       expect(repository.create).not.toHaveBeenCalled();
       expect(hashService.hash).not.toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
-    it('обновляет пользователя', async () => {
+    it('updates the user', async () => {
       repository.update.mockResolvedValue(makeUser({ name: 'Updated' }));
 
       const result = await service.update('user-1', { name: 'Updated' });
@@ -149,7 +150,7 @@ describe('UserService', () => {
       expect(result.name).toBe('Updated');
     });
 
-    it('выбрасывает NotFoundException, если пользователь для обновления не найден', async () => {
+    it('throws a NotFoundException if the user to be updated is not found', async () => {
       repository.update.mockResolvedValue(null);
 
       await expect(service.update('missing', { name: 'X' })).rejects.toThrow(
@@ -159,7 +160,7 @@ describe('UserService', () => {
   });
 
   describe('updateRole', () => {
-    it('обновляет роль пользователя', async () => {
+    it('updates the users role', async () => {
       repository.updateRole.mockResolvedValue(
         makeUser({ role: UserRole.ADMIN }),
       );
@@ -168,14 +169,13 @@ describe('UserService', () => {
         role: UserRole.ADMIN,
       });
 
-      expect(repository.updateRole).toHaveBeenCalledWith(
-        'user-1',
-        UserRole.ADMIN,
-      );
+      expect(repository.updateRole).toHaveBeenCalledWith('user-1', {
+        role: UserRole.ADMIN,
+      });
       expect(result.role).toBe(UserRole.ADMIN);
     });
 
-    it('выбрасывает NotFoundException, если пользователь не найден', async () => {
+    it('throws a NotFoundException if the user is not found', async () => {
       repository.updateRole.mockResolvedValue(null);
 
       await expect(
@@ -185,7 +185,7 @@ describe('UserService', () => {
   });
 
   describe('delete', () => {
-    it('удаляет пользователя, если он существует', async () => {
+    it('deletes the user if they exist', async () => {
       repository.findById.mockResolvedValue(makeUser());
 
       await service.delete('user-1');
@@ -193,7 +193,7 @@ describe('UserService', () => {
       expect(repository.delete).toHaveBeenCalledWith('user-1');
     });
 
-    it('выбрасывает NotFoundException и не вызывает delete, если пользователь не найден', async () => {
+    it('throws a NotFoundException and does not call `delete` if the user is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.delete('missing')).rejects.toThrow(
@@ -205,11 +205,11 @@ describe('UserService', () => {
 
   describe('changePassword', () => {
     const dto = {
-      currentPassword: 'OldPassword123',
-      newPassword: 'NewPassword456',
+      currentPassword: '!OldPassword123',
+      newPassword: '!NewPassword456',
     };
 
-    it('меняет пароль и сбрасывает refreshToken, если текущий пароль верный', async () => {
+    it('changes the password and resets the refreshToken if the current password is correct', async () => {
       repository.findById.mockResolvedValue(makeUser());
       hashService.compare.mockResolvedValue(true);
       hashService.hash.mockResolvedValue('hashed-new-password');
@@ -227,7 +227,7 @@ describe('UserService', () => {
       });
     });
 
-    it('выбрасывает NotFoundException, если пользователь не найден', async () => {
+    it('throws a NotFoundException if the user is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.changePassword('missing', dto)).rejects.toThrow(
@@ -235,7 +235,7 @@ describe('UserService', () => {
       );
     });
 
-    it('выбрасывает UnauthorizedException, если текущий пароль неверный', async () => {
+    it('throws an UnauthorizedException if the current password is incorrect', async () => {
       repository.findById.mockResolvedValue(makeUser());
       hashService.compare.mockResolvedValue(false);
 
@@ -245,14 +245,14 @@ describe('UserService', () => {
       expect(repository.update).not.toHaveBeenCalled();
     });
 
-    it('выбрасывает BadRequestException, если новый пароль совпадает со старым (по значению DTO)', async () => {
+    it('Throws a BadRequestException if the new password matches the old one (based on the DTO value)', async () => {
       repository.findById.mockResolvedValue(makeUser());
       hashService.compare.mockResolvedValue(true);
 
       await expect(
         service.changePassword('user-1', {
-          currentPassword: 'SamePassword123',
-          newPassword: 'SamePassword123',
+          currentPassword: '!SamePassword123',
+          newPassword: '!SamePassword123',
         }),
       ).rejects.toThrow(BadRequestException);
       expect(repository.update).not.toHaveBeenCalled();

@@ -146,7 +146,7 @@ describe('Orders (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
-      // у admin своих заказов нет
+      
       const { data } = asEnvelope<PaginatedPayload<OrderPayload>>(res.body);
       expect(data.items).toEqual([]);
     });

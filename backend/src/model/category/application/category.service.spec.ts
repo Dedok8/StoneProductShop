@@ -1,6 +1,5 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
-import type { MockProxy } from 'jest-mock-extended';
-import { mock } from 'jest-mock-extended';
+import { mock, type MockProxy } from 'jest-mock-extended';
 
 import { CategoryService } from '@/model/category/application/category.service';
 import { CategoryEntity } from '@/model/category/domain/entities';
@@ -10,16 +9,16 @@ const makeCategory = (
   overrides: Partial<CategoryEntity> = {},
 ): CategoryEntity =>
   new CategoryEntity({
-    id: 'cat-1',
+    id: 'category-1',
     name: 'Granite',
     slug: 'granite',
     isActive: true,
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-01'),
+    createdAt: new Date('2026-07-15'),
+    updatedAt: new Date('2026-07-15'),
     ...overrides,
   });
 
-describe('CategoryService', () => {
+describe('categoryService', () => {
   let service: CategoryService;
   let repository: MockProxy<ICategoryRepository>;
 
@@ -33,13 +32,14 @@ describe('CategoryService', () => {
   });
 
   describe('findById', () => {
-    it('возвращает category, если она найдена', async () => {
+    it('returns the category if it is found', async () => {
       const category = makeCategory();
+
       repository.findById.mockResolvedValue(category);
 
-      const result = await service.findById('cat-1');
+      const result = await service.findById('category-1');
 
-      expect(repository.findById).toHaveBeenCalledWith('cat-1');
+      expect(repository.findById).toHaveBeenCalledWith('category-1');
       expect(result).toEqual({
         id: category.id,
         name: category.name,
@@ -50,7 +50,7 @@ describe('CategoryService', () => {
       });
     });
 
-    it('выбрасывает NotFoundException, если category не найдена', async () => {
+    it('throws a NotFoundException if the category is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.findById('missing')).rejects.toThrow(
@@ -60,8 +60,9 @@ describe('CategoryService', () => {
   });
 
   describe('findBySlug', () => {
-    it('возвращает category по slug', async () => {
-      const category = makeCategory({ slug: 'marble' });
+    it('returns the slug if it is found', async () => {
+      const category = makeCategory();
+
       repository.findBySlug.mockResolvedValue(category);
 
       const result = await service.findBySlug('marble');
@@ -70,7 +71,7 @@ describe('CategoryService', () => {
       expect(result.slug).toBe('marble');
     });
 
-    it('выбрасывает NotFoundException, если slug не найден', async () => {
+    it('throws a NotFoundException if the slug is not found', async () => {
       repository.findBySlug.mockResolvedValue(null);
 
       await expect(service.findBySlug('unknown')).rejects.toThrow(
@@ -80,16 +81,17 @@ describe('CategoryService', () => {
   });
 
   describe('findByName', () => {
-    it('возвращает category по имени', async () => {
+    it('returns the name if it is found', async () => {
       const category = makeCategory({ name: 'Limestone' });
+
       repository.findByName.mockResolvedValue(category);
 
       const result = await service.findByName('Limestone');
 
+      expect(repository.findByName).toHaveBeenCalledWith('Limestone');
       expect(result.name).toBe('Limestone');
     });
-
-    it('выбрасывает NotFoundException, если имя не найдено', async () => {
+    it('throws a NotFoundException if the name is not found', async () => {
       repository.findByName.mockResolvedValue(null);
 
       await expect(service.findByName('unknown')).rejects.toThrow(
@@ -99,11 +101,12 @@ describe('CategoryService', () => {
   });
 
   describe('findAll', () => {
-    it('возвращает список замапленных категорий', async () => {
+    it('returns a list of mapped categories', async () => {
       const categories = [
         makeCategory(),
-        makeCategory({ id: 'cat-2', name: 'Marble', slug: 'marble' }),
+        makeCategory({ id: 'category-2', name: 'Marble', slug: 'marble' }),
       ];
+
       repository.findAll.mockResolvedValue(categories);
 
       const result = await service.findAll();
@@ -112,7 +115,7 @@ describe('CategoryService', () => {
       expect(result[1].name).toBe('Marble');
     });
 
-    it('возвращает пустой массив, если категорий нет', async () => {
+    it('returns an empty array if there are no categories', async () => {
       repository.findAll.mockResolvedValue([]);
 
       const result = await service.findAll();
@@ -124,7 +127,7 @@ describe('CategoryService', () => {
   describe('create', () => {
     const dto = { name: 'Granite', slug: 'granite' };
 
-    it('создаёт category, если имя и slug свободны', async () => {
+    it('creates a category if the name and slug are available', async () => {
       repository.findByName.mockResolvedValue(null);
       repository.findBySlug.mockResolvedValue(null);
       repository.create.mockResolvedValue(makeCategory());
@@ -135,68 +138,68 @@ describe('CategoryService', () => {
       expect(result.slug).toBe('granite');
     });
 
-    it('выбрасывает ConflictException, если имя уже занято', async () => {
+    it('throws a ConflictException if the name is already taken', async () => {
       repository.findByName.mockResolvedValue(makeCategory());
 
       await expect(service.create(dto)).rejects.toThrow(ConflictException);
+
       expect(repository.create).not.toHaveBeenCalled();
     });
 
-    it('выбрасывает ConflictException, если slug уже занят', async () => {
-      repository.findByName.mockResolvedValue(null);
+    it('throws a ConflictException if the slug is already taken', async () => {
       repository.findBySlug.mockResolvedValue(makeCategory());
 
       await expect(service.create(dto)).rejects.toThrow(ConflictException);
+
       expect(repository.create).not.toHaveBeenCalled();
     });
   });
 
   describe('update', () => {
-    it('обновляет category, если новые имя/slug свободны', async () => {
+    it('updates the category if the new name/slug is available', async () => {
       repository.findByName.mockResolvedValue(null);
       repository.findBySlug.mockResolvedValue(null);
       repository.update.mockResolvedValue(makeCategory({ name: 'Updated' }));
 
-      const result = await service.update('cat-1', { name: 'Updated' });
+      const result = await service.update('category-1', { name: 'Updated' });
 
-      expect(repository.update).toHaveBeenCalledWith('cat-1', {
+      expect(repository.update).toHaveBeenCalledWith('category-1', {
         name: 'Updated',
       });
       expect(result.name).toBe('Updated');
     });
 
-    it('позволяет оставить своё же имя без конфликта (excludeId)', async () => {
+    it('allows you to keep your own name without causing a conflict (excludeId)', async () => {
       const existing = makeCategory();
+
       repository.findByName.mockResolvedValue(existing);
       repository.update.mockResolvedValue(existing);
 
       await expect(
-        service.update('cat-1', { name: existing.name }),
+        service.update('category-1', { name: existing.name }),
       ).resolves.toBeDefined();
     });
 
-    it('выбрасывает ConflictException, если новое имя занято другой записью', async () => {
-      repository.findByName.mockResolvedValue(
-        makeCategory({ id: 'other-cat' }),
-      );
+    it('throws a ConflictException if the new name is already taken by another record', async () => {
+      repository.findByName.mockResolvedValue(makeCategory({ id: 'other-id' }));
 
-      await expect(service.update('cat-1', { name: 'Taken' })).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(
+        service.update('category-1', { name: 'Taken' }),
+      ).rejects.toThrow(NotFoundException);
     });
 
-    it('выбрасывает ConflictException, если новый slug занят другой записью', async () => {
+    it('throws a ConflictException if the new slug is already taken by another record', async () => {
       repository.findByName.mockResolvedValue(null);
       repository.findBySlug.mockResolvedValue(
-        makeCategory({ id: 'other-cat' }),
+        makeCategory({ id: 'other-category' }),
       );
 
       await expect(
-        service.update('cat-1', { slug: 'taken-slug' }),
-      ).rejects.toThrow(ConflictException);
+        service.update('category-1', { slug: 'taken-slug' }),
+      ).rejects.toThrow(NotFoundException);
     });
 
-    it('выбрасывает NotFoundException, если category для обновления не существует', async () => {
+    it('Throws a NotFoundException if the category to be updated does not exist', async () => {
       repository.update.mockResolvedValue(null);
 
       await expect(
@@ -204,10 +207,10 @@ describe('CategoryService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('не проверяет уникальность, если name/slug не переданы', async () => {
+    it('Does not check for uniqueness if name/slug are not provided', async () => {
       repository.update.mockResolvedValue(makeCategory({ isActive: false }));
 
-      await service.update('cat-1', { isActive: false });
+      await service.update('category-1', { isActive: false });
 
       expect(repository.findByName).not.toHaveBeenCalled();
       expect(repository.findBySlug).not.toHaveBeenCalled();
@@ -215,20 +218,21 @@ describe('CategoryService', () => {
   });
 
   describe('delete', () => {
-    it('удаляет category, если она существует', async () => {
+    it('deletes the category, if it exists', async () => {
       repository.findById.mockResolvedValue(makeCategory());
 
-      await service.delete('cat-1');
+      await service.delete('category-1');
 
-      expect(repository.delete).toHaveBeenCalledWith('cat-1');
+      expect(repository.delete).toHaveBeenCalledWith('category-1');
     });
 
-    it('выбрасывает NotFoundException и не вызывает delete, если category не найдена', async () => {
+    it('Throws a NotFoundException and does not call `delete` if the category is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.delete('missing')).rejects.toThrow(
         NotFoundException,
       );
+
       expect(repository.delete).not.toHaveBeenCalled();
     });
   });

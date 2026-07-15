@@ -15,7 +15,7 @@ const makeOrderItem = (
     id: 'item-1',
     quantity: 2,
     price: 15000,
-    productId: 'prod-1',
+    productId: 'product-1',
     orderId: 'order-1',
     ...overrides,
   });
@@ -33,8 +33,8 @@ const makeOrder = (
     status: OrderStatus.PENDING,
     items: [makeOrderItem()],
     userId: 'user-1',
-    createdAt: new Date('2026-01-01'),
-    updatedAt: new Date('2026-01-01'),
+    createdAt: new Date('2026-07-15'),
+    updatedAt: new Date('2026-07-15'),
     ...overrides,
   });
 
@@ -52,7 +52,7 @@ describe('OrderService', () => {
   });
 
   describe('findById', () => {
-    it('возвращает заказ, если он найден и userId не передан (доступ администратора)', async () => {
+    it('returns the order if it is found and the userId is not provided (administrator access)', async () => {
       const order = makeOrder();
       repository.findById.mockResolvedValue(order);
 
@@ -62,7 +62,7 @@ describe('OrderService', () => {
       expect(result.total).toBe(30000);
     });
 
-    it('возвращает заказ, если userId совпадает с владельцем', async () => {
+    it('returns the order if the userId matches the owners', async () => {
       const order = makeOrder({ userId: 'user-1' });
       repository.findById.mockResolvedValue(order);
 
@@ -71,7 +71,7 @@ describe('OrderService', () => {
       expect(result.userId).toBe('user-1');
     });
 
-    it('выбрасывает NotFoundException, если заказ не найден', async () => {
+    it('throws a NotFoundException if the order is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(service.findById('missing')).rejects.toThrow(
@@ -79,7 +79,7 @@ describe('OrderService', () => {
       );
     });
 
-    it('выбрасывает NotFoundException, если userId не совпадает с владельцем (маскировка чужого заказа)', async () => {
+    it('Throws a NotFoundException if the userId does not match the owner (attempt to pass off someone else order as your own)', async () => {
       const order = makeOrder({ userId: 'owner-A' });
       repository.findById.mockResolvedValue(order);
 
@@ -90,7 +90,7 @@ describe('OrderService', () => {
   });
 
   describe('findAll', () => {
-    it('возвращает пагинированный список заказов', async () => {
+    it('returns a paginated list of orders', async () => {
       repository.findAll.mockResolvedValue({
         items: [makeOrder(), makeOrder({ id: 'order-2' })],
         total: 2,
@@ -104,7 +104,7 @@ describe('OrderService', () => {
       expect(result.meta.total).toBe(2);
     });
 
-    it('подставляет дефолтные page/limit, если query их не содержит', async () => {
+    it('sets the default page/limit values if the query does not include them', async () => {
       repository.findAll.mockResolvedValue({ items: [], total: 0 });
 
       const result = await service.findAll({});
@@ -115,7 +115,7 @@ describe('OrderService', () => {
   });
 
   describe('create', () => {
-    it('создаёт заказ для пользователя с переданными позициями', async () => {
+    it('creates an order for the user with the specified items', async () => {
       const dto = { items: [{ productId: 'prod-1', quantity: 2 }] };
       repository.create.mockResolvedValue(makeOrder());
 
@@ -130,7 +130,7 @@ describe('OrderService', () => {
   });
 
   describe('updateStatus', () => {
-    it('переводит заказ из PENDING в PAID (разрешённый переход)', async () => {
+    it('Changes the order status from PENDING to PAID (allowed transition)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );
@@ -147,7 +147,7 @@ describe('OrderService', () => {
       expect(result.status).toBe(OrderStatus.PAID);
     });
 
-    it('переводит заказ из PENDING в CANCELLED (разрешённый переход)', async () => {
+    it('changes the order status from PENDING to CANCELLED (allowed transition)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );
@@ -163,7 +163,7 @@ describe('OrderService', () => {
       expect(result.status).toBe(OrderStatus.CANCELLED);
     });
 
-    it('выбрасывает BadRequestException при недопустимом переходе (PENDING → SHIPPED)', async () => {
+    it('Throws a BadRequestException if an invalid transition occurs (PENDING → SHIPPED)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );
@@ -174,7 +174,7 @@ describe('OrderService', () => {
       expect(repository.updateStatus).not.toHaveBeenCalled();
     });
 
-    it('выбрасывает BadRequestException при попытке изменить статус завершённого заказа', async () => {
+    it('Throws a BadRequestException when attempting to change the status of a completed order', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.COMPLETED }),
       );
@@ -184,7 +184,7 @@ describe('OrderService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('выбрасывает BadRequestException при попытке изменить статус отменённого заказа', async () => {
+    it('Throws a BadRequestException when attempting to change the status of a canceled order', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.CANCELLED }),
       );
@@ -194,7 +194,7 @@ describe('OrderService', () => {
       ).rejects.toThrow(BadRequestException);
     });
 
-    it('выбрасывает NotFoundException, если заказ не найден', async () => {
+    it('throws a NotFoundException if the order is not found', async () => {
       repository.findById.mockResolvedValue(null);
 
       await expect(
@@ -203,7 +203,7 @@ describe('OrderService', () => {
       expect(repository.updateStatus).not.toHaveBeenCalled();
     });
 
-    it('выбрасывает NotFoundException, если заказ исчез между findById и updateStatus (гонка)', async () => {
+    it('Throws a NotFoundException if the order disappears between `findById` and `updateStatus` (race condition)', async () => {
       repository.findById.mockResolvedValue(
         makeOrder({ status: OrderStatus.PENDING }),
       );

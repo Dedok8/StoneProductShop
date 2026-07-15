@@ -1,8 +1,0 @@
-postgres-test:
-  image: postgres:16-alpine
-  environment:
-    POSTGRES_USER: user
-    POSTGRES_PASSWORD: pass
-    POSTGRES_DB: stoneproductshop_test
-  ports:
-    - '5433:5432'
