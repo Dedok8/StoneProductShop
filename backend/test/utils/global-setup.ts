@@ -1,4 +1,4 @@
-import { setupTestDatabase } from 'test/utils/test-db.setup';
+import { setupTestDatabase } from './test-db.setup';
 
 export default async function globalSetup() {
   await setupTestDatabase();

@@ -1,6 +1,6 @@
-import { CategoryFixture } from 'test/fixtures/category.fixture';
-import { ProductFixture } from 'test/fixtures/product.fixture';
-import { UserFixture } from 'test/fixtures/user.fixture';
+import { CategoryFixture } from '../fixtures/category.fixture';
+import { ProductFixture } from '../fixtures/product.fixture';
+import { UserFixture } from '../fixtures/user.fixture';
 
 import { OrderStatus } from '@/generated/prisma/enums';
 import { InsufficientStockError, OrderRepository } from '@/model';

@@ -21,7 +21,7 @@ describe('CategoryRepository', () => {
   const cache = {
     getJson: jest.fn(),
     setJson: jest.fn(),
-    del: jest.fn(),
+    deleteByPattern: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -151,7 +151,11 @@ describe('CategoryRepository', () => {
       });
 
       expect(prisma.category.create).toHaveBeenCalled();
-
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:id:1');
+      expect(cache.deleteByPattern).toHaveBeenCalledWith(
+        'category:slug:granite',
+      );
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:list*');
       expect(result.name).toBe('Granite');
     });
   });
@@ -169,8 +173,12 @@ describe('CategoryRepository', () => {
       });
 
       expect(prisma.category.update).toHaveBeenCalled();
-
       expect(result?.name).toBe('Updated');
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:id:1');
+      expect(cache.deleteByPattern).toHaveBeenCalledWith(
+        'category:slug:updated',
+      );
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:list*');
     });
   });
 
@@ -187,6 +195,8 @@ describe('CategoryRepository', () => {
       expect(prisma.category.delete).toHaveBeenCalledWith({
         where: { id: '1' },
       });
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:id:1');
+      expect(cache.deleteByPattern).toHaveBeenCalledWith('category:list*');
     });
   });
 });
