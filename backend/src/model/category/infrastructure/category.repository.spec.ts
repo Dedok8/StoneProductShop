@@ -1,8 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { CategoryRepository } from './category.repository';
-
+import { CategoryRepository } from '@/model/category/infrastructure/category.repository';
 import { PrismaService, RedisCacheService } from '@/shared';
 
 describe('CategoryRepository', () => {

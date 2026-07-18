@@ -1,5 +1,5 @@
+import type { OrderStatus } from '@/generated/prisma/enums';
 import { OrderItemResponse } from '@/model/order/application/dto/order-item.response.dto';
-import type { OrderStatus } from '@/model/order/domain/entities/order.entity';
 
 export class OrderResponse {
   readonly id: string;

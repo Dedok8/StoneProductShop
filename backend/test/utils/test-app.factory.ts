@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
-import { ThrottlerGuard } from '@nestjs/throttler';
 import cookieParser from 'cookie-parser';
 import type { App } from 'supertest/types';
 
@@ -21,10 +20,7 @@ import {
 export async function createTestApp(): Promise<INestApplication<App>> {
   const moduleRef: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
-  })
-    .overrideGuard(ThrottlerGuard)
-    .useValue({ canActivate: () => true })
-    .compile();
+  }).compile();
 
   const app = moduleRef.createNestApplication();
 

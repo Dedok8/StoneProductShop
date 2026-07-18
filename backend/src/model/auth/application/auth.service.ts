@@ -12,7 +12,11 @@ import {
 } from '@/model/auth/application/dto';
 import { TokenService } from '@/model/auth/application/token';
 import { ITokenPair } from '@/model/auth/domain';
-import { IUserRepository, USER_REPOSITORY, UserEntity } from '@/model/user';
+import {
+  type IUserRepository,
+  USER_REPOSITORY,
+  UserEntity,
+} from '@/model/user';
 import { HashService } from '@/shared';
 
 @Injectable()

@@ -2,10 +2,12 @@ import { NotFoundException } from '@nestjs/common';
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { InsufficientStockError, OrderRepository } from './order.repository';
-
 import { Prisma } from '@/generated/prisma/client';
 import { OrderStatus } from '@/generated/prisma/enums';
+import {
+  InsufficientStockError,
+  OrderRepository,
+} from '@/model/order/infrastructure/order.repository';
 import { PrismaService } from '@/shared';
 
 describe('OrderRepository', () => {
@@ -74,7 +76,7 @@ describe('OrderRepository', () => {
 
   describe('findAll', () => {
     it('should load orders from db and apply filters', async () => {
-      prisma.order.findMany.mockResolvedValue([{ id: '1' }]);
+      prisma.order.findMany.mockResolvedValue([{ id: '1', items: [] }]);
       prisma.order.count.mockResolvedValue(1);
 
       const result = await repository.findAll({
@@ -107,7 +109,7 @@ describe('OrderRepository', () => {
         { id: '1', price: { toNumber: () => 100 }, stock: 5 },
       ]);
       prisma.product.updateMany.mockResolvedValue({ count: 1 });
-      prisma.order.create.mockResolvedValue({ id: '1' });
+      prisma.order.create.mockResolvedValue({ id: '1', items: [] });
 
       const result = await repository.create({
         userId: '2',

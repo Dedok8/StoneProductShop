@@ -2,14 +2,14 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
+import { ProductService } from '@/model/product/application';
 import type { ProductQueryDto } from '@/model/product/application/dto';
-import { ProductService } from '@/model/product/application/product.service';
 import type { IProductRepository } from '@/model/product/domain';
 import { ProductEntity } from '@/model/product/domain';
 
 const makeProduct = (overrides: Partial<ProductEntity> = {}): ProductEntity =>
   new ProductEntity({
-    id: 'prod-1',
+    id: 'product-1',
     name: 'Granite Slab',
     slug: 'granite-slab',
     description: 'Premium stone',
@@ -47,7 +47,7 @@ describe('productService', () => {
 
       expect(repository.findById).toHaveBeenCalledWith('product-1');
       expect(result.id).toBe('product-1');
-      expect(result.price).toBe(150000);
+      expect(result.price).toBe(15000);
     });
 
     it('throws a NotFoundException if the product is not found', async () => {
@@ -135,7 +135,7 @@ describe('productService', () => {
       price: 15000,
       stock: 10,
       images: ['https://example.com/1.jpg'],
-      categoryId: 'cat-1',
+      categoryId: 'category-1',
     } as Parameters<ProductService['create']>[0];
 
     it('creates a product with the specified ownerId, provided the name and slug are available', async () => {
@@ -188,22 +188,22 @@ describe('productService', () => {
 
     it('throws a ConflictException if the new name is already taken by another product', async () => {
       repository.findByName.mockResolvedValue(
-        makeProduct({ id: 'other-prod' }),
+        makeProduct({ id: 'other-product' }),
       );
 
-      await expect(service.update('prod-1', { name: 'Taken' })).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(
+        service.update('product-1', { name: 'Taken' }),
+      ).rejects.toThrow(ConflictException);
     });
 
     it('throws a ConflictException if the new slug is already taken by another product', async () => {
       repository.findByName.mockResolvedValue(null);
       repository.findBySlug.mockResolvedValue(
-        makeProduct({ id: 'other-prod' }),
+        makeProduct({ id: 'other-product' }),
       );
 
       await expect(
-        service.update('prod-1', { slug: 'taken-slug' }),
+        service.update('product-1', { slug: 'taken-slug' }),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -218,7 +218,7 @@ describe('productService', () => {
     it('does not check for uniqueness if name/slug are not provided', async () => {
       repository.update.mockResolvedValue(makeProduct({ stock: 5 }));
 
-      await service.update('prod-1', { stock: 5 });
+      await service.update('product-1', { stock: 5 });
 
       expect(repository.findByName).not.toHaveBeenCalled();
       expect(repository.findBySlug).not.toHaveBeenCalled();
@@ -229,7 +229,7 @@ describe('productService', () => {
     it('deletes the product if it exists', async () => {
       repository.findById.mockResolvedValue(makeProduct());
 
-      await service.delete('prod-1');
+      await service.delete('product-1');
 
       expect(repository.delete).toHaveBeenCalledWith('product-1');
     });

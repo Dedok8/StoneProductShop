@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/model/order/domain/entities/order.entity';
+import type { OrderStatus } from '@/generated/prisma/enums';
 
 export interface OrderResponseDto {
   id: string;

@@ -15,12 +15,13 @@ import {
   UserQueryDto,
 } from '@/model/user/application/dto';
 import { UserMapper } from '@/model/user/application/mapper';
-import { IUserRepository, USER_REPOSITORY } from '@/model/user/domain';
+import { type IUserRepository, USER_REPOSITORY } from '@/model/user/domain';
 import {
   assertFound,
   ensureUnique,
   HashService,
   PaginationMetaDto,
+  UserRole,
 } from '@/shared';
 
 @Injectable()
@@ -71,7 +72,7 @@ export class UserService {
       name: dto.name,
       email: dto.email,
       passwordHash,
-      role: dto.role,
+      role: dto.role ?? UserRole.USER,
     });
 
     return UserMapper.toResponse(user);

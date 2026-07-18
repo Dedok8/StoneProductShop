@@ -10,7 +10,7 @@ import type {
   PaginatedOrderResponseDto,
   UpdateOrderStatusDto,
 } from '@/model/order/application';
-import { OrderController } from '@/model/order/presentation/order.controller';
+import { OrderController } from '@/model/order/presentation';
 import { UserRole } from '@/shared';
 
 describe('orderController', () => {

@@ -43,4 +43,8 @@ export class RedisCacheService {
       if (keys.length) await this.redis.del(...keys);
     } while (cursor !== '0');
   }
+
+  async flushAll(): Promise<void> {
+    await this.redis.flushdb();
+  }
 }

@@ -1,8 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { ProductRepository } from './product.repository';
-
+import { ProductRepository } from '@/model/product/infrastructure/product.repository';
 import { PrismaService, RedisCacheService } from '@/shared';
 
 describe('ProductRepository', () => {
@@ -89,6 +88,7 @@ describe('ProductRepository', () => {
       prisma.product.findUnique.mockResolvedValue({
         id: '1',
         slug: 'granite-slab',
+        price: { toNumber: () => 999 },
       });
 
       const result = await repository.findBySlug('granite-slab');
@@ -105,6 +105,7 @@ describe('ProductRepository', () => {
       prisma.product.findFirst.mockResolvedValue({
         id: '1',
         name: 'Granite Slab',
+        price: { toNumber: () => 999 },
       });
 
       const result = await repository.findByName('Granite Slab');
@@ -120,23 +121,23 @@ describe('ProductRepository', () => {
   });
 
   describe('findAll', () => {
-    it('should return cached products', async () => {
+    it('should return cached product', async () => {
       cache.getJson.mockResolvedValue({
-        items: [{ id: '1', name: 'Granite Slab' }],
-        total: 1,
+        id: '1',
+        name: 'Granite Slab',
+        price: 999,
       });
 
-      const result = await repository.findAll({});
+      const result = await repository.findById('1');
 
-      expect(prisma.product.findMany).not.toHaveBeenCalled();
-      expect(result.total).toBe(1);
-      expect(result.items).toHaveLength(1);
+      expect(prisma.product.findUnique).not.toHaveBeenCalled();
+      expect(result?.id).toBe('1');
     });
 
     it('should load products from db and cache them', async () => {
       cache.getJson.mockResolvedValue(null);
       prisma.product.findMany.mockResolvedValue([
-        { id: '1', name: 'Granite Slab' },
+        { id: '1', name: 'Granite Slab', price: { toNumber: () => 999 } },
       ]);
       prisma.product.count.mockResolvedValue(1);
 
@@ -158,6 +159,7 @@ describe('ProductRepository', () => {
         id: '1',
         name: 'Granite Slab',
         slug: 'granite-slab',
+        price: { toNumber: () => 999 },
       });
 
       const result = await repository.create({
@@ -185,6 +187,7 @@ describe('ProductRepository', () => {
       prisma.product.update.mockResolvedValue({
         id: '1',
         name: 'Updated Slab',
+        price: { toNumber: () => 999 },
       });
 
       const result = await repository.update('1', {

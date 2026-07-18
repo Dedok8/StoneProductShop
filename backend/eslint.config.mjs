@@ -69,7 +69,11 @@ export default tseslint.config(
     files: ['**/*.spec.ts', 'test/**/*.ts'],
     plugins: { jest },
     rules: {
+      '@typescript-eslint/no-unsafe-enum-comparison': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/unbound-method': 'off',
+      'jest/unbound-method': 'error',
       'jest/unbound-method': 'error',
     },
   },

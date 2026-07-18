@@ -7,8 +7,9 @@
     "^.+\\.(t|j)s$": "ts-jest"
   },
   "globalSetup": "<rootDir>/utils/global-setup.ts",
-  "setupFilesAfterEnv": ["<rootDir>/setup-e2e.ts"],
+  "setupFilesAfterEnv": ["<rootDir>/utils/setup.e2e.ts"],
   "moduleNameMapper": {
-    "^@/(.*)$": "<rootDir>/../src/$1"
+    "^@/(.*)$": "<rootDir>/../src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   }
 }

@@ -7,6 +7,7 @@ import {
 import { PrismaPg } from '@prisma/adapter-pg';
 
 import { Prisma, PrismaClient } from '@/generated/prisma/client';
+import { RedisCacheService } from '@/shared/redis';
 
 @Injectable()
 export class PrismaService
@@ -15,7 +16,7 @@ export class PrismaService
 {
   private readonly logger = new Logger(PrismaService.name);
 
-  constructor() {
+  constructor(private readonly redis: RedisCacheService) {
     const adapter = new PrismaPg({
       connectionString: process.env.DATABASE_URL,
       connectionTimeoutMillis: 5000,
@@ -77,9 +78,10 @@ export class PrismaService
     for (const { tablename } of tablenames) {
       if (tablename !== '_prisma_migrations') {
         await this.$executeRawUnsafe(
-          `TRUNCATE TABLE "${tablename}" CASCADE RESTART IDENTITY;`,
+          `TRUNCATE TABLE "${tablename}" RESTART IDENTITY CASCADE;`,
         );
       }
     }
+    await this.redis.flushAll();
   }
 }

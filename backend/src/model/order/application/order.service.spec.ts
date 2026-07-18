@@ -3,8 +3,8 @@ import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
 import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderService } from '@/model/order/application';
 import type { OrderQueryDto } from '@/model/order/application/dto';
-import { OrderService } from '@/model/order/application/order.service';
 import { OrderEntity, OrderItemEntity } from '@/model/order/domain/entities';
 import type { IOrderRepository } from '@/model/order/domain/interfaces';
 

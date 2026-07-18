@@ -9,6 +9,12 @@ export interface RegisteredSession {
   refreshCookie: string;
 }
 
+interface AuthResponse {
+  data: {
+    accessToken: string;
+  };
+}
+
 export async function registerAndLogin(
   app: INestApplication<App>,
   overrides: { name?: string; email?: string; password?: string } = {},
@@ -27,10 +33,14 @@ export async function registerAndLogin(
     .expect(201);
 
   const setCookie = res.headers['set-cookie'];
-  const refreshCookie = Array.isArray(setCookie) ? setCookie[0] : setCookie;
+  const refreshCookie = (
+    Array.isArray(setCookie) ? (setCookie[0] ?? '') : (setCookie ?? '')
+  ) as string;
+
+  const body = res.body as AuthResponse;
 
   return {
-    accessToken: res.body.data.accessToken as string,
+    accessToken: body.data.accessToken,
     refreshCookie,
   };
 }
@@ -55,8 +65,10 @@ export async function loginAs(
     .send({ email: user.email, password: DEFAULT_PASSWORD })
     .expect(200);
 
+  const body = res.body as AuthResponse;
+
   return {
-    accessToken: res.body.data.accessToken as string,
+    accessToken: body.data.accessToken,
     userId: user.id,
     email: user.email,
   };

@@ -3,8 +3,8 @@ import type { Reflector } from '@nestjs/core';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
-import { RolesGuard } from '@/shared/guards/role/roles.guard';
-import { UserRole } from '@/shared/guards/role/user-role';
+import { RolesGuard } from '@/shared/guards/role';
+import { UserRole } from '@/shared/guards/role';
 
 describe('rolesGuard', () => {
   let guard: RolesGuard;

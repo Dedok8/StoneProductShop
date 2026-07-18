@@ -1,9 +1,8 @@
 import type { ArgumentsHost } from '@nestjs/common';
 import { HttpStatus, Logger } from '@nestjs/common';
 
-import { PrismaExceptionFilter } from './prisma-exception.filter';
-
 import type { Prisma } from '@/generated/prisma/client';
+import { PrismaExceptionFilter } from '@/shared/filters/prisma-exception.filter';
 
 interface ErrorResponseBody {
   statusCode: number;

@@ -14,7 +14,7 @@ export class RedisService
 {
   private readonly logger = new Logger(RedisService.name);
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService,) {
     super({
       host: configService.get<string>('REDIS_HOST', 'localhost'),
       port: configService.get<number>('REDIS_PORT', 6379),

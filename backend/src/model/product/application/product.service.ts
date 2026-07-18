@@ -1,5 +1,14 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
+import {
+  CATEGORY_REPOSITORY,
+  type ICategoryRepository,
+} from '@/model/category/domain/interfaces';
 import {
   CreateProductDto,
   PaginatedProductResponseDto,
@@ -7,7 +16,10 @@ import {
 } from '@/model/product/application/dto';
 import { ProductQueryDto } from '@/model/product/application/dto/product.query.dto';
 import { ProductMapper } from '@/model/product/application/mapper';
-import { IProductRepository, PRODUCT_REPOSITORY } from '@/model/product/domain';
+import {
+  type IProductRepository,
+  PRODUCT_REPOSITORY,
+} from '@/model/product/domain';
 import { assertFound, ensureUnique, PaginationMetaDto } from '@/shared';
 
 @Injectable()
@@ -15,6 +27,8 @@ export class ProductService {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productRepository: IProductRepository,
+    @Inject(CATEGORY_REPOSITORY)
+    private readonly categoryRepository: ICategoryRepository,
   ) {}
 
   async findById(id: string) {
@@ -65,6 +79,13 @@ export class ProductService {
       undefined,
       'Product slug is already in use',
     );
+
+    const category = await this.categoryRepository.findById(dto.categoryId);
+    if (!category) {
+      throw new BadRequestException(
+        `Category with id "${dto.categoryId}" does not exist`,
+      );
+    }
 
     const created = await this.productRepository.create({ ...dto, ownerId });
     return ProductMapper.toResponse(created);

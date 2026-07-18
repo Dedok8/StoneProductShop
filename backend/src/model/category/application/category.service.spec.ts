@@ -61,7 +61,7 @@ describe('categoryService', () => {
 
   describe('findBySlug', () => {
     it('returns the slug if it is found', async () => {
-      const category = makeCategory();
+      const category = makeCategory({ slug: 'marble' });
 
       repository.findBySlug.mockResolvedValue(category);
 

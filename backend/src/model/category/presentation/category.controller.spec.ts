@@ -5,6 +5,7 @@ import type { CategoryService } from '@/model/category/application';
 import type { UpdateCategoryDto } from '@/model/category/application/dto';
 import { CategoryController } from '@/model/category/presentation/category.controller';
 
+
 describe('categoryController', () => {
   let controller: CategoryController;
   let service: MockProxy<CategoryService>;

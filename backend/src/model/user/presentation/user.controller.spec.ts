@@ -1,7 +1,7 @@
 import { mock, type MockProxy } from 'jest-mock-extended';
 
 import type { UpdateUserDto, UserService } from '@/model/user/application';
-import { UserController } from '@/model/user/presentation/user.controller';
+import { UserController } from '@/model/user/presentation';
 
 describe('userController', () => {
   let controller: UserController;

@@ -13,7 +13,7 @@ import type {
   IOrderQuery,
   IOrderRepository,
 } from '@/model/order/domain/interfaces';
-import { updateOrNotFound, type PrismaService } from '@/shared';
+import { updateOrNotFound, PrismaService } from '@/shared';
 
 type OrderWithItems = Prisma.OrderGetPayload<{ include: { items: true } }>;
 
@@ -89,7 +89,6 @@ export class OrderRepository implements IOrderRepository {
         }
       }
 
-      
       for (const item of data.items) {
         const result = await tx.product.updateMany({
           where: { id: item.productId, stock: { gte: item.quantity } },

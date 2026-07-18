@@ -8,7 +8,7 @@ import type {
   ProductService,
   UpdateProductDto,
 } from '@/model/product/application';
-import { ProductController } from '@/model/product/presentation/product.controller';
+import { ProductController } from '@/model/product/presentation';
 
 describe('productController', () => {
   let controller: ProductController;

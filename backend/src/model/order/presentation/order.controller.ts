@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 
-import { IAccessTokenPayload } from '@/model/auth/domain';
+import type { IAccessTokenPayload } from '@/model/auth/domain';
 import { OrderService } from '@/model/order/application';
 import {
   CreateOrderDto,

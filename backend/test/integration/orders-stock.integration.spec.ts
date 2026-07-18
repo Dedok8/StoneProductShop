@@ -1,13 +1,21 @@
+import { ConfigService } from '@nestjs/config';
+
 import { CategoryFixture } from '../fixtures/category.fixture';
 import { ProductFixture } from '../fixtures/product.fixture';
 import { UserFixture } from '../fixtures/user.fixture';
 
 import { OrderStatus } from '@/generated/prisma/enums';
 import { InsufficientStockError, OrderRepository } from '@/model';
-import { HashService, PrismaService } from '@/shared';
+import {
+  HashService,
+  PrismaService,
+  RedisCacheService,
+  RedisService,
+} from '@/shared';
 
 describe('Orders — atomic stock decrement (integration)', () => {
   let prisma: PrismaService;
+  let redis: RedisService;
   let orderRepository: OrderRepository;
   let userFixture: UserFixture;
   let productFixture: ProductFixture;
@@ -17,7 +25,11 @@ describe('Orders — atomic stock decrement (integration)', () => {
   let categoryId: string;
 
   beforeAll(async () => {
-    prisma = new PrismaService();
+    redis = new RedisService(new ConfigService());
+    await redis.onModuleInit();
+    const redisCache = new RedisCacheService(redis);
+
+    prisma = new PrismaService(redisCache);
     await prisma.onModuleInit();
 
     orderRepository = new OrderRepository(prisma);
@@ -28,6 +40,8 @@ describe('Orders — atomic stock decrement (integration)', () => {
 
   afterAll(async () => {
     await prisma.onModuleDestroy();
+    await prisma.onModuleDestroy();
+    await redis.onModuleDestroy();
   });
 
   beforeEach(async () => {

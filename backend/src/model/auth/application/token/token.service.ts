@@ -12,7 +12,7 @@ export class TokenService {
     private readonly config: ConfigService,
   ) {}
 
-  signAccessToken(user: UserEntity): Promise<string> {
+  async signAccessToken(user: UserEntity): Promise<string> {
     const payload: IAccessTokenPayload = {
       sub: user.id,
       email: user.email,
@@ -27,7 +27,7 @@ export class TokenService {
     });
   }
 
-  signRefreshToken(user: UserEntity): Promise<string> {
+  async signRefreshToken(user: UserEntity): Promise<string> {
     const payload: IRefreshTokenPayload = {
       sub: user.id,
     };

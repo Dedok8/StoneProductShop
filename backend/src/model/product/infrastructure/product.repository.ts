@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Product } from '@/generated/prisma/client';
+import { Prisma, Product } from '@/generated/prisma/client';
 import {
   ICreateProductData,
   IProductAllResultData,
@@ -31,6 +31,18 @@ const listPattern = 'product:list*';
 const listKey = (query: IProductQuery) =>
   buildQueryCacheKey('product:list', query);
 
+type ProductCached = Omit<Product, 'price'> & { price: number };
+
+const priceToCache = (raw: Product): ProductCached => ({
+  ...raw,
+  price: raw.price.toNumber(),
+});
+
+const priceFromCache = (cached: ProductCached): Product => ({
+  ...cached,
+  price: new Prisma.Decimal(cached.price),
+});
+
 @Injectable()
 export class ProductRepository implements IProductRepository {
   constructor(
@@ -45,6 +57,8 @@ export class ProductRepository implements IProductRepository {
       ttl: DETAIL_TTL_SEC,
       fetch: () => this.prisma.product.findUnique({ where: { id } }),
       entityClass: ProductEntity,
+      toCache: priceToCache,
+      fromCache: priceFromCache,
     });
   }
 
@@ -55,6 +69,8 @@ export class ProductRepository implements IProductRepository {
       ttl: DETAIL_TTL_SEC,
       fetch: () => this.prisma.product.findUnique({ where: { slug } }),
       entityClass: ProductEntity,
+      toCache: priceToCache,
+      fromCache: priceFromCache,
     });
   }
 
@@ -72,11 +88,13 @@ export class ProductRepository implements IProductRepository {
       categoryId: query.categoryId ?? undefined,
     };
 
-    return findManyCached<Product, Product, ProductEntity>({
+    return findManyCached<ProductCached, Product, ProductEntity>({
       cache: this.cache,
       key: listKey(query),
       ttl: LIST_TTL_SEC,
       entityClass: ProductEntity,
+      toCache: priceToCache,
+      fromCache: priceFromCache,
       fetch: async () => {
         const [items, total] = await Promise.all([
           this.prisma.product.findMany({

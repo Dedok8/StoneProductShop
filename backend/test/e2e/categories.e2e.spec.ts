@@ -168,7 +168,7 @@ describe('Categories (e2e)', () => {
       await request(app.getHttpServer())
         .patch('/api/v1/category/00000000-0000-0000-0000-000000000000')
         .set('Authorization', `Bearer ${adminToken}`)
-        .send({ name: 'X' })
+        .send({ name: 'Aaa' })
         .expect(404);
     });
   });

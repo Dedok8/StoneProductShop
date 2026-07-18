@@ -7,7 +7,7 @@ import {
 import { CategoryMapper } from '@/model/category/application/mapper';
 import {
   CATEGORY_REPOSITORY,
-  ICategoryRepository,
+  type ICategoryRepository,
 } from '@/model/category/domain/interfaces';
 import { assertFound, ensureUnique } from '@/shared';
 

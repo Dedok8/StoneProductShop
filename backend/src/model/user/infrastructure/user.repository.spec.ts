@@ -1,8 +1,7 @@
 import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
-import { UserRepository } from './user.repository';
-
+import { UserRepository } from '@/model/user/infrastructure/user.repository';
 import { PrismaService, RedisCacheService } from '@/shared';
 import { UserRole } from '@/shared/guards';
 

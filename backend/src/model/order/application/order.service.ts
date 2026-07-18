@@ -13,7 +13,7 @@ import {
 } from '@/model/order/application/dto';
 import { OrderMapper } from '@/model/order/application/mapper';
 import {
-  IOrderRepository,
+  type IOrderRepository,
   ORDER_REPOSITORY,
 } from '@/model/order/domain/interfaces';
 import { PaginationMetaDto } from '@/shared';

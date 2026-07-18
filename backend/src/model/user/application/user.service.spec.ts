@@ -7,8 +7,8 @@ import {
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
+import { UserService } from '@/model/user/application';
 import type { UserQueryDto } from '@/model/user/application/dto';
-import { UserService } from '@/model/user/application/user.service';
 import type { IUserRepository } from '@/model/user/domain';
 import type { UserRepository } from '@/model/user/infrastructure';
 import { makeUser, UserRole, type HashService } from '@/shared';
@@ -37,8 +37,8 @@ describe('UserService', () => {
       expect(result).toEqual(
         expect.objectContaining({
           id: 'user-1',
-          name: 'John Stone',
-          email: 'john@example.com',
+          name: 'Ivan',
+          email: 'Ivan@example.com',
           role: UserRole.USER,
         }),
       );
@@ -170,9 +170,10 @@ describe('UserService', () => {
         role: UserRole.ADMIN,
       });
 
-      expect(repository.updateRole).toHaveBeenCalledWith('user-1', {
-        role: UserRole.ADMIN,
-      });
+      expect(repository.updateRole).toHaveBeenCalledWith(
+        'user-1',
+        UserRole.ADMIN,
+      );
       expect(result.role).toBe(UserRole.ADMIN);
     });
 
@@ -219,7 +220,7 @@ describe('UserService', () => {
 
       expect(hashService.compare).toHaveBeenCalledWith(
         dto.currentPassword,
-        'hashed-old-password',
+        'hashed-password',
       );
       expect(hashService.hash).toHaveBeenCalledWith(dto.newPassword);
       expect(repository.update).toHaveBeenCalledWith('user-1', {

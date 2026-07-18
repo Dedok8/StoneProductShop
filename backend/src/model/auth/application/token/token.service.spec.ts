@@ -2,7 +2,7 @@ import type { ConfigService } from '@nestjs/config';
 import type { JwtService } from '@nestjs/jwt';
 import { mock, type MockProxy } from 'jest-mock-extended';
 
-import { TokenService } from '@/model/auth/application/token/token.service';
+import { TokenService } from '@/model/auth/application/token';
 import { makeUser } from '@/shared';
 
 describe('TokenService', () => {
@@ -25,7 +25,7 @@ describe('TokenService', () => {
       const user = makeUser();
 
       config.getOrThrow.mockReturnValue('access-secret');
-      config.get.mockReturnValue('15');
+      config.get.mockReturnValue('15m');
       jwtService.signAsync.mockResolvedValue('signed-access-token');
 
       const result = await service.signAccessToken(user);

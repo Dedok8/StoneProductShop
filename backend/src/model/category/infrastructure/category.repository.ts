@@ -21,6 +21,7 @@ const LIST_TTL_SEC = 60;
 const DETAIL_TTL_SEC = 5 * 60;
 
 const listKey = () => 'category:list';
+const listPattern = () => 'category:list*';
 const idKey = (id: string) => `category:id:${id}`;
 const slugKey = (slug: string) => `category:slug:${slug}`;
 
@@ -76,7 +77,7 @@ export class CategoryRepository implements ICategoryRepository {
       invalidateKeys: (category) => [
         idKey(category.id),
         slugKey(category.slug),
-        listKey(),
+        listPattern(),
       ],
       entityClass: CategoryEntity,
     });
@@ -92,7 +93,7 @@ export class CategoryRepository implements ICategoryRepository {
       invalidateKeys: (category) => [
         idKey(category.id),
         slugKey(category.slug),
-        listKey(),
+        listPattern(),
       ],
       entityClass: CategoryEntity,
     });
@@ -105,7 +106,7 @@ export class CategoryRepository implements ICategoryRepository {
       invalidateKeys: (category) => [
         idKey(category.id),
         slugKey(category.slug),
-        listKey(),
+        listPattern(),
       ],
     });
   }

@@ -7,7 +7,7 @@ import type {
   UserQueryDto,
   UserService,
 } from '@/model/user/application';
-import { AdminController } from '@/model/user/presentation/admin.controller';
+import { AdminController } from '@/model/user/presentation';
 import { UserRole } from '@/shared/guards/role/user-role';
 
 describe('adminController', () => {

@@ -1,8 +1,6 @@
 import { OrderStatus } from '@/generated/prisma/enums';
 import { OrderItemEntity } from '@/model/order/domain/entities/order-item.entity';
 
-export { OrderStatus };
-
 export class OrderEntity {
   readonly id: string;
   readonly status: OrderStatus;
@@ -26,7 +24,6 @@ export class OrderEntity {
     this.updatedAt = props.updatedAt;
   }
 
-  
   private static readonly transitions: Record<OrderStatus, OrderStatus[]> = {
     [OrderStatus.PENDING]: [OrderStatus.PAID, OrderStatus.CANCELLED],
     [OrderStatus.PAID]: [OrderStatus.SHIPPED, OrderStatus.CANCELLED],

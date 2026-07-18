@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 import { envValidationSchema } from '@/config/env.validation';
 import {
@@ -11,7 +11,12 @@ import {
   ProductModule,
   UserModule,
 } from '@/model';
-import { HealthController, PrismaModule, RedisModule } from '@/shared';
+import {
+  AppThrottlerGuard,
+  HealthController,
+  PrismaModule,
+  RedisModule,
+} from '@/shared';
 
 @Module({
   imports: [
@@ -41,7 +46,7 @@ import { HealthController, PrismaModule, RedisModule } from '@/shared';
   providers: [
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard,
+      useClass: AppThrottlerGuard,
     },
   ],
 })

@@ -10,9 +10,10 @@ import {
 } from '@/model/auth/infrastructure';
 import { AuthController } from '@/model/auth/presentation';
 import { UserModule } from '@/model/user';
+import { HashModule } from '@/shared';
 
 @Module({
-  imports: [PassportModule, JwtModule.register({}), UserModule],
+  imports: [HashModule, PassportModule, JwtModule.register({}), UserModule],
   controllers: [AuthController],
   providers: [AuthService, TokenService, JWTAccessStrategy, JWTRefreshStrategy],
 })

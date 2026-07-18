@@ -1,6 +1,3 @@
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
 import { PrismaPg } from '@prisma/adapter-pg';
 import { config } from 'dotenv';
 import { Pool } from 'pg';
@@ -17,16 +14,7 @@ if (!databaseUrl) {
 
 const pool = new Pool({ connectionString: databaseUrl });
 const adapter = new PrismaPg(pool);
-
 const prisma = new PrismaClient({ adapter });
-
-const execAsync = promisify(exec);
-
-export async function setupTestDatabase(): Promise<void> {
-  await execAsync('npx prisma migrate deploy', {
-    env: process.env,
-  });
-}
 
 export async function cleanDatabase(): Promise<void> {
   await prisma.$transaction([
