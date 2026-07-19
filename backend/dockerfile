@@ -8,7 +8,7 @@ COPY package.json package-lock.json ./
 FROM base AS development
 ARG DATABASE_URL="postgresql://user:pass@localhost:5432/db"
 ENV DATABASE_URL=$DATABASE_URL
-RUN npm ci
+RUN npm ci --ignore-scripts
 COPY . .
 RUN npx prisma generate
 EXPOSE 3000
@@ -18,7 +18,7 @@ CMD ["npm", "run", "start:dev"]
 FROM base AS build
 ARG DATABASE_URL="postgresql://user:pass@localhost:5432/db"
 ENV DATABASE_URL=$DATABASE_URL
-RUN npm ci
+RUN npm ci --ignore-scripts
 COPY . .
 RUN npx prisma generate
 RUN npm run build
@@ -28,7 +28,9 @@ FROM node:20-slim AS production
 WORKDIR /backend
 ENV NODE_ENV=production
 COPY package.json package-lock.json ./
+COPY --from=build /backend/prisma ./prisma
 RUN npm ci --omit=dev --ignore-scripts
 COPY --from=build /backend/dist ./dist
-COPY --from=build /backend/prisma ./prisma
 COPY --from=build /backend/src/generated ./src/generated
+EXPOSE 3000
+CMD ["node", "dist/main"]
