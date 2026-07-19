@@ -52,7 +52,7 @@ async function bootstrap() {
     prefix: 'api/v',
   });
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.ENABLE_SWAGGER === 'true') {
     const config = new DocumentBuilder()
       .setTitle('StoneProductShop API')
       .setDescription('Backend API for natural stone e-commerce')
