@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 import jest from 'eslint-plugin-jest';
 
 export default tseslint.config(
-  { ignores: ['dist', 'node_modules', 'coverage', 'generated'] },
+  { ignores: ['dist', 'node_modules', 'coverage', 'src/generated/**'] },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,
   ...tseslint.configs.stylisticTypeChecked,
