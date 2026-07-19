@@ -1,4 +1,4 @@
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import { OrderItemEntity } from '@/model/order/domain/entities/order-item.entity';
 
 export class OrderEntity {

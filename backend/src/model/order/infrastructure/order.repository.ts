@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 
 import { OrderItem, Prisma } from '@/generated/prisma/client';
-import type { OrderStatus } from '@/generated/prisma/enums';
+import type { OrderStatus } from '@/generated/prisma/client';
 import { OrderEntity } from '@/model/order/domain/entities';
 import type {
   ICreateOrderData,

@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import type { Prisma } from '@/generated/prisma/client';
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import type { PrismaService } from '@/shared';
 
 export interface OrderFixtureItem {
@@ -16,7 +16,6 @@ export interface OrderFixtureOverrides {
 
 export class OrderFixture {
   constructor(private readonly prisma: PrismaService) {}
-
 
   async create(
     userId: string,

@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/generated/prisma/enums';
+import type { OrderStatus } from '@/generated/prisma/client';
 
 export interface OrderResponseDto {
   id: string;

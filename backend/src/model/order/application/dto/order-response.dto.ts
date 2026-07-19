@@ -1,4 +1,4 @@
-import type { OrderStatus } from '@/generated/prisma/enums';
+import type { OrderStatus } from '@/generated/prisma/client';
 import { OrderItemResponse } from '@/model/order/application/dto/order-item.response.dto';
 
 export class OrderResponse {

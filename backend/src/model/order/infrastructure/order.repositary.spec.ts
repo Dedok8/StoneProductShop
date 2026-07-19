@@ -3,7 +3,7 @@ import type { TestingModule } from '@nestjs/testing';
 import { Test } from '@nestjs/testing';
 
 import { Prisma } from '@/generated/prisma/client';
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import {
   InsufficientStockError,
   OrderRepository,

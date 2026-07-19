@@ -4,7 +4,7 @@ import { CategoryFixture } from '../fixtures/category.fixture';
 import { ProductFixture } from '../fixtures/product.fixture';
 import { UserFixture } from '../fixtures/user.fixture';
 
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import { InsufficientStockError, OrderRepository } from '@/model';
 import {
   HashService,

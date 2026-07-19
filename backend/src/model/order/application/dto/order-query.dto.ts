@@ -1,9 +1,8 @@
 import { Type } from 'class-transformer';
 import { IsDate, IsEnum, IsOptional, IsUUID } from 'class-validator';
 
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import { PaginationQueryDto, SortOrder } from '@/shared';
-
 
 export class OrderQueryDto extends PaginationQueryDto {
   @IsOptional()

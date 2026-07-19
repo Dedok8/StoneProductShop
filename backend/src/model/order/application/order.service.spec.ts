@@ -2,7 +2,7 @@ import { BadRequestException, NotFoundException } from '@nestjs/common';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
-import { OrderStatus } from '@/generated/prisma/enums';
+import { OrderStatus } from '@/generated/prisma/client';
 import { OrderService } from '@/model/order/application';
 import type { OrderQueryDto } from '@/model/order/application/dto';
 import { OrderEntity, OrderItemEntity } from '@/model/order/domain/entities';
