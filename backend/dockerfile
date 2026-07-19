@@ -31,6 +31,6 @@ COPY package.json package-lock.json ./
 COPY --from=build /backend/prisma ./prisma
 RUN npm ci --omit=dev --ignore-scripts
 COPY --from=build /backend/dist ./dist
-COPY --from=build /backend/src/generated ./src/generated
+COPY --from=build /backend/src/generated ./dist/generated
 EXPOSE 3000
 CMD ["node", "dist/main"]
