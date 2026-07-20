@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json --runInBand",
+    "test:e2e": "dotenv -e .env.test -- prisma migrate reset --force && dotenv -e .env.test -- jest --config ./test/jest-e2e.json --runInBand",
     "test:integration": "dotenv -e .env.test -- jest --config ./test/jest-integration.json --runInBand",
     "seed": "npx prisma db seed"
   },
@@ -83,6 +83,7 @@
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.23.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
   },
