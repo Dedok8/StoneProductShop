@@ -27,10 +27,13 @@ RUN npm run build
 FROM node:20-slim AS production
 WORKDIR /backend
 ENV NODE_ENV=production
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
-COPY --from=build /backend/prisma ./prisma
 RUN npm ci --omit=dev --ignore-scripts
+COPY --from=build /backend/prisma.config.ts ./
+COPY --from=build /backend/prisma ./prisma
 COPY --from=build /backend/dist ./dist
 COPY --from=build /backend/src/generated ./dist/generated
+
 EXPOSE 3000
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main"]
