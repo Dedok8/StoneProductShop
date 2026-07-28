@@ -12,7 +12,6 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
-  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
@@ -41,42 +40,39 @@ export class AuthController {
 
   @Post('register')
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Register a new user' })
   @ApiCreatedResponse({ type: AccessTokenResponseDto })
   async register(
     @Body() dto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AccessTokenResponseDto> {
-    const { accessToken, refreshToken } = await this.authService.register(dto);
+    const { user, accessToken, refreshToken } =
+      await this.authService.register(dto);
 
     this.setRefreshCookie(res, refreshToken);
 
-    return { accessToken };
+    return new AccessTokenResponseDto({ user, accessToken });
   }
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 5, ttl: 60_000 } })
-  @ApiOperation({ summary: 'Login with email and password' })
   @ApiOkResponse({ type: AccessTokenResponseDto })
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AccessTokenResponseDto> {
-    const { accessToken, refreshToken } = await this.authService.login(dto);
+    const { user, accessToken, refreshToken } =
+      await this.authService.login(dto);
 
     this.setRefreshCookie(res, refreshToken);
 
-    return { accessToken };
+    return new AccessTokenResponseDto({ user, accessToken });
   }
 
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @Throttle({ default: { limit: 20, ttl: 60_000 } })
   @UseGuards(JWTRefreshGuard)
-  @ApiOperation({
-    summary: 'Issue a new access token using the refresh cookie',
-  })
   @ApiOkResponse({ type: AccessTokenResponseDto })
   refresh(
     @CurrentUser() payload: IRefreshTokenPayload & { refreshToken: string },
@@ -88,7 +84,6 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiBearerAuth()
   @UseGuards(JWTAuthGuard)
-  @ApiOperation({ summary: 'Logout and revoke the refresh token' })
   async logout(
     @CurrentUser('sub') userId: string,
     @Res({ passthrough: true }) res: Response,

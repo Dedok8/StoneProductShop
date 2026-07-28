@@ -16,6 +16,8 @@ import {
   type IUserRepository,
   USER_REPOSITORY,
   UserEntity,
+  UserMapper,
+  UserResponseDto,
 } from '@/model/user';
 import { HashService } from '@/shared';
 
@@ -28,7 +30,9 @@ export class AuthService {
     private readonly tokenService: TokenService,
   ) {}
 
-  async register(dto: RegisterDto): Promise<ITokenPair> {
+  async register(
+    dto: RegisterDto,
+  ): Promise<ITokenPair & { user: UserResponseDto }> {
     await this.ensureEmailIsAvailable(dto.email);
 
     const passwordHash = await this.hashService.hash(dto.password);
@@ -39,10 +43,12 @@ export class AuthService {
       passwordHash,
     });
 
-    return this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user);
+
+    return { user: UserMapper.toResponse(user), ...tokens };
   }
 
-  async login(dto: LoginDto): Promise<ITokenPair> {
+  async login(dto: LoginDto): Promise<ITokenPair & { user: UserResponseDto }> {
     const user = await this.userRepository.findByEmail(dto.email);
 
     if (!user) throw new UnauthorizedException('Invalid credentials');
@@ -54,7 +60,9 @@ export class AuthService {
 
     if (!isValid) throw new UnauthorizedException('Invalid credentials');
 
-    return this.issueTokenPair(user);
+    const tokens = await this.issueTokenPair(user);
+
+    return { user: UserMapper.toResponse(user), ...tokens };
   }
 
   async refresh(
@@ -76,7 +84,10 @@ export class AuthService {
 
     const accessToken = await this.tokenService.signAccessToken(user);
 
-    return { accessToken };
+    return new AccessTokenResponseDto({
+      user: UserMapper.toResponse(user),
+      accessToken,
+    });
   }
 
   async logout(userId: string): Promise<void> {
