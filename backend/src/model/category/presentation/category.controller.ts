@@ -17,6 +17,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 import { CategoryService } from '@/model/category/application';
 import {
+  CategoryResponseDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from '@/model/category/application/dto';
@@ -28,23 +29,26 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  findAll() {
+  findAll(): Promise<CategoryResponseDto[]> {
     return this.categoryService.findAll();
   }
 
-
   @Get('search')
-  search(@Query('slug') slug?: string, @Query('name') name?: string) {
+  search(
+    @Query('slug') slug?: string,
+    @Query('name') name?: string,
+  ): Promise<CategoryResponseDto | CategoryResponseDto[]> {
     if (slug) return this.categoryService.findBySlug(slug);
     if (name) return this.categoryService.findByName(name);
-
     throw new BadRequestException(
       'Provide either "slug" or "name" query parameter',
     );
   }
 
   @Get(':id')
-  findById(@Param('id', ParseUUIDPipe) id: string) {
+  findById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<CategoryResponseDto> {
     return this.categoryService.findById(id);
   }
 
@@ -52,7 +56,7 @@ export class CategoryController {
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JWTAuthGuard, RolesGuard)
-  create(@Body() dto: CreateCategoryDto) {
+  create(@Body() dto: CreateCategoryDto): Promise<CategoryResponseDto> {
     return this.categoryService.create(dto);
   }
 
@@ -63,11 +67,10 @@ export class CategoryController {
   update(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateCategoryDto,
-  ) {
+  ): Promise<CategoryResponseDto> {
     return this.categoryService.update(id, dto);
   }
 
- 
   @Delete(':id')
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)

@@ -12,10 +12,10 @@ import {
 import {
   ChangePasswordDto,
   UpdateUserDto,
+  UserResponseDto,
   UserService,
 } from '@/model/user/application';
 import { CurrentUser, JWTAuthGuard } from '@/shared';
-
 
 @Controller('user')
 @UseGuards(JWTAuthGuard)
@@ -23,12 +23,15 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  getMe(@CurrentUser('sub') id: string) {
+  getMe(@CurrentUser('sub') id: string): Promise<UserResponseDto> {
     return this.userService.findById(id);
   }
 
   @Patch('me')
-  update(@CurrentUser('sub') id: string, @Body() dto: UpdateUserDto) {
+  update(
+    @CurrentUser('sub') id: string,
+    @Body() dto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
     return this.userService.update(id, dto);
   }
 
@@ -36,7 +39,7 @@ export class UserController {
   changePassword(
     @CurrentUser('sub') id: string,
     @Body() dto: ChangePasswordDto,
-  ) {
+  ): Promise<void> {
     return this.userService.changePassword(id, dto);
   }
 

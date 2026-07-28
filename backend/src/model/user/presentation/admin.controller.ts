@@ -16,9 +16,11 @@ import {
 import {
   CreateUserDto,
   FindByEmailQueryDto,
+  PaginatedUsersResponseDto,
   UpdateUserDto,
   UpdateUserRoleDto,
   UserQueryDto,
+  UserResponseDto,
   UserService,
 } from '@/model/user/application';
 import { JWTAuthGuard, Roles, RolesGuard } from '@/shared';
@@ -31,17 +33,19 @@ export class AdminController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getAll(@Query() query: UserQueryDto) {
+  getAll(@Query() query: UserQueryDto): Promise<PaginatedUsersResponseDto> {
     return this.userService.findAll(query);
   }
 
   @Get('search')
-  findByEmail(@Query() query: FindByEmailQueryDto) {
+  findByEmail(@Query() query: FindByEmailQueryDto): Promise<UserResponseDto> {
     return this.userService.findByEmail(query.email);
   }
 
   @Get(':id')
-  findUserById(@Param('id', ParseUUIDPipe) id: string) {
+  findUserById(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<UserResponseDto> {
     return this.userService.findById(id);
   }
 
@@ -49,7 +53,7 @@ export class AdminController {
   updateUser(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserDto,
-  ) {
+  ): Promise<UserResponseDto> {
     return this.userService.update(id, dto);
   }
 
@@ -57,12 +61,12 @@ export class AdminController {
   updateRole(
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateUserRoleDto,
-  ) {
+  ): Promise<UserResponseDto> {
     return this.userService.updateRole(id, dto);
   }
 
   @Post()
-  createUser(@Body() dto: CreateUserDto) {
+  createUser(@Body() dto: CreateUserDto): Promise<UserResponseDto> {
     return this.userService.create(dto);
   }
 

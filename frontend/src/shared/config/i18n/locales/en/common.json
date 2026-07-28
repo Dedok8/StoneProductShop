@@ -1,0 +1,22 @@
+{
+  "app": {
+    "name": "StoneProductShop"
+  },
+  "actions": {
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "retry": "Try again",
+    "close": "Close",
+    "reload": "Reload"
+  },
+  "errors": {
+    "unknown": "Something went wrong. Please try again.",
+    "network": "Network error. Check your internet connection.",
+    "server": "Server error. Please try again later.",
+    "unauthorized": "You need to sign in to continue.",
+    "forbidden": "You don't have permission to do this.",
+    "notFound": "The requested resource was not found.",
+    "validation": "Please check the highlighted fields.",
+    "timeout": "The request took too long. Please try again."
+  }
+}
