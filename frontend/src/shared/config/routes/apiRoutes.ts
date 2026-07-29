@@ -7,41 +7,45 @@ export const API_ROUTES = {
   },
 
   user: {
-    getMe: "/users/me",
-    updateMe: "/users/me",
-    deleteMe: "/users/me",
-    changePassword: "/users/changePassword",
+    getMe: "/user/me",
+    updateMe: "/user/me",
+    deleteMe: "/user/me",
+    changePassword: "/user/changePassword",
   },
 
   adminUser: {
-    getAll: "/admin/users",
-    byId: (id: string) => `/admin/users/${id}`,
-    update: (id: string) => `/admin/users/${id}`,
-    delete: (id: string) => `/admin/users/${id}`,
+    getAll: "/admin/user",
+    create: "/admin/user",
+    search: "/admin/user/search",
+    byId: (id: string) => `/admin/user/${id}`,
+    update: (id: string) => `/admin/user/${id}`,
+    role: (id: string) => `/admin/user/${id}/role`,
+    delete: (id: string) => `/admin/user/${id}`,
   },
 
-  products: {
-    getAll: "/products",
-    create: "/products",
-    byId: (id: string) => `/products/${id}`,
-    update: (id: string) => `/products/${id}`,
-    delete: (id: string) => `/products/${id}`,
+  product: {
+    getAll: "/product",
+    create: "/product",
+    byId: (id: string) => `/product/${id}`,
+    update: (id: string) => `/product/${id}`,
+    delete: (id: string) => `/product/${id}`,
   },
 
   category: {
     getAll: "/category",
     create: "/category",
+    search: "/category/search",
     byId: (id: string) => `/category/${id}`,
     update: (id: string) => `/category/${id}`,
     delete: (id: string) => `/category/${id}`,
   },
 
-  orders: {
-    create: "/orders",
-    mine: "/orders/mine",
-    all: "/orders/all",
-    byId: (id: string) => `/orders/${id}`,
-    cancel: (id: string) => `/orders/${id}/cancel`,
-    status: (id: string) => `/orders/${id}/status`,
+  order: {
+    create: "/order",
+    mine: "/order/my",
+    all: "/order",
+    byId: (id: string) => `/order/${id}`,
+    cancel: (id: string) => `/order/${id}/cancel`,
+    status: (id: string) => `/order/${id}/status`,
   },
 } as const;

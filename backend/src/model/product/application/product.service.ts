@@ -55,6 +55,12 @@ export class ProductService {
     return ProductMapper.toResponse(product);
   }
 
+  async findByIds(ids: string[]) {
+    const products = await this.productRepository.findByIds(ids);
+
+    return ProductMapper.toResponseList(products);
+  }
+
   async findAll(query: ProductQueryDto): Promise<PaginatedProductResponseDto> {
     const { items, total } = await this.productRepository.findAll(query);
 

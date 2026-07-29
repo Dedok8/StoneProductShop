@@ -1,13 +1,15 @@
+import type { WithTimestamps } from '@/shared';
 import {
   mapToEntity,
   type EntityFactory,
-  type WithTimestamps,
-} from './map-to-entity.util';
+  type RedisCacheService,
+} from '@/shared';
 
-import type { RedisCacheService } from '@/shared';
-
-
-export async function findOneCached<TCached, TRaw extends WithTimestamps, TEntity>(params: {
+export async function findOneCached<
+  TCached,
+  TRaw extends WithTimestamps,
+  TEntity,
+>(params: {
   cache: RedisCacheService;
   key: string;
   ttl: number;
@@ -37,7 +39,11 @@ export async function findOneCached<TCached, TRaw extends WithTimestamps, TEntit
   return raw ? mapToEntity(raw, params.entityClass) : null;
 }
 
-export async function findManyCached<TCached, TRaw extends WithTimestamps, TEntity>(params: {
+export async function findManyCached<
+  TCached,
+  TRaw extends WithTimestamps,
+  TEntity,
+>(params: {
   cache: RedisCacheService;
   key: string;
   ttl: number;
@@ -82,7 +88,6 @@ export async function findManyCached<TCached, TRaw extends WithTimestamps, TEnti
   };
 }
 
-
 export async function invalidateCacheKeys(
   cache: RedisCacheService,
   keys: string[],
@@ -90,8 +95,10 @@ export async function invalidateCacheKeys(
   await Promise.all(keys.map((key) => cache.deleteByPattern(key)));
 }
 
-
-export async function createAndInvalidate<TModel extends WithTimestamps, TEntity>(params: {
+export async function createAndInvalidate<
+  TModel extends WithTimestamps,
+  TEntity,
+>(params: {
   createFn: () => Promise<TModel>;
   cache: RedisCacheService;
   invalidateKeys: (model: TModel) => string[];
@@ -102,8 +109,9 @@ export async function createAndInvalidate<TModel extends WithTimestamps, TEntity
   return mapToEntity(created, params.entityClass);
 }
 
-
-export async function deleteAndInvalidate<TModel extends WithTimestamps>(params: {
+export async function deleteAndInvalidate<
+  TModel extends WithTimestamps,
+>(params: {
   deleteFn: () => Promise<TModel>;
   cache: RedisCacheService;
   invalidateKeys: (model: TModel) => string[];

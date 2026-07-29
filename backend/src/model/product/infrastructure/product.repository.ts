@@ -49,6 +49,17 @@ export class ProductRepository implements IProductRepository {
     private readonly prisma: PrismaService,
     private readonly cache: RedisCacheService,
   ) {}
+  
+  async findByIds(ids: string[]): Promise<ProductEntity[]> {
+    const unique = [...new Set(ids)];
+    if (unique.length === 0) return [];
+
+    const products = await this.prisma.product.findMany({
+      where: { id: { in: unique } },
+    });
+
+    return products.map((p) => mapToEntity(p, ProductEntity));
+  }
 
   findById(id: string): Promise<ProductEntity | null> {
     return findOneCached({

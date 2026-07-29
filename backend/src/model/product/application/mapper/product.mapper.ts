@@ -11,7 +11,9 @@ export class ProductMapper {
       price: entity.price,
       stock: entity.stock,
       images: entity.images,
+      isActive: entity.isActive,
       categoryId: entity.categoryId,
+      createdAt: entity.createdAt,
     });
   }
 

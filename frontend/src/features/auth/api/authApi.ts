@@ -14,6 +14,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: credentials,
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
     logout: build.mutation<void, void>({
@@ -21,6 +22,7 @@ export const authApi = baseApi.injectEndpoints({
         url: API_ROUTES.auth.logout,
         method: "POST",
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
     refresh: build.mutation<IAccessTokenResponse, void>({
@@ -28,6 +30,7 @@ export const authApi = baseApi.injectEndpoints({
         url: API_ROUTES.auth.refresh,
         method: "POST",
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
     register: build.mutation<IAccessTokenResponse, IRegisterRequest>({
@@ -36,6 +39,7 @@ export const authApi = baseApi.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
   }),
 });

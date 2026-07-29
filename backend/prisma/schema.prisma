@@ -33,6 +33,8 @@ model User {
   createdAt    DateTime  @default(now()) @map("created_at")
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
+  cart         Cart?
+  
   products     Product[]
   orders       Order[]
 
@@ -70,6 +72,7 @@ model Product {
   ownerId     String   @map("owner_id")
 
   orderItems  OrderItem[]
+  cartItems   CartItem[]
 
   isActive    Boolean  @default(true) @map("is_active")
   createdAt   DateTime @default(now()) @map("created_at")
@@ -109,4 +112,39 @@ model OrderItem {
   @@map("order_items")
   @@index([productId])
   @@index([orderId])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String     @unique @map("user_id")
+
+  items      CartItem[]
+
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String    @id @default(uuid())
+
+  quantity  Int
+
+  cart      Cart      @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  cartId    String    @map("cart_id")
+
+  product   Product   @relation(fields: [productId], references: [id])
+  productId String    @map("product_id")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
+
+  @@map("cart_items")
 }

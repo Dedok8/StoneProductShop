@@ -1,6 +1,9 @@
 import { logout, setCredentials } from "@/features";
 import { API_ROUTES, mainConfig } from "@/shared/config";
-import type { IUserResponse, RootState } from "@/shared/types";
+import type {
+  IAccessTokenResponse,
+  RootState,
+} from "@/shared/types";
 import { Mutex } from "async-mutex";
 import {
   type BaseQueryFn,
@@ -11,11 +14,6 @@ import {
 } from "@reduxjs/toolkit/query/react";
 
 const mutex = new Mutex();
-
-interface RefreshResponse {
-  user: IUserResponse;
-  accessToken: string;
-}
 
 const baseQuery = fetchBaseQuery({
   baseUrl: mainConfig.BASE_URL,
@@ -61,7 +59,7 @@ const baseQueryWithReauth: BaseQueryFn<
         );
 
         if (refreshResult.data) {
-          const data = refreshResult.data as RefreshResponse;
+          const data = refreshResult.data as IAccessTokenResponse;
           api.dispatch(
             setCredentials({ user: data.user, accessToken: data.accessToken })
           );
@@ -88,7 +86,7 @@ export const baseApi = createApi({
 
   baseQuery: baseQueryWithReauth,
 
-  tagTypes: ["Auth", "Me", "Users", "Categories", "Products", "Orders"],
+  tagTypes: ["Auth", "Me", "User", "Category", "Product", "Order", "Admin"],
 
   endpoints: () => ({}),
 });

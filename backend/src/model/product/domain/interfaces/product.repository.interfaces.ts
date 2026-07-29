@@ -42,6 +42,7 @@ export interface IProductRepository {
   findBySlug(slug: string): Promise<ProductEntity | null>;
   findByName(name: string): Promise<ProductEntity | null>;
   findAll(query: IProductQuery): Promise<IProductAllResultData>;
+  findByIds(ids: string[]): Promise<ProductEntity[]>;
   create(data: ICreateProductData): Promise<ProductEntity>;
   update(id: string, data: IUpdateProductData): Promise<ProductEntity | null>;
   delete(id: string): Promise<void>;

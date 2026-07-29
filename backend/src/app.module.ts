@@ -11,6 +11,8 @@ import {
   ProductModule,
   UserModule,
 } from '@/model';
+import { CartModule } from '@/model/cart';
+import { CheckoutModule } from '@/model/checkout';
 import {
   AppThrottlerGuard,
   HealthController,
@@ -41,6 +43,8 @@ import {
     CategoryModule,
     ProductModule,
     OrderModule,
+    CartModule,
+    CheckoutModule,
   ],
   controllers: [HealthController],
   providers: [

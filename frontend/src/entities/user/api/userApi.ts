@@ -13,6 +13,7 @@ export const userApi = baseApi.injectEndpoints({
         url: API_ROUTES.user.getMe,
         method: "GET",
       }),
+      providesTags: [{ type: "User", id: "ME" }],
     }),
 
     updateMe: build.mutation<IUserResponse, IUpdateUserRequest>({
@@ -21,6 +22,7 @@ export const userApi = baseApi.injectEndpoints({
         method: "PATCH",
         body: credential,
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
     deleteMe: build.mutation<void, void>({
@@ -28,6 +30,7 @@ export const userApi = baseApi.injectEndpoints({
         url: API_ROUTES.user.deleteMe,
         method: "DELETE",
       }),
+      invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
     changeMyPassword: build.mutation<void, IChangePasswordRequest>({
