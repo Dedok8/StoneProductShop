@@ -1,11 +1,30 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import type { MockProxy } from 'jest-mock-extended';
 import { mock } from 'jest-mock-extended';
 
+import { CategoryEntity } from '@/model/category/domain/entities';
+import type { ICategoryRepository } from '@/model/category/domain/interfaces';
 import { ProductService } from '@/model/product/application';
 import type { ProductQueryDto } from '@/model/product/application/dto';
 import type { IProductRepository } from '@/model/product/domain';
 import { ProductEntity } from '@/model/product/domain';
+
+const makeCategory = (
+  overrides: Partial<CategoryEntity> = {},
+): CategoryEntity =>
+  new CategoryEntity({
+    id: 'category-1',
+    name: 'Granite',
+    slug: 'granite',
+    isActive: true,
+    createdAt: new Date('2026-01-01'),
+    updatedAt: new Date('2026-01-01'),
+    ...overrides,
+  });
 
 const makeProduct = (overrides: Partial<ProductEntity> = {}): ProductEntity =>
   new ProductEntity({
@@ -27,10 +46,13 @@ const makeProduct = (overrides: Partial<ProductEntity> = {}): ProductEntity =>
 describe('productService', () => {
   let service: ProductService;
   let repository: MockProxy<IProductRepository>;
+  let categoryRepository: MockProxy<ICategoryRepository>;
 
   beforeEach(() => {
     repository = mock<IProductRepository>();
-    service = new ProductService(repository);
+    categoryRepository = mock<ICategoryRepository>();
+    categoryRepository.findById.mockResolvedValue(makeCategory());
+    service = new ProductService(repository, categoryRepository);
   });
 
   afterEach(() => {
@@ -167,6 +189,17 @@ describe('productService', () => {
 
       await expect(service.create(dto, 'owner-1')).rejects.toThrow(
         ConflictException,
+      );
+      expect(repository.create).not.toHaveBeenCalled();
+    });
+
+    it('throws a BadRequestException if the category does not exist', async () => {
+      repository.findByName.mockResolvedValue(null);
+      repository.findBySlug.mockResolvedValue(null);
+      categoryRepository.findById.mockResolvedValue(null);
+
+      await expect(service.create(dto, 'owner-1')).rejects.toThrow(
+        BadRequestException,
       );
       expect(repository.create).not.toHaveBeenCalled();
     });

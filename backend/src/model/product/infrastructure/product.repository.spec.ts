@@ -121,17 +121,19 @@ describe('ProductRepository', () => {
   });
 
   describe('findAll', () => {
-    it('should return cached product', async () => {
+    it('returns the list from cache without hitting the db', async () => {
       cache.getJson.mockResolvedValue({
-        id: '1',
-        name: 'Granite Slab',
-        price: 999,
+        items: [{ id: '1', name: 'Granite Slab', price: 999 }],
+        total: 1,
       });
 
-      const result = await repository.findById('1');
+      const result = await repository.findAll({ page: 1, limit: 20 });
 
-      expect(prisma.product.findUnique).not.toHaveBeenCalled();
-      expect(result?.id).toBe('1');
+      expect(cache.getJson).toHaveBeenCalled();
+      expect(prisma.product.findMany).not.toHaveBeenCalled();
+      expect(prisma.product.count).not.toHaveBeenCalled();
+      expect(result.total).toBe(1);
+      expect(result.items[0].price).toBe(999);
     });
 
     it('should load products from db and cache them', async () => {

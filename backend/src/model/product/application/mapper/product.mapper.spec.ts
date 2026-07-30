@@ -40,10 +40,10 @@ describe('ProductMapper', () => {
       expect(result.stock).toBe(25);
       expect(result.images).toEqual(['image1.png', 'image2.png']);
       expect(result.categoryId).toBe('category-1');
+      expect(result.isActive).toBe(true);
+      expect(result.createdAt).toBe(mockDate);
 
       expect(result).not.toHaveProperty('ownerId');
-      expect(result).not.toHaveProperty('isActive');
-      expect(result).not.toHaveProperty('createdAt');
       expect(result).not.toHaveProperty('updatedAt');
     });
 

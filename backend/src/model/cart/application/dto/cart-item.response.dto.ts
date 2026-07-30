@@ -4,6 +4,7 @@ export class CartItemResponseDto {
   readonly name: string;
   readonly price: number;
   readonly isStock: boolean;
+
   constructor(props: {
     productId: string;
     quantity: number;

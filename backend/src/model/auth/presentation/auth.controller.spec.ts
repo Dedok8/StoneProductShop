@@ -8,10 +8,19 @@ import type {
 } from '@/model/auth/application';
 import type { IRefreshTokenPayload } from '@/model/auth/domain';
 import { AuthController } from '@/model/auth/presentation/auth.controller';
+import type { UserResponseDto } from '@/model/user';
 
 const REFRESH_COOKIE_NAME = 'refreshToken';
 const REFRESH_COOKIE_PATH = '/api/v1/auth';
 const REFRESH_COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
+
+const mockUser: UserResponseDto = {
+  id: 'user-1',
+  name: 'Ivan',
+  email: 'ivan@example.com',
+  role: 'USER',
+  createdAt: new Date('2026-01-01'),
+};
 
 describe('authController', () => {
   let controller: AuthController;
@@ -37,9 +46,10 @@ describe('authController', () => {
       password: '!Password123',
     };
 
-    it('registers the user and returns only the accessToken in the response body', async () => {
+    it('registers the user and strips the refreshToken from the response body', async () => {
       config.get.mockReturnValue('development');
       authService.register.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -47,13 +57,14 @@ describe('authController', () => {
       const result = await controller.register(dto, res);
 
       expect(authService.register).toHaveBeenCalledWith(dto);
-      expect(result).toEqual({ accessToken: 'access-token' });
+      expect(result).toEqual({ user: mockUser, accessToken: 'access-token' });
       expect(result).not.toHaveProperty('refreshToken');
     });
 
     it('sets the refreshToken as an httpOnly cookie scoped to the auth path', async () => {
       config.get.mockReturnValue('development');
       authService.register.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -75,6 +86,7 @@ describe('authController', () => {
     it('marks the refresh cookie as secure in production', async () => {
       config.get.mockReturnValue('production');
       authService.register.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -91,6 +103,7 @@ describe('authController', () => {
     it('does not mark the refresh cookie as secure outside production', async () => {
       config.get.mockReturnValue('test');
       authService.register.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -111,9 +124,10 @@ describe('authController', () => {
       password: '!Password123',
     };
 
-    it('logs the user in and returns only the accessToken in the response body', async () => {
+    it('logs the user in and strips the refreshToken from the response body', async () => {
       config.get.mockReturnValue('development');
       authService.login.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -121,12 +135,14 @@ describe('authController', () => {
       const result = await controller.login(dto, res);
 
       expect(authService.login).toHaveBeenCalledWith(dto);
-      expect(result).toEqual({ accessToken: 'access-token' });
+      expect(result).toEqual({ user: mockUser, accessToken: 'access-token' });
+      expect(result).not.toHaveProperty('refreshToken');
     });
 
     it('sets the refreshToken cookie, same as register', async () => {
       config.get.mockReturnValue('development');
       authService.login.mockResolvedValue({
+        user: mockUser,
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
       });
@@ -167,6 +183,7 @@ describe('authController', () => {
         refreshToken: 'raw-refresh-token',
       } as IRefreshTokenPayload & { refreshToken: string };
       authService.refresh.mockResolvedValue({
+        user: mockUser,
         accessToken: 'new-access-token',
       });
 

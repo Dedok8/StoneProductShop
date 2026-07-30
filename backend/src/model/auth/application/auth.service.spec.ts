@@ -52,10 +52,13 @@ describe('AuthService', () => {
       expect(userRepository.update).toHaveBeenCalledWith(expect.any(String), {
         refreshToken: 'hashed-refresh-token',
       });
-      expect(result).toEqual({
-        accessToken: 'access-token',
-        refreshToken: 'refresh-token',
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          accessToken: 'access-token',
+          refreshToken: 'refresh-token',
+        }),
+      );
+      expect(result.user.email).toBe(dto.email);
     });
 
     it('throws a ConflictException if the email address is already in use', async () => {
@@ -90,10 +93,13 @@ describe('AuthService', () => {
       expect(userRepository.update).toHaveBeenCalledWith(user.id, {
         refreshToken: 'hashed-refresh-token',
       });
-      expect(result).toEqual({
-        accessToken: 'access-token',
-        refreshToken: 'refresh-token',
-      });
+      expect(result).toEqual(
+        expect.objectContaining({
+          accessToken: 'access-token',
+          refreshToken: 'refresh-token',
+        }),
+      );
+      expect(result.user.email).toBe(dto.email);
     });
 
     it('throws an UnauthorizedException if the user is not found', async () => {
@@ -128,7 +134,10 @@ describe('AuthService', () => {
         'hashed-refresh-token',
       );
       expect(tokenService.signAccessToken).toHaveBeenCalledWith(user);
-      expect(result).toEqual({ accessToken: 'new-access-token' });
+      expect(result).toEqual(
+        expect.objectContaining({ accessToken: 'new-access-token' }),
+      );
+      expect(result.user.id).toBe(user.id);
     });
 
     it('throws an UnauthorizedException if the user is not found', async () => {

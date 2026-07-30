@@ -49,7 +49,7 @@ export class ProductRepository implements IProductRepository {
     private readonly prisma: PrismaService,
     private readonly cache: RedisCacheService,
   ) {}
-  
+
   async findByIds(ids: string[]): Promise<ProductEntity[]> {
     const unique = [...new Set(ids)];
     if (unique.length === 0) return [];

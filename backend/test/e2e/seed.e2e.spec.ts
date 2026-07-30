@@ -36,10 +36,17 @@ describe('Database seed', () => {
   });
 
   it('relations must be correctly configured', async () => {
-    const product = await prisma.product.findFirst({
-      include: { category: true, owner: true },
+    const product = await prisma.product.findUnique({
+      where: {
+        slug: 'granite-slab-60x60',
+      },
+      include: {
+        category: true,
+        owner: true,
+      },
     });
 
+    expect(product).not.toBeNull();
     expect(product?.category).toBeDefined();
     expect(product?.owner).toBeDefined();
     expect(product?.owner.email).toBe('admin@example.com');
