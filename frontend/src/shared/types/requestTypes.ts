@@ -106,7 +106,7 @@ export interface ICreateUserRequest {
   email: string;
   /** 8–64 chars */
   password: string;
-  role?: UserRole;
+  role: UserRole;
 }
 
 export interface IUpdateUserRoleRequest {
@@ -172,6 +172,8 @@ export interface IProductResponse {
   stock: number;
   images: string[];
   categoryId: string;
+  createdAt: string;
+  isActive: boolean;
 }
 
 export type PaginatedProductResponse = IPaginated<IProductResponse>;
@@ -280,3 +282,43 @@ export interface IUpdateOrderStatusRequest {
 // ---------------------------------------------------------------------------
 
 // GET /health -> 200, no response schema defined
+
+// ---------------------------------------------------------------------------
+// Cart
+// ---------------------------------------------------------------------------
+
+export interface ICartItemResponse {
+  productId: string;
+  quantity: number;
+  name: string;
+  price: number;
+  isStock: boolean;
+}
+
+export interface ICartResponse {
+  id: string;
+  userId: string;
+  items: ICartItemResponse[];
+  createdAt: string; // ISO date-time
+  updatedAt: string; // ISO date-time
+}
+
+export interface IAddCartItemRequest {
+  productId: string; // uuid
+  quantity: number; // min 1
+}
+
+// NOTE: the spec defines UpdateCartItemDto with an empty schema (no
+// properties listed) — likely a documentation gap on the backend side.
+// Given the endpoint's purpose (PATCH /cart/items/{productId}), this is
+// almost certainly meant to carry a new quantity. Confirm against actual
+// backend behavior before relying on this shape.
+export interface IUpdateCartItemRequest {
+  quantity?: number;
+}
+
+// GET    /api/v1/cart -> CartResponseDto (auth required)
+// DELETE /api/v1/cart -> 204 No Content (auth required)
+// POST   /api/v1/cart/items -> CartResponseDto (auth required, body: AddCartItemDto)
+// PATCH  /api/v1/cart/items/{productId} -> CartResponseDto (auth required, body: UpdateCartItemDto)
+// DELETE /api/v1/cart/items/{productId} -> CartResponseDto (auth required)

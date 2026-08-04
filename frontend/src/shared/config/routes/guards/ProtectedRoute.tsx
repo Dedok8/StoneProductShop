@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 
+import { selectAuthAccessToken, selectAuthLoading } from "@/features";
 import { FRONT_ROUTES } from "@/shared/config";
 import { useAppSelector } from "@/shared/hooks";
-import { selectAuthAccessToken, selectAuthLoading } from "@/features";
 
 function ProtectedRoute() {
   const accessToken = useAppSelector(selectAuthAccessToken);

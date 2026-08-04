@@ -1,10 +1,3 @@
-import { logout, setCredentials } from "@/features";
-import { API_ROUTES, mainConfig } from "@/shared/config";
-import type {
-  IAccessTokenResponse,
-  RootState,
-} from "@/shared/types";
-import { Mutex } from "async-mutex";
 import {
   type BaseQueryFn,
   createApi,
@@ -12,6 +5,11 @@ import {
   fetchBaseQuery,
   type FetchBaseQueryError,
 } from "@reduxjs/toolkit/query/react";
+import { Mutex } from "async-mutex";
+
+import { API_ROUTES, mainConfig } from "@/shared/config";
+import { logout, setCredentials, type IUserSlice } from "@/shared/redux";
+import type { IAccessTokenResponse } from "@/shared/types";
 
 const mutex = new Mutex();
 
@@ -21,7 +19,7 @@ const baseQuery = fetchBaseQuery({
   credentials: "include",
 
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.accessToken;
+    const token = (getState() as { auth: IUserSlice }).auth.accessToken;
 
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
@@ -86,7 +84,16 @@ export const baseApi = createApi({
 
   baseQuery: baseQueryWithReauth,
 
-  tagTypes: ["Auth", "Me", "User", "Category", "Product", "Order", "Admin"],
+  tagTypes: [
+    "Auth",
+    "Me",
+    "User",
+    "Category",
+    "Product",
+    "Order",
+    "Admin",
+    "Cart",
+  ],
 
   endpoints: () => ({}),
 });

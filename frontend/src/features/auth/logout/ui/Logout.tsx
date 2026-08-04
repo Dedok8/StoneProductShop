@@ -1,9 +1,8 @@
-import { useLogout } from "@/features/auth/logout/model/useLogout";
-import { FRONT_ROUTES } from "@/shared";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 
-import { Button } from "@/shared/ui/components/button";
+import { useLogout } from "@/features/auth/logout/model/useLogout";
+import { FRONT_ROUTES } from "@/shared";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,6 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/ui/components/alert-dialog";
+import { Button } from "@/shared/ui/components/button";
 
 function Logout() {
   const { logout, isLoading } = useLogout();

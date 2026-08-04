@@ -48,4 +48,12 @@ export const API_ROUTES = {
     cancel: (id: string) => `/order/${id}/cancel`,
     status: (id: string) => `/order/${id}/status`,
   },
+
+  cart: {
+    get: "/cart",
+    clear: "/cart",
+    addItem: "/cart/items",
+    updateItem: (productId: string) => `/cart/items/${productId}`,
+    removeItem: (productId: string) => `/cart/items/${productId}`,
+  },
 } as const;

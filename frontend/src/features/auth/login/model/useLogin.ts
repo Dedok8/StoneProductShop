@@ -1,6 +1,5 @@
 import { useLoginMutation } from "@/features/auth/api";
-import { setCredentials } from "@/features/auth/model";
-import { useAppDispatch, type ILoginRequest } from "@/shared";
+import { setCredentials, useAppDispatch, type ILoginRequest } from "@/shared";
 
 export const useLogin = () => {
   const [loginMutation, { isLoading, isError }] = useLoginMutation();

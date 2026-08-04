@@ -1,14 +1,13 @@
 import { createBrowserRouter } from "react-router";
 
+import { store } from "@/app";
 import { appRouterRoutes } from "@/app/router/appRouterRoutes";
 import { bootSessionLoader } from "@/app/router/bootSessionLoader";
-
-import { store } from "@/app";
-import { PageLoader, type IRouteMeta } from "@/shared";
-import RootLayout from "@/widgets/layouts/RootLayout";
-import PublicLayout from "@/widgets/layouts/PublicLayout";
-import MainLayout from "@/widgets/layouts/PrivateLayout";
 import RoleRoute from "@/app/router/guards/RoleRoute";
+import { PageLoader, type IRouteMeta } from "@/shared";
+import MainLayout from "@/widgets/layouts/PrivateLayout";
+import PublicLayout from "@/widgets/layouts/PublicLayout";
+import RootLayout from "@/widgets/layouts/RootLayout";
 
 const authRoutes = appRouterRoutes.filter((r) => r.meta.requireAuth);
 
@@ -20,6 +19,7 @@ const roleRouteGroups = new Map<
   string,
   { roles: string[]; routes: typeof authRoutes }
 >();
+
 for (const route of authRoutes) {
   const roles = (route.meta as IRouteMeta).roles;
   if (!roles?.length) continue;

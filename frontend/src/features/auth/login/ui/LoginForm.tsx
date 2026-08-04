@@ -1,3 +1,6 @@
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+
 import { useLogin } from "@/features/auth/login/model/useLogin";
 import { useLoginForm } from "@/features/auth/login/model/useLoginForm";
 import { FRONT_ROUTES, type ILoginRequest } from "@/shared";
@@ -13,8 +16,6 @@ import { Input } from "@/shared/ui/components/input";
 import { Label } from "@/shared/ui/components/label";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 
 function LoginForm() {
   const { login, isLoading } = useLogin();

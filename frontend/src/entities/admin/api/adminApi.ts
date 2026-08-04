@@ -101,7 +101,7 @@ export const adminApi = baseApi.injectEndpoints({
 
 export const {
   useGetAllUsersQuery,
-  useLazyFindUserByEmailQuery,
+  useFindUserByEmailQuery,
   useFindUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,

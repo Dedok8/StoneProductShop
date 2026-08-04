@@ -33,7 +33,7 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: "User", id: "ME" }],
     }),
 
-    changeMyPassword: build.mutation<void, IChangePasswordRequest>({
+    changeMyPassword: build.mutation<IUserResponse, IChangePasswordRequest>({
       query: (credential) => ({
         url: API_ROUTES.user.changePassword,
         method: "PATCH",

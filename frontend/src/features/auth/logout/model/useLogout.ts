@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { logout as logoutAction } from "@/features/auth/model/authSlice";
-import { useLogoutMutation } from "@/features/auth/api";
-import { useAppDispatch } from "@/shared";
 import { useTranslation } from "react-i18next";
+
+import { useLogoutMutation } from "@/features/auth/api";
+import { logout as logoutAction, useAppDispatch } from "@/shared";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
 export const useLogout = () => {

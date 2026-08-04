@@ -1,8 +1,7 @@
 import { Navigate, Outlet } from "react-router";
 
+import { selectAuthAccessToken, useAppSelector } from "@/shared";
 import { FRONT_ROUTES } from "@/shared/config/routes";
-import { useAppSelector } from "@/shared";
-import { selectAuthAccessToken } from "@/features";
 
 function MainLayout() {
   const token = useAppSelector(selectAuthAccessToken);

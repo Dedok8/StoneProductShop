@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router";
+
+import { selectAuthAccessToken, useAppSelector } from "@/shared";
 import { FRONT_ROUTES } from "@/shared/config";
-import { useAppSelector } from "@/shared";
-import { selectAuthAccessToken } from "@/features";
 
 function GuestRoute() {
   const accessToken = useAppSelector(selectAuthAccessToken);

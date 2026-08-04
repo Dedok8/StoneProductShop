@@ -17,6 +17,7 @@
     "forbidden": "You don't have permission to do this.",
     "notFound": "The requested resource was not found.",
     "validation": "Please check the highlighted fields.",
-    "timeout": "The request took too long. Please try again."
+    "timeout": "The request took too long. Please try again.",
+    "generic": "Something went wrong. Please try again later."
   }
 }

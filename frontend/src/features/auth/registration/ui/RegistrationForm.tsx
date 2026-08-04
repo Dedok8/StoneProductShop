@@ -1,11 +1,12 @@
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+
 import {
   useRegistration,
   useRegistrationForm,
 } from "@/features/auth/registration/model";
 import { FRONT_ROUTES, type IRegisterRequest } from "@/shared";
 import { getApiErrorMessage } from "@/shared/ui/Error";
-import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router";
 
 function Registration() {
   const { registration, isLoading } = useRegistration();

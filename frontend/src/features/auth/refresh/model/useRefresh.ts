@@ -1,7 +1,7 @@
-import { useRefreshMutation } from "@/features/auth/api";
-import { logout, setCredentials } from "@/features/auth/model";
-import { useAppDispatch } from "@/shared";
 import { useCallback } from "react";
+
+import { useRefreshMutation } from "@/features/auth/api";
+import { logout, setCredentials, useAppDispatch } from "@/shared";
 
 export const useRefresh = () => {
   const [refreshMutation, { isLoading, error }] = useRefreshMutation();

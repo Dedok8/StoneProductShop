@@ -1,7 +1,7 @@
-import { selectAuthAccessToken } from "@/features/auth/model";
-import { useRefresh } from "@/features/auth/refresh/model/useRefresh";
-import { mainConfig, useAppSelector } from "@/shared";
 import { useEffect, useRef } from "react";
+
+import { useRefresh } from "@/features/auth/refresh/model/useRefresh";
+import { mainConfig, selectAuthAccessToken, useAppSelector } from "@/shared";
 
 export function useSessionKeepAlive() {
   const accessToken = useAppSelector(selectAuthAccessToken);

@@ -1,11 +1,12 @@
-import type { IUserResponse, RootState } from "@/shared";
 import {
   createSlice,
   type PayloadAction,
   type SerializedError,
 } from "@reduxjs/toolkit";
 
-interface IUserSlice {
+import type { IUserResponse } from "@/shared/types";
+
+export interface IUserSlice {
   user: IUserResponse | null;
   accessToken: string | null;
   loading: boolean;
@@ -32,6 +33,11 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = null;
     },
+    setUser(state, action: PayloadAction<IUserResponse | null>) {
+      state.user = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
     logout(state) {
       state.user = null;
       state.accessToken = null;
@@ -41,12 +47,14 @@ const authSlice = createSlice({
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, setUser, logout } = authSlice.actions;
 
-export const selectAuthUser = (state: RootState) => state.auth.user;
-export const selectAuthAccessToken = (state: RootState) =>
+export const selectAuthUser = (state: { auth: IUserSlice }) => state.auth.user;
+export const selectAuthAccessToken = (state: { auth: IUserSlice }) =>
   state.auth.accessToken;
-export const selectAuthLoading = (state: RootState) => state.auth.loading;
-export const selectAuthError = (state: RootState) => state.auth.error;
+export const selectAuthLoading = (state: { auth: IUserSlice }) =>
+  state.auth.loading;
+export const selectAuthError = (state: { auth: IUserSlice }) =>
+  state.auth.error;
 
 export default authSlice.reducer;
