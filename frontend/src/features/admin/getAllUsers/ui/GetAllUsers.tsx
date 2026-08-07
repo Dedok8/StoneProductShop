@@ -24,6 +24,9 @@ function GetAllUsers() {
   return (
     <div>
       <div>
+        <button onClick={refetch} disabled={isFetching}>
+          {isFetching ? t("common.loading") : t("common.refresh")}
+        </button>
         <label>
           <Input
             value={query.search ?? ""}

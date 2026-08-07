@@ -6,28 +6,20 @@ import { useTranslation } from "react-i18next";
 import { registerSchema } from "@/entities";
 import type { IRegisterRequest } from "@/shared";
 
-const defaultValues: IRegisterRequest = {
-  name: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
 export const useRegistrationForm = () => {
   const { t } = useTranslation();
-  const schema = registerSchema(t);
+  const schema = useMemo(() => registerSchema(t), [t]);
 
-  const form = useForm({
+  const form = useForm<IRegisterRequest>({
     mode: "onBlur",
-    defaultValues,
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
     resolver: yupResolver(schema),
   });
 
-  const field = useMemo(
-    () => ({
-      errors: form.formState.errors,
-    }),
-    [form.formState.errors]
-  );
-  return { ...form, field };
+  return { ...form, errors: form.formState.errors };
 };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSearchUser } from "@/features/admin/searchUser/model";
+import { Input } from "@/shared/ui/components/input";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function SearchUser() {
@@ -14,7 +15,7 @@ function SearchUser() {
 
   return (
     <div>
-      <input
+      <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}

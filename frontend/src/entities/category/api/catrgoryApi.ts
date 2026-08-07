@@ -41,7 +41,7 @@ export const categoryApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Category", id }],
     }),
 
-    createCatgory: build.mutation<ICategoryResponse, ICreateCategoryRequest>({
+    createCategory: build.mutation<ICategoryResponse, ICreateCategoryRequest>({
       query: (credentials) => ({
         url: API_ROUTES.category.create,
         method: "POST",
@@ -82,7 +82,7 @@ export const {
   useGetAllCategoryQuery,
   useSearchCategoryQuery,
   useFindCategoryByIdQuery,
-  useCreateCatgoryMutation,
+  useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useDeleteCategoryMutation,
 } = categoryApi;

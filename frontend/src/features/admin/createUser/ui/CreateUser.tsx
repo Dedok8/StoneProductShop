@@ -10,11 +10,7 @@ import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function CreateUser() {
   const { createUser, isLoading, error, isError } = useCreateUser();
-  const {
-    register,
-    handleSubmit,
-    field: { errors },
-  } = useCreateUserForm();
+  const { register, handleSubmit, errors } = useCreateUserForm();
   const { t } = useTranslation();
 
   const onSubmit = async (value: ICreateUserRequest) => {

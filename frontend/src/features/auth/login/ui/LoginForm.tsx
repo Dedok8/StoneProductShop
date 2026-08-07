@@ -16,17 +16,11 @@ import { Input } from "@/shared/ui/components/input";
 import { Label } from "@/shared/ui/components/label";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
-
 function LoginForm() {
   const { login, isLoading } = useLogin();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const {
-    register,
-    handleSubmit,
-    field: { errors },
-    setError,
-  } = useLoginForm();
+  const { register, handleSubmit, errors, setError } = useLoginForm();
 
   const onSubmit = async (values: ILoginRequest) => {
     try {

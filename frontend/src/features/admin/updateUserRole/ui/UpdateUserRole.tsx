@@ -1,9 +1,10 @@
-import { useUpdateUserRole } from "@/features/admin/updateUserRole/model";
-import type { UserRole } from "@/shared";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+
+import { useUpdateUserRole } from "@/features/admin/updateUserRole/model";
+import type { UserRole } from "@/shared";
+import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function UpdateUserRole() {
   const { id } = useParams<{ id: string }>();

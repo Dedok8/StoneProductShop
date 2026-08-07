@@ -6,26 +6,16 @@ import { useTranslation } from "react-i18next";
 import { loginSchema } from "@/entities";
 import type { ILoginRequest } from "@/shared";
 
-const defaultValues: ILoginRequest = {
-  email: "",
-  password: "",
-};
 
 export const useLoginForm = () => {
   const { t } = useTranslation();
-  const schema = loginSchema(t);
+  const schema = useMemo(() => loginSchema(t), [t]);
 
-  const form = useForm({
+  const form = useForm<ILoginRequest>({
     mode: "onBlur",
-    defaultValues,
+    defaultValues: { email: "", password: "" },
     resolver: yupResolver(schema),
   });
 
-  const field = useMemo(
-    () => ({
-      errors: form.formState.errors,
-    }),
-    [form.formState.errors]
-  );
-  return { ...form, field };
+  return { ...form, errors: form.formState.errors };
 };

@@ -4,12 +4,13 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { createUserSchema } from "@/entities";
+import type { ICreateUserRequest } from "@/shared";
 
 export const useCreateUserForm = () => {
   const { t } = useTranslation();
-  const schema = createUserSchema(t);
+  const schema = useMemo(() => createUserSchema(t), [t]);
 
-  const form = useForm({
+  const form = useForm<ICreateUserRequest>({
     mode: "onBlur",
     defaultValues: {
       name: "",
@@ -20,12 +21,5 @@ export const useCreateUserForm = () => {
     resolver: yupResolver(schema),
   });
 
-  const field = useMemo(
-    () => ({
-      errors: form.formState.errors,
-    }),
-    [form.formState.errors]
-  );
-
-  return { ...form, field };
+  return { ...form, errors: form.formState.errors };
 };

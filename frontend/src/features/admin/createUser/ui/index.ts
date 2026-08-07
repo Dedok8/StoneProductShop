@@ -1,1 +1,1 @@
-export * from "./CreateUser";
+export { default as CreateUser } from "./CreateUser";

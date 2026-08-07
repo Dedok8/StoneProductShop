@@ -152,6 +152,14 @@ export interface ISearchCategoryQuery {
   name?: string;
 }
 
+export interface IGetCategoryQuery {
+  sortBy?: "name" | "email" | "createdAt"; // default 'createdAt'
+  search?: string;
+  sortOrder?: SortOrder; // default 'asc'
+  page?: number; // min 1, default 1
+  limit?: number; // min 1, max 100, default 20
+}
+
 // GET /api/v1/category -> CategoryResponse[] (inferred)
 // GET /api/v1/category/search -> CategoryResponse[] | CategoryResponse (inferred)
 // GET /api/v1/category/{id} -> CategoryResponse (inferred)
