@@ -6,7 +6,7 @@ export const useGetAllProduct = (query: IGetProductsQuery) => {
     useGetAllProductQuery(query);
 
   return {
-    product: data?.items ?? [],
+    products: data?.items ?? [],
     meta: data?.meta,
     isLoading,
     error,

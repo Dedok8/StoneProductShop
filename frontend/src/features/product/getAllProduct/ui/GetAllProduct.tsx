@@ -15,15 +15,8 @@ function GetAllProduct() {
     sortOrder: "asc",
   });
 
-  const {
-    product: products,
-    meta,
-    isLoading,
-    error,
-    isError,
-    isFetching,
-    refetch,
-  } = useGetAllProduct(query);
+  const { products, meta, isLoading, error, isError, isFetching, refetch } =
+    useGetAllProduct(query);
 
   const { t } = useTranslation();
 

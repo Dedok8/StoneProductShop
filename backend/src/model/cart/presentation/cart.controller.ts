@@ -19,7 +19,7 @@ import {
   CartService,
   UpdateCartItemDto,
 } from '@/model/cart/application';
-import { CurrentUser, JWTAuthGuard } from '@/shared';
+import { CurrentUser, JWTAuthGuard, Roles, RolesGuard } from '@/shared';
 
 @Controller('cart')
 @ApiBearerAuth()
@@ -29,6 +29,15 @@ export class CartController {
 
   @Get()
   getCart(@CurrentUser('sub') userId: string): Promise<CartResponseDto> {
+    return this.cartService.getCart(userId);
+  }
+
+  @Get('admin/:userId')
+  @Roles('ADMIN')
+  @UseGuards(RolesGuard)
+  getUserCartAsAdmin(
+    @Param('userId', ParseUUIDPipe) userId: string,
+  ): Promise<CartResponseDto> {
     return this.cartService.getCart(userId);
   }
 
