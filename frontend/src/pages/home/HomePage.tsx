@@ -1,5 +1,12 @@
+import Header from "@/widgets/Header";
+
 function HomePage() {
-  return <>Home page</>;
+  return (
+    <>
+      <Header />
+      Home page
+    </>
+  );
 }
 
 export default HomePage;

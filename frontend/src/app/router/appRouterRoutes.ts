@@ -22,8 +22,10 @@ export const appRouterRoutes = pagesList.map((page) => {
         ? route.template
         : undefined;
 
+  const isIndex = path === "/";
+
   return {
-    path,
+    ...(isIndex ? { index: true } : { path }),
     meta: route.meta,
 
     lazy: async () => {
@@ -31,9 +33,11 @@ export const appRouterRoutes = pagesList.map((page) => {
         p.includes(`/${page.toLowerCase()}/index.ts`)
       );
 
-      if (!match) throw new Error(`Page "${page}" не найдена в /pages`);
+      if (!match) throw new Error(`Page "${page}" не знайдена в /pages`);
 
       const module = await pages[match]();
+
+      console.log("route config:", page, { path, isIndex, meta: route.meta });
 
       return { Component: module.default };
     },

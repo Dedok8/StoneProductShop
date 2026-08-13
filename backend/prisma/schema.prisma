@@ -23,6 +23,13 @@ enum OrderStatus {
   CANCELLED
 }
 
+enum LeadStatus {
+  NEW
+  CONTACTED
+  CLOSED
+}
+
+
 model User {
   id           String    @id @default(uuid())
   name         String    @unique
@@ -148,3 +155,19 @@ model CartItem {
 
   @@map("cart_items")
 }
+
+model Lead {
+  id        String     @id @default(uuid())
+  name      String
+  phone     String
+  consent   Boolean
+  status    LeadStatus @default(NEW)
+
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("leads")
+  @@index([status])
+  @@index([createdAt])
+}
+

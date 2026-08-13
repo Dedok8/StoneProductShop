@@ -1,8 +1,8 @@
 import { Navigate, Outlet, useLocation } from "react-router";
 
-import { selectAuthAccessToken, selectAuthLoading } from "@/features";
 import { FRONT_ROUTES } from "@/shared/config";
 import { useAppSelector } from "@/shared/hooks";
+import { selectAuthAccessToken, selectAuthLoading } from "@/shared/redux";
 
 function ProtectedRoute() {
   const accessToken = useAppSelector(selectAuthAccessToken);
@@ -14,7 +14,7 @@ function ProtectedRoute() {
   if (!accessToken) {
     return (
       <Navigate
-        to={FRONT_ROUTES.pages.Login.path}
+        to={FRONT_ROUTES.pages.Authentication.path}
         state={{ from: location }}
         replace
       />

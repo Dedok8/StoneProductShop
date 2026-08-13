@@ -6,7 +6,8 @@ import { FRONT_ROUTES } from "@/shared/config/routes";
 function MainLayout() {
   const token = useAppSelector(selectAuthAccessToken);
 
-  if (!token) return <Navigate to={FRONT_ROUTES.pages.Login.path} replace />;
+  if (!token)
+    return <Navigate to={FRONT_ROUTES.pages.Authentication.path} replace />;
 
   return (
     <div>

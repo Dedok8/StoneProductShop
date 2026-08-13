@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter } from "react-router-dom";
 
 import { store } from "@/app";
 import { appRouterRoutes } from "@/app/router/appRouterRoutes";
@@ -8,7 +8,6 @@ import { PageLoader, type IRouteMeta } from "@/shared";
 import MainLayout from "@/widgets/layouts/PrivateLayout";
 import PublicLayout from "@/widgets/layouts/PublicLayout";
 import RootLayout from "@/widgets/layouts/RootLayout";
-
 const authRoutes = appRouterRoutes.filter((r) => r.meta.requireAuth);
 
 const plainAuthRoutes = authRoutes.filter(

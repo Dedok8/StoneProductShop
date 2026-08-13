@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAddToCartItem } from "@/features/cart/addCartItem/model";
+import { getApiErrorMessage } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 
@@ -37,7 +38,7 @@ function AddToCartItem({ productId }: { productId: string }) {
         {t("cart.addToCart")}
       </Button>
 
-      {isError && <p>{error?.toString()}</p>}
+      {isError && <p>{getApiErrorMessage(error, t)}</p>}
     </form>
   );
 }

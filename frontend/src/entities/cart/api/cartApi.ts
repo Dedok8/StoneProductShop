@@ -16,6 +16,14 @@ export const cartApi = baseApi.injectEndpoints({
       providesTags: [{ type: "Cart", id: "MY_CART" }],
     }),
 
+    getUserCartAsAdmin: build.query<ICartResponse, string>({
+      query: (userId) => ({
+        url: API_ROUTES.cart.getCartAsAdmin(userId),
+        method: "GET",
+      }),
+      providesTags: (_result, _error, userId) => [{ type: "Cart", id: userId }],
+    }),
+
     addCartItem: build.mutation<ICartResponse, IAddCartItemRequest>({
       query: (body) => ({
         url: API_ROUTES.cart.addItem,

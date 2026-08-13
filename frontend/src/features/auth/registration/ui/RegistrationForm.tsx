@@ -9,7 +9,7 @@ import { FRONT_ROUTES, type IRegisterRequest } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
-function Registration() {
+function RegistrationForm() {
   const { registration, isLoading } = useRegistration();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -71,4 +71,4 @@ function Registration() {
   );
 }
 
-export default Registration;
+export default RegistrationForm;
