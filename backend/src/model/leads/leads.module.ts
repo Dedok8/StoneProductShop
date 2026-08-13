@@ -3,6 +3,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailerModule } from '@nestjs-modules/mailer';
 
 import { LeadsService } from '@/model/leads/application';
+import { LEAD_REPOSITORY } from '@/model/leads/domain/interfaces';
+import { LeadRepository } from '@/model/leads/infrastructure';
 import { LeadController } from '@/model/leads/presentation';
 
 @Module({
@@ -27,6 +29,12 @@ import { LeadController } from '@/model/leads/presentation';
     }),
   ],
   controllers: [LeadController],
-  providers: [LeadsService],
+  providers: [
+    LeadsService,
+    {
+      provide: LEAD_REPOSITORY,
+      useClass: LeadRepository,
+    },
+  ],
 })
 export class LeadsModule {}
