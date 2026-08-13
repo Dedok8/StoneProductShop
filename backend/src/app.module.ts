@@ -6,13 +6,14 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from '@/config/env.validation';
 import {
   AuthModule,
+  CartModule,
   CategoryModule,
+  CheckoutModule,
+  LeadsModule,
   OrderModule,
   ProductModule,
   UserModule,
 } from '@/model';
-import { CartModule } from '@/model/cart';
-import { CheckoutModule } from '@/model/checkout';
 import {
   AppThrottlerGuard,
   HealthController,
@@ -45,6 +46,7 @@ import {
     OrderModule,
     CartModule,
     CheckoutModule,
+    LeadsModule,
   ],
   controllers: [HealthController],
   providers: [

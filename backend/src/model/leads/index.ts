@@ -1,1 +1,1 @@
-export * from './mail.module';
+export * from './leads.module';
