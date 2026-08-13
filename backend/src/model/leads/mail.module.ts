@@ -1,6 +1,9 @@
 import { Module } from '@nestjs/common';
-import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailerModule } from '@nestjs-modules/mailer';
+
+import { LeadsService } from '@/model/leads/application';
+import { LeadController } from '@/model/leads/presentation';
 
 @Module({
   imports: [
@@ -23,7 +26,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       }),
     }),
   ],
-  controllers: [LeadsController],
+  controllers: [LeadController],
   providers: [LeadsService],
 })
 export class LeadsModule {}
