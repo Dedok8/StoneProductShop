@@ -62,7 +62,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   findById(id: string): Promise<ProductEntity | null> {
-    return findOneCached({
+    return findOneCached<ProductCached, Product, ProductEntity>({
       cache: this.cache,
       key: idKey(id),
       ttl: DETAIL_TTL_SEC,
@@ -74,7 +74,7 @@ export class ProductRepository implements IProductRepository {
   }
 
   findBySlug(slug: string): Promise<ProductEntity | null> {
-    return findOneCached({
+    return findOneCached<ProductCached, Product, ProductEntity>({
       cache: this.cache,
       key: slugKey(slug),
       ttl: DETAIL_TTL_SEC,

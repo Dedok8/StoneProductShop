@@ -6,3 +6,4 @@ export * from './user';
 export * from './leads';
 export * from './cart';
 export * from './checkout';
+export * from './inspiration';

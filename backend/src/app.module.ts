@@ -9,6 +9,7 @@ import {
   CartModule,
   CategoryModule,
   CheckoutModule,
+  InspirationModule,
   LeadsModule,
   OrderModule,
   ProductModule,
@@ -47,6 +48,7 @@ import {
     CartModule,
     CheckoutModule,
     LeadsModule,
+    InspirationModule,
   ],
   controllers: [HealthController],
   providers: [

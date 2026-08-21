@@ -1,9 +1,9 @@
-import { LeadResponse } from '@/model/leads/application/dto';
+import { LeadResponseDto } from '@/model/leads/application/dto';
 import type { LeadEntity } from '@/model/leads/domain/entities';
 
 export class LeadMapper {
-  static toResponse(entity: LeadEntity): LeadResponse {
-    return new LeadResponse({
+  static toResponse(entity: LeadEntity): LeadResponseDto {
+    return new LeadResponseDto({
       id: entity.id,
       name: entity.name,
       phone: entity.phone,
@@ -14,7 +14,7 @@ export class LeadMapper {
     });
   }
 
-  static toResponseList(entities: LeadEntity[]): LeadResponse[] {
+  static toResponseList(entities: LeadEntity[]): LeadResponseDto[] {
     return entities.map((entity) => LeadMapper.toResponse(entity));
   }
 }

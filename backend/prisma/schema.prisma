@@ -171,3 +171,12 @@ model Lead {
   @@index([createdAt])
 }
 
+model InspirationImage {
+  id        String   @id @default(uuid())
+  imageUrl  String   @map("image_url")
+  alt       String   @default("")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  @@map("inspiration_images")
+}

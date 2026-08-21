@@ -5,7 +5,7 @@ import { LeadsService } from '@/model/leads/application';
 import {
   CreateLeadDto,
   LeadQueryDto,
-  LeadResponse,
+  LeadResponseDto,
   PaginatedLeadResponseDto,
 } from '@/model/leads/application/dto';
 import { JWTAuthGuard, Roles, RolesGuard, UserRole } from '@/shared';
@@ -25,7 +25,7 @@ export class LeadController {
   @Post()
   @ApiBearerAuth()
   @UseGuards(JWTAuthGuard)
-  create(@Body() dto: CreateLeadDto): Promise<LeadResponse> {
+  create(@Body() dto: CreateLeadDto): Promise<LeadResponseDto> {
     return this.leadService.create(dto);
   }
 }

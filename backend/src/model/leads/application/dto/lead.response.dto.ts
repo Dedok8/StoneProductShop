@@ -1,6 +1,6 @@
 import type { LeadStatus } from '@/generated/prisma';
 
-export class LeadResponse {
+export class LeadResponseDto {
   readonly id: string;
   readonly name: string;
   readonly phone: string;
