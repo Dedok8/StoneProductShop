@@ -10,3 +10,4 @@ export * from './redis';
 export * from './dto';
 export * from './utils';
 export * from './test';
+export * from './upload';

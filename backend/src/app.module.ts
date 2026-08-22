@@ -20,6 +20,7 @@ import {
   HealthController,
   PrismaModule,
   RedisModule,
+  UploadModule,
 } from '@/shared';
 
 @Module({
@@ -49,6 +50,7 @@ import {
     CheckoutModule,
     LeadsModule,
     InspirationModule,
+    UploadModule,
   ],
   controllers: [HealthController],
   providers: [

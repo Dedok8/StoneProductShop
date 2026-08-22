@@ -361,3 +361,25 @@ export interface IGetLeadQuery {
   dateFrom?: Date;
   dateTo?: Date;
 }
+
+// ---------------------------------------------------------------------------
+// inspiration
+// ---------------------------------------------------------------------------
+
+export interface IInspirationResponse {
+  id: string;
+  imageUrl: string;
+  alt: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICreateInspiration {
+  imageUrl: string;
+  alt: string;
+}
+
+export interface IUpdateInspiration {
+  imageUrl: string;
+  alt: string;
+}

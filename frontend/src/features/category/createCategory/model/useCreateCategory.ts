@@ -1,5 +1,5 @@
 import { useCreateCategoryMutation } from "@/entities";
-import type { ICreateCategoryRequest } from "@/shared";
+import type { ICreateCategoryRequest } from "@/shared/types";
 
 export const useCreateCategory = () => {
   const [createCategoryMutation, { isLoading, error, isError }] =

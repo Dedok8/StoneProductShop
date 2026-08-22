@@ -1,11 +1,10 @@
+import { API_ROUTES, baseApi } from "@/shared";
 import {
-  API_ROUTES,
-  baseApi,
   type ICategoryResponse,
   type ICreateCategoryRequest,
   type ISearchCategoryQuery,
   type IUpdateCategoryRequest,
-} from "@/shared";
+} from "@/shared/types";
 
 export const categoryApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

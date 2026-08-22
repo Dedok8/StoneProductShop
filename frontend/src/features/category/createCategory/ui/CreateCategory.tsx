@@ -4,7 +4,7 @@ import {
   useCreateCategory,
   useCreateCategoryForm,
 } from "@/features/category/createCategory/model";
-import type { ICreateCategoryRequest } from "@/shared";
+import type { ICreateCategoryRequest } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 import { getApiErrorMessage } from "@/shared/ui/Error";

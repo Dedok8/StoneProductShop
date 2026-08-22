@@ -62,4 +62,15 @@ export const API_ROUTES = {
     getAll: "/lead",
     create: "/lead",
   },
+
+  inspiration: {
+    getAll: "/inspiration",
+  },
+
+  inspirationAdmin: {
+    getAll: "/admin/inspiration",
+    create: "/admin/inspiration",
+    update: (id: string) => `/admin/inspiration/${id}`,
+    delete: (id: string) => `/admin/inspiration/${id}`,
+  },
 } as const;
