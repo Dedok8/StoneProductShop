@@ -6,7 +6,7 @@ export const useCreateProduct = () => {
     useCreateProductMutation();
 
   async function createProduct(credentials: ICreateProductRequest) {
-    const data = await createProductMutation(credentials);
+    const data = await createProductMutation(credentials).unwrap();
     return data;
   }
 

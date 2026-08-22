@@ -11,13 +11,13 @@ import {
 export const productApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     getAllProduct: build.query<
-      PaginatedProductResponse, 
+      PaginatedProductResponse,
       IGetProductsQuery | void
     >({
       query: (params) => ({
         url: API_ROUTES.product.getAll,
         method: "GET",
-        params: params ?? undefined, 
+        params: params ?? undefined,
       }),
       providesTags: (result) =>
         result

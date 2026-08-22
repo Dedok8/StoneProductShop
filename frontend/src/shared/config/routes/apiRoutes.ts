@@ -57,4 +57,9 @@ export const API_ROUTES = {
     removeItem: (productId: string) => `/cart/items/${productId}`,
     getCartAsAdmin: (userId: string) => `/cart/admin/${userId}`,
   },
+
+  lead: {
+    getAll: "/lead",
+    create: "/lead",
+  },
 } as const;

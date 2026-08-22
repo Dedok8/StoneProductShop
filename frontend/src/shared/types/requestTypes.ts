@@ -16,6 +16,8 @@ export type OrderStatus =
   | "COMPLETED"
   | "CANCELLED";
 
+export type LeadStatus = "NEW" | "CONTACTED" | "CLOSED";
+
 export type SortOrder = "asc" | "desc";
 
 // ---------------------------------------------------------------------------
@@ -330,3 +332,32 @@ export interface IUpdateCartItemRequest {
 // POST   /api/v1/cart/items -> CartResponseDto (auth required, body: AddCartItemDto)
 // PATCH  /api/v1/cart/items/{productId} -> CartResponseDto (auth required, body: UpdateCartItemDto)
 // DELETE /api/v1/cart/items/{productId} -> CartResponseDto (auth required)
+
+// ---------------------------------------------------------------------------
+// Leads
+// ---------------------------------------------------------------------------
+
+export interface ILeadsResponse {
+  id: string;
+  name: string;
+  phone: string;
+  consent: boolean;
+  status: LeadStatus;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ICreateLead {
+  name: string;
+  phone: string;
+  consent: boolean;
+}
+
+export type paginatedLeadResponse = IPaginated<ILeadsResponse>;
+
+export interface IGetLeadQuery {
+  status?: LeadStatus;
+  sortOrder?: SortOrder;
+  dateFrom?: Date;
+  dateTo?: Date;
+}

@@ -4,7 +4,12 @@ import { useSelector } from "react-redux";
 import { getMenuItems, selectAuthUser } from "@/shared";
 import { HeaderNavLink } from "@/widgets/Header/Header-nav-link";
 
-function HeaderNav() {
+interface HeaderNavProps {
+  mobile?: boolean;
+  onLinkClick?: () => void;
+}
+
+function HeaderNav({ mobile = false, onLinkClick }: HeaderNavProps) {
   const user = useSelector(selectAuthUser);
   const { t } = useTranslation();
 
@@ -14,9 +19,15 @@ function HeaderNav() {
   });
 
   return (
-    <nav className="flex gap-30">
+    <nav
+      className={
+        mobile
+          ? "flex flex-col gap-4"
+          : "flex flex-wrap gap-6 md:gap-10 lg:gap-16 xl:gap-30 justify-end"
+      }
+    >
       {allowedRoutes.map(({ path, title }) => (
-        <HeaderNavLink key={path} to={path}>
+        <HeaderNavLink key={path} to={path} onClick={onLinkClick}>
           {t(title)}
         </HeaderNavLink>
       ))}

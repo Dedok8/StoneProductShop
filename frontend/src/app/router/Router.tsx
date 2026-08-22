@@ -5,6 +5,7 @@ import { appRouterRoutes } from "@/app/router/appRouterRoutes";
 import { bootSessionLoader } from "@/app/router/bootSessionLoader";
 import RoleRoute from "@/app/router/guards/RoleRoute";
 import { PageLoader, type IRouteMeta } from "@/shared";
+import RouteErrorFallback from "@/shared/ui/Error/RouteErrorFallback";
 import MainLayout from "@/widgets/layouts/PrivateLayout";
 import PublicLayout from "@/widgets/layouts/PublicLayout";
 import RootLayout from "@/widgets/layouts/RootLayout";
@@ -35,11 +36,13 @@ export const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout />,
+    errorElement: <RouteErrorFallback />,
     loader: bootSessionLoader({ store }),
     HydrateFallback: PageLoader,
     children: [
       {
         element: <PublicLayout />,
+        errorElement: <RouteErrorFallback />,
         children: appRouterRoutes.filter(
           (r) => (r.meta as IRouteMeta).isGuestOnly
         ),
@@ -47,6 +50,7 @@ export const router = createBrowserRouter([
 
       {
         element: <MainLayout />,
+        errorElement: <RouteErrorFallback />,
         children: [
           ...plainAuthRoutes,
           ...[...roleRouteGroups.values()].map(({ roles, routes }) => ({

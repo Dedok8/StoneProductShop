@@ -3,10 +3,13 @@ import { Module } from '@nestjs/common';
 import { InspirationImageService } from '@/model/inspiration/application';
 import { INSPIRATION_IMAGE_REPOSITORY } from '@/model/inspiration/domain';
 import { InspirationImageRepository } from '@/model/inspiration/infrastructure';
-import { InspirationController } from '@/model/inspiration/presentation';
+import {
+  AdminInspirationController,
+  InspirationController,
+} from '@/model/inspiration/presentation';
 
 @Module({
-  controllers: [InspirationController],
+  controllers: [InspirationController, AdminInspirationController],
   providers: [
     InspirationImageService,
     {

@@ -4,7 +4,7 @@ import { NavLink, type NavLinkProps } from "react-router-dom";
 import { cn } from "@/shared";
 
 const navLinkVariants = cva(
-  "text-[18px] font-medium transition-colors hover:text-background transition-colors duration-200 ease-out",
+  "text-[15px] sm:text-[16px] font-medium transition-colors hover:text-background duration-200 ease-out py-1 lg:py-0",
   {
     variants: {
       active: {

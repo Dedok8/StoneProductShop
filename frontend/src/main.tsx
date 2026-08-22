@@ -5,6 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Provider } from "react-redux";
 import { RouterProvider } from "react-router";
 
+import "@/shared/config/i18n/config";
 import { store } from "@/app";
 import { router } from "@/app/router";
 import ErrorCompFallback from "@/shared/ui/Error/ErrorCompFallback";

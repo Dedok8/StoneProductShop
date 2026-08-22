@@ -1,2 +1,2 @@
-export * from "./ErrorCompFallback";
 export * from "./getApiErrorMessage";
+export { default } from "./ErrorCompFallback";

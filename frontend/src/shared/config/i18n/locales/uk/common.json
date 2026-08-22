@@ -58,14 +58,7 @@
     "updating": "Оновлення...",
     "updateSuccess": "Профіль успішно оновлено"
   },
-  "password": {
-    "current": "Поточний пароль",
-    "new": "Новий пароль",
-    "requirements": "8–64 символів, мають бути малі та великі літери, а також цифра",
-    "changing": "Зміна пароля...",
-    "change": "Змінити пароль",
-    "changeSuccess": "Пароль успішно змінено"
-  },
+  "password": "Пароль",
   "delete": {
     "deleteAccount": "Ви впевнені, що хочете видалити акаунт?",
     "deleting": "Видалення..."
@@ -88,7 +81,8 @@
     "desc": "За спаданням",
     "changeRole": "Змінити роль",
     "page": "Сторінка",
-    "of": "з"
+    "of": "з",
+    "createCategory": "Створити категорію"
   },
   "category": {
     "categories": "Категорії",
@@ -100,7 +94,8 @@
     "editCategory": "Редагувати категорію",
     "deleteCategory": "Видалити категорію",
     "deleteCategoryConfirm": "Ви впевнені, що хочете видалити цю категорію?",
-    "slugHint": "Тільки малі латинські літери, цифри та дефіси"
+    "slugHint": "Тільки малі латинські літери, цифри та дефіси",
+    "notFound": "Категорії не знайдено"
   },
   "product": {
     "products": "Товари",
@@ -122,13 +117,24 @@
     "inStock": "В наявності",
     "selectProduct": "Оберіть товар",
     "imageUrlPlaceholder": "URL зображення",
-    "searchPlaceholder": "Пошук товарів"
+    "searchPlaceholder": "Пошук товарів",
+    "create": "Створити товар",
+    "sortByCreatedAt": "Спочатку нові",
+    "sortByName": "За назвою",
+    "sortByPrice": "За ціною"
   },
   "order": {
     "orders": "Замовлення",
     "order": "Замовлення",
     "myOrders": "Мої замовлення",
-    "status": "Статус",
+    "status": {
+      "label": "Статус",
+      "pending": "Очікує",
+      "paid": "Оплачено",
+      "shipped": "Відправлено",
+      "completed": "Завершено",
+      "cancelled": "Скасовано"
+    },
     "total": "Разом",
     "createdAt": "Створено",
     "updatedAt": "Оновлено",
@@ -145,7 +151,8 @@
     "allStatuses": "Всі статуси",
     "addItem": "Додати товар",
     "id": "Номер замовлення",
-    "selectProduct": "Оберіть товар"
+    "selectProduct": "Оберіть товар",
+    "create": "Створити замовлення"
   },
   "orderStatus": {
     "PENDING": "Очікує",
@@ -164,7 +171,10 @@
     "quantity": "Кількість",
     "empty": "Ваш кошик порожній",
     "total": "Разом",
-    "checkout": "Оформити замовлення"
+    "checkout": "Оформити замовлення",
+    "outOfStock": "Немає в наявності",
+    "clear": "Очистити кошик",
+    "remove": "Видалити"
   },
   "checkout": {
     "checkout": "Оформлення замовлення",
@@ -186,5 +196,70 @@
     "emailTaken": "Цей email вже зареєстровано.",
     "invalidCredentials": "Невірний email або пароль.",
     "wrongCurrentPassword": "Поточний пароль вказано невірно."
+  },
+  "footer": {
+    "menu": {
+      "title": "Меню",
+      "delivery": "Доставка та повернення",
+      "newArrivals": "Новинки",
+      "faq": "Часті запитання",
+      "contacts": "Контакти",
+      "blog": "Блог"
+    },
+    "catalog": {
+      "title": "Каталог",
+      "newArrivals": "Новинки",
+      "trending": "Популярне",
+      "sales": "Акції",
+      "brands": "Бренди"
+    }
+  },
+  "name": "Ім'я",
+  "email": "Email",
+  "confirmPassword": "Підтвердіть пароль",
+  "register": "Зареєструватися",
+  "save": "Зберегти",
+  "validation": {
+    "required": "Це поле обов'язкове",
+    "minLength": "Мінімум {{count}} символів",
+    "maxLength": "Максимум {{count}} символів",
+    "slugFormat": "Тільки малі латинські літери, цифри та дефіси",
+    "invalidPhone": "Введіть коректний номер телефону",
+    "consentRequired": "Потрібна згода для продовження",
+    "number": "Повинно бути числом",
+    "minValue": "Мінімальне значення — {{count}}",
+    "maxValue": "Максимальне значення — {{count}}",
+    "integer": "Повинно бути цілим числом",
+    "url": "Введіть коректне посилання (URL)",
+    "maxItems": "Можна додати не більше {{count}} елементів",
+    "uuid": "Некоректний UUID",
+    "email": "Введіть коректну email-адресу",
+    "passwordComplexity": "Пароль має містити малі, великі літери та цифру",
+    "passwordMatch": "Паролі мають співпадати",
+    "invalidRole": "Обрано недійсну роль"
+  },
+  "login": {
+    "title": "З поверненням",
+    "subtitle": "Увійдіть у свій акаунт",
+    "emailLabel": "Email",
+    "emailPlaceholder": "you@example.com",
+    "passwordLabel": "Пароль",
+    "passwordPlaceholder": "Введіть пароль",
+    "submit": "Увійти"
+  },
+  "logout": {
+    "submit": "Вийти",
+    "confirmTitle": "Вийти з акаунту?",
+    "confirmMessage": "Ви впевнені, що хочете вийти?"
+  },
+  "lead": {
+    "name": "Ім'я",
+    "phone": "Номер телефону",
+    "create": "Надіслати заявку",
+    "consent": "Я погоджуюсь на обробку персональних даних",
+    "pd": "Політика конфіденційності"
+  },
+  "commandIcon": {
+    "loading": "Завантаження..."
   }
 }
