@@ -380,6 +380,10 @@ export interface ICreateInspiration {
 }
 
 export interface IUpdateInspiration {
-  imageUrl: string;
-  alt: string;
+  imageUrl?: string;
+  alt?: string;
+}
+
+export interface IUploadResponse {
+  url: string;
 }

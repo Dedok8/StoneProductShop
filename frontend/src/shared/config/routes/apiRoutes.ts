@@ -70,7 +70,12 @@ export const API_ROUTES = {
   inspirationAdmin: {
     getAll: "/admin/inspiration",
     create: "/admin/inspiration",
+    findById: (id: string) => `/admin/inspiration/${id}`,
     update: (id: string) => `/admin/inspiration/${id}`,
     delete: (id: string) => `/admin/inspiration/${id}`,
+  },
+
+  upload: {
+    createUpload: "/admin/upload",
   },
 } as const;

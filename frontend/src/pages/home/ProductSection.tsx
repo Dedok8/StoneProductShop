@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react"; // або ваша іконка стрілки
+import { ArrowRight } from "lucide-react"; 
 import { useTranslation } from "react-i18next";
 
 type Product = {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useGetAllProduct } from "@/features/product/getAllProduct/model";
-import type { IGetProductsQuery } from "@/shared";
+import type { IGetProductsQuery } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 

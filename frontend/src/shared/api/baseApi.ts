@@ -96,6 +96,7 @@ export const baseApi = createApi({
     "Lead",
     "InspirationAdmin",
     "Inspiration",
+    "Upload",
   ],
 
   endpoints: () => ({}),

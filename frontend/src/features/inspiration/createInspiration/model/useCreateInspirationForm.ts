@@ -3,7 +3,8 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { inspirationSchema, type IInspirationFormValues } from "@/entities";
+import { inspirationSchema } from "@/entities";
+import type { IInspirationFormValues } from "@/shared/types";
 
 export const useCreateInspirationForm = () => {
   const { t } = useTranslation();

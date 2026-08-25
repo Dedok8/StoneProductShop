@@ -24,6 +24,14 @@ export const adminInspiration = baseApi.injectEndpoints({
           : [{ type: "InspirationAdmin" as const, id: "LIST" }],
     }),
 
+    findInspirationById: build.query<IInspirationResponse, string>({
+      query: (id) => ({
+        url: API_ROUTES.inspirationAdmin.findById(id),
+        method: "GET",
+      }),
+      providesTags: (_result, _error, id) => [{ type: "InspirationAdmin", id }],
+    }),
+
     createInspiration: build.mutation<IInspirationResponse, ICreateInspiration>(
       {
         query: (credentials) => ({
@@ -65,6 +73,7 @@ export const adminInspiration = baseApi.injectEndpoints({
 
 export const {
   useGetAllInspirationQuery,
+  useFindInspirationByIdQuery,
   useCreateInspirationMutation,
   useDeleteInspirationMutation,
   useUpdateInspirationMutation,

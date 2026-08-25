@@ -27,7 +27,7 @@ export const FRONT_ROUTES = {
         title: "Catalog",
         isInMenu: true,
         requireAuth: false,
-        isGuestOnly: true,
+        // isGuestOnly: true,
       },
     },
     Promotions: {
@@ -119,6 +119,16 @@ export const FRONT_ROUTES = {
         order: 11,
         icon: "box",
       },
+    },
+  },
+
+  AdminInspiration: {
+    path: "/admin/inspiration",
+    meta: {
+      title: "Create Inspiration",
+      isInMenu: true,
+      requireAuth: true,
+      roles: ["ADMIN"],
     },
   },
 } as const;

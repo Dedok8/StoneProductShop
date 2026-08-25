@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
-import { useDeleteCategory } from "@/features/category/deleteCategory/model";
+import { useDeleteProduct } from "@/features/product/deleteProduct/model/useDeleteProduct";
+import { getApiErrorMessage } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
-function DeleteCategory() {
-  const { deleteCategory, isLoading, error, isError } = useDeleteCategory();
+function DeleteProduct() {
+  const { deleteProduct, isLoading, error, isError } = useDeleteProduct();
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
 
@@ -16,7 +16,7 @@ function DeleteCategory() {
     try {
       if (!id) return;
 
-      await deleteCategory(id);
+      await deleteProduct(id);
     } catch (e) {
       //
     }
@@ -26,10 +26,10 @@ function DeleteCategory() {
       <div>{isError && <div>{getApiErrorMessage(error, t)}</div>}</div>
 
       <Button type="submit" disabled={isLoading}>
-        {isLoading ? t("delete.deleting") : t("delete.deleteCategory")}
+        {isLoading ? t("delete.deleting") : t("delete.deleteProduct")}
       </Button>
     </form>
   );
 }
 
-export default DeleteCategory;
+export default DeleteProduct;

@@ -8,7 +8,7 @@ import {
 } from "@/widgets/homeFn";
 
 function AdvantagesPage() {
-  const [openId, setOpenId] = useState<string | null>("01");
+  const [openId, setOpenId] = useState<string | null>("00");
 
   const handleToggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id));

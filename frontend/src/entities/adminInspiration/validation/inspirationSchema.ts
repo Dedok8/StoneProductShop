@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-import type { IInspirationFormValues } from "@/entities/adminInspiration/validation/fileTypes";
+import type { IInspirationFormValues } from "@/shared/types/fileTypes";
 
 import type { TFunction } from "i18next";
 

@@ -1,12 +1,11 @@
+import { API_ROUTES, baseApi } from "@/shared";
 import {
-  API_ROUTES,
-  baseApi,
   type ICreateProductRequest,
   type IGetProductsQuery,
   type IProductResponse,
   type IUpdateProductRequest,
   type PaginatedProductResponse,
-} from "@/shared";
+} from "@/shared/types";
 
 export const productApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

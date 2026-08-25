@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 
 import { useFindCategoryById } from "@/features/category/findCategoryById";
 import { useUpdateCategory } from "@/features/category/updateCategory/model";
-import type { ICategoryResponse } from "@/shared";
+import type { ICategoryResponse } from "@/shared/types";
 
 function UpdateCategory() {
   const { id } = useParams<{ id: string }>();
