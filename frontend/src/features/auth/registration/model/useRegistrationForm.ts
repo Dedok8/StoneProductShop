@@ -3,14 +3,13 @@ import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { registerSchema } from "@/entities";
-import type { IRegisterRequest } from "@/shared";
+import { registerSchema, type RegisterFormValues } from "@/entities";
 
 export const useRegistrationForm = () => {
   const { t } = useTranslation();
   const schema = useMemo(() => registerSchema(t), [t]);
 
-  const form = useForm<IRegisterRequest>({
+  const form = useForm<RegisterFormValues>({
     mode: "onBlur",
     defaultValues: {
       name: "",

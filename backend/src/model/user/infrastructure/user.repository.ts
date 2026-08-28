@@ -60,6 +60,12 @@ export class UserRepository implements IUserRepository {
     });
   }
 
+  findByIdWithRefreshToken(id: string): Promise<UserEntity | null> {
+    return this.prisma.user
+      .findUnique({ where: { id } })
+      .then((user) => (user ? UserEntity.fromPersistence(user) : null));
+  }
+
   findByEmail(email: string): Promise<UserEntity | null> {
     return findOneCached<CachedUser, User, UserEntity>({
       cache: this.cache,

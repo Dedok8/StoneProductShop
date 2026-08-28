@@ -13,7 +13,7 @@ import type { IAccessTokenResponse } from "@/shared/types";
 
 const mutex = new Mutex();
 
-const baseQuery = fetchBaseQuery({
+const rawBaseQuery = fetchBaseQuery({
   baseUrl: mainConfig.BASE_URL,
 
   credentials: "include",
@@ -28,6 +28,16 @@ const baseQuery = fetchBaseQuery({
     return headers;
   },
 });
+
+const baseQuery: typeof rawBaseQuery = async (args, api, extraOptions) => {
+  const result = await rawBaseQuery(args, api, extraOptions);
+
+  if (result.data && typeof result.data === "object" && "data" in result.data) {
+    return { ...result, data: (result.data as { data: unknown }).data };
+  }
+
+  return result;
+};
 
 const baseQueryWithReauth: BaseQueryFn<
   string | FetchArgs,

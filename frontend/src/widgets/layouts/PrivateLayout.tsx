@@ -11,8 +11,6 @@ function MainLayout() {
 
   return (
     <div>
-      {/* <Header />
-      <Sidebar /> */}
       <main>
         <Outlet />
       </main>

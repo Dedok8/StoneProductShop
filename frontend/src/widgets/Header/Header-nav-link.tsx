@@ -8,7 +8,7 @@ const navLinkVariants = cva(
   {
     variants: {
       active: {
-        true: "text-primary",
+        true: "text-ring",
         false: "text-muted-foreground",
       },
     },

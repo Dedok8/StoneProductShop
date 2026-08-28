@@ -16,7 +16,6 @@ export interface IUpdateUserData {
   refreshToken?: string | null;
 }
 
-
 export interface IUserQuery {
   search?: string;
   sortBy?: string;
@@ -32,6 +31,7 @@ export interface IUserFindAllResult {
 
 export interface IUserRepository {
   findById(id: string): Promise<UserEntity | null>;
+  findByIdWithRefreshToken(id: string): Promise<UserEntity | null>;
   findByEmail(email: string): Promise<UserEntity | null>;
   findAll(query: IUserQuery): Promise<IUserFindAllResult>;
   create(data: ICreateUserData): Promise<UserEntity>;

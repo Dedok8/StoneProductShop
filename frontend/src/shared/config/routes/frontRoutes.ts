@@ -12,15 +12,7 @@ export const FRONT_ROUTES = {
         icon: "home",
       },
     },
-    Authentication: {
-      path: "/authentication",
-      meta: {
-        title: "Authentication",
-        isInMenu: false,
-        requireAuth: false,
-        isGuestOnly: true,
-      },
-    },
+
     Catalog: {
       path: "/catalog",
       meta: {
@@ -43,7 +35,7 @@ export const FRONT_ROUTES = {
       path: "/blog",
       meta: {
         title: "Blog",
-        isInMenu: true,
+        isInMenu: false,
         requireAuth: false,
         isGuestOnly: true,
       },
@@ -66,21 +58,49 @@ export const FRONT_ROUTES = {
         isGuestOnly: true,
       },
     },
+
     Profile: {
       path: "/profile",
       meta: {
         title: "Profile",
         isInMenu: true,
         requireAuth: true,
-        order: 2,
-        icon: "user",
+        // order: 2,
+        // icon: "user",
       },
     },
+    Authentication: {
+      path: "/authentication",
+      meta: {
+        title: "Authentication",
+        isInMenu: true,
+        requireAuth: false,
+        // isGuestOnly: true,
+      },
+    },
+
+    Login: {
+      path: "/login",
+      meta: {
+        title: "Login",
+        isInMenu: false,
+        requireAuth: false,
+      },
+    },
+    Registration: {
+      path: "/registration",
+      meta: {
+        title: "Registration",
+        isInMenu: false,
+        requireAuth: false,
+      },
+    },
+
     Orders: {
       path: "/orders",
       meta: {
         title: "My Orders",
-        isInMenu: true,
+        isInMenu: false,
         requireAuth: true,
         order: 3,
         icon: "bag",
@@ -120,15 +140,24 @@ export const FRONT_ROUTES = {
         icon: "box",
       },
     },
-  },
+    AdminInspiration: {
+      path: "/admin/inspiration",
+      meta: {
+        title: "Create Inspiration",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
 
-  AdminInspiration: {
-    path: "/admin/inspiration",
-    meta: {
-      title: "Create Inspiration",
-      isInMenu: true,
-      requireAuth: true,
-      roles: ["ADMIN"],
+    CreateProduct: {
+      path: "/admin/createProduct",
+      meta: {
+        title: "Create Product",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
     },
   },
 } as const;
@@ -168,22 +197,3 @@ export function getMenuItems({
       icon: "icon" in page.meta ? page.meta.icon : undefined,
     }));
 }
-
-// Login: {
-//   path: "/login",
-//   meta: {
-//     title: "Sign In",
-//     isInMenu: false,
-//     requireAuth: false,
-//     isGuestOnly: true,
-//   },
-// },
-// Registration: {
-//   path: "/registration",
-//   meta: {
-//     title: "Sign Up",
-//     isInMenu: false,
-//     requireAuth: false,
-//     isGuestOnly: true,
-//   },
-// },

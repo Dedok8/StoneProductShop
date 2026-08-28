@@ -46,7 +46,7 @@ export interface IRegisterRequest {
   email: string;
   /** 8–64 chars, must contain lower, upper, and digit */
   password: string;
-  confirmPassword: string;
+  // confirmPassword: string;
 }
 
 export interface ILoginRequest {

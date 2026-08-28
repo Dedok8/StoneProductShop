@@ -69,7 +69,7 @@ export class AuthService {
     userId: string,
     refreshToken: string,
   ): Promise<AccessTokenResponseDto> {
-    const user = await this.userRepository.findById(userId);
+    const user = await this.userRepository.findByIdWithRefreshToken(userId);
 
     if (!user?.refreshToken) {
       throw new UnauthorizedException('Invalid refresh token');

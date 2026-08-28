@@ -30,7 +30,7 @@ export const appRouterRoutes = pagesList.map((page) => {
 
     lazy: async () => {
       const match = Object.keys(pages).find((p) =>
-        p.includes(`/${page.toLowerCase()}/index.ts`)
+        p.toLowerCase().includes(`/${page.toLowerCase()}/index.ts`)
       );
 
       if (!match) throw new Error(`Page "${page}" не знайдена в /pages`);

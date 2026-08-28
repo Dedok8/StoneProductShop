@@ -1,6 +1,6 @@
 import * as yup from "yup";
 
-import type { UserRole } from "@/shared";
+import type { UserRole } from "@/shared/types";
 
 import type { TFunction } from "i18next";
 

@@ -1,5 +1,6 @@
 import { authApi } from "@/features";
-import { logout, setCredentials, type AppStore } from "@/shared";
+import { logout, setCredentials } from "@/shared";
+import type { AppStore } from "@/shared/types";
 
 interface IBootSessionLoaderDeps {
   store: AppStore;

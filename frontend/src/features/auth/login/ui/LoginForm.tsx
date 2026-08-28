@@ -3,7 +3,8 @@ import { useNavigate } from "react-router";
 
 import { useLogin } from "@/features/auth/login/model/useLogin";
 import { useLoginForm } from "@/features/auth/login/model/useLoginForm";
-import { FRONT_ROUTES, type ILoginRequest } from "@/shared";
+import { FRONT_ROUTES } from "@/shared";
+import type { ILoginRequest } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import {
   Card,
@@ -31,11 +32,16 @@ function LoginForm() {
       setError("root", { message });
     }
   };
+
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>{t("login.title")}</CardTitle>
-        <CardDescription>{t("login.subtitle")}</CardDescription>
+    <Card className="w-full max-w-sm rounded-2xl border border-border/60 shadow-lg shadow-black/5">
+      <CardHeader className="space-y-1.5 pb-4">
+        <CardTitle className="text-2xl font-semibold tracking-tight">
+          {t("login.title")}
+        </CardTitle>
+        <CardDescription className="text-muted-foreground">
+          {t("login.subtitle")}
+        </CardDescription>
       </CardHeader>
 
       <CardContent>
@@ -51,11 +57,14 @@ function LoginForm() {
               type="email"
               placeholder={t("login.emailPlaceholder")}
               aria-invalid={!!errors.email}
+              className="rounded-lg"
               {...register("email")}
             />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
+            <p
+              className={`text-xs text-red-500 min-h-[1rem] ${errors.email ? "" : "invisible"}`}
+            >
+              {errors.email?.message || "placeholder"}
+            </p>
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -65,20 +74,27 @@ function LoginForm() {
               type="password"
               placeholder={t("login.passwordPlaceholder")}
               aria-invalid={!!errors.password}
+              className="rounded-lg"
               {...register("password")}
             />
-            {errors.password && (
-              <p className="text-sm text-destructive">
-                {errors.password.message}
-              </p>
-            )}
+            <p
+              className={`text-xs text-red-500 min-h-[1rem] ${errors.password ? "" : "invisible"}`}
+            >
+              {errors.password?.message || "placeholder"}
+            </p>
           </div>
 
           {errors.root && (
-            <p className="text-sm text-destructive">{errors.root.message}</p>
+            <p className="text-sm text-destructive text-center">
+              {errors.root.message}
+            </p>
           )}
 
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <Button
+            type="submit"
+            disabled={isLoading}
+            className="w-full rounded-lg py-5 font-medium"
+          >
             {isLoading ? t("login.submit") + "..." : t("login.submit")}
           </Button>
         </form>

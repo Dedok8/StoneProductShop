@@ -1,10 +1,9 @@
-import {
-  API_ROUTES,
-  baseApi,
-  type IChangePasswordRequest,
-  type IUpdateUserRequest,
-  type IUserResponse,
-} from "@/shared";
+import { API_ROUTES, baseApi } from "@/shared";
+import type {
+  IChangePasswordRequest,
+  IUpdateUserRequest,
+  IUserResponse,
+} from "@/shared/types";
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

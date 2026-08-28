@@ -1,10 +1,9 @@
-import {
-  API_ROUTES,
-  baseApi,
-  type IAccessTokenResponse,
-  type ILoginRequest,
-  type IRegisterRequest,
-} from "@/shared";
+import { API_ROUTES, baseApi } from "@/shared";
+import type {
+  IAccessTokenResponse,
+  ILoginRequest,
+  IRegisterRequest,
+} from "@/shared/types";
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
