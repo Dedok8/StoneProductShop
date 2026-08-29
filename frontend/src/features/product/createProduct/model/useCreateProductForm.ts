@@ -20,7 +20,7 @@ export const useCreateProductForm = () => {
       stock: 0,
       images: [],
       categoryId: "",
-      ownerId: "",
+      
     },
     resolver: yupResolver(schema) as Resolver<ProductFormValues>,
   });

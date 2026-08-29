@@ -1,8 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 
 import { useGetMe } from "@/features/user/getMe/model";
-import { FRONT_ROUTES } from "@/shared";
 import {
   Card,
   CardContent,
@@ -60,13 +58,6 @@ function GetMe() {
             {t("profile.emailLabel", "Email")}
           </span>
           <span className="text-sm font-medium">{user?.email}</span>
-        </div>
-      </CardContent>
-
-      <CardContent>
-        <h2>Admin</h2>
-        <div>
-          <Link to={FRONT_ROUTES.pages.CreateProduct.path}>Create prod</Link>
         </div>
       </CardContent>
     </Card>

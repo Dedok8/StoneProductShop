@@ -1,7 +1,27 @@
 import type { UserRole } from "@/shared/types";
 
+/**
+ * Единый реестр маршрутов приложения.
+ * Структура сгруппирована по смыслу, а не по алфавиту/порядку добавления —
+ * так проще найти нужный роут, когда их станет ещё больше.
+ *
+ * meta-поля:
+ * - title         — заголовок страницы / пункта меню
+ * - isInMenu      — показывать ли пункт в навигационном меню
+ * - requireAuth   — доступен только авторизованным пользователям
+ * - isGuestOnly   — доступен только НЕавторизованным (гостям) — прежнее
+ *                   значение сохранено как есть, хотя логически это скорее
+ *                   баг у некоторых публичных страниц (см. заметку ниже)
+ * - roles         — список ролей, которым разрешён доступ (сейчас только ADMIN)
+ * - order         — порядок сортировки в меню (чем меньше — тем выше)
+ * - icon          — иконка пункта меню
+ */
 export const FRONT_ROUTES = {
   pages: {
+    // ─────────────────────────────────────────────────────────
+    // ПУБЛИЧНЫЕ СТРАНИЦЫ — доступны всем, без авторизации
+    // ─────────────────────────────────────────────────────────
+
     Home: {
       path: "/",
       meta: {
@@ -19,16 +39,21 @@ export const FRONT_ROUTES = {
         title: "Catalog",
         isInMenu: true,
         requireAuth: false,
-        // isGuestOnly: true,
+        // isGuestOnly: true, // закомментировано в исходнике — оставлено как было
       },
     },
+
+    // ⚠️ Заметка: у Promotions/Blog/Cooperation/PaymentAndShipping стоит
+    // isGuestOnly: true — то есть формально эти страницы должны быть скрыты
+    // от УЖЕ авторизованных пользователей. Проверьте, действительно ли так
+    // задумано, или это скопировано по инерции с шаблона Login/Registration.
     Promotions: {
       path: "/promotions",
       meta: {
         title: "promotions",
         isInMenu: true,
         requireAuth: false,
-        isGuestOnly: true,
+        isGuestOnly: false,
       },
     },
     Blog: {
@@ -37,7 +62,7 @@ export const FRONT_ROUTES = {
         title: "Blog",
         isInMenu: false,
         requireAuth: false,
-        isGuestOnly: true,
+        isGuestOnly: false,
       },
     },
     Cooperation: {
@@ -46,7 +71,7 @@ export const FRONT_ROUTES = {
         title: "Cooperation",
         isInMenu: true,
         requireAuth: false,
-        isGuestOnly: true,
+        isGuestOnly: false,
       },
     },
     PaymentAndShipping: {
@@ -55,36 +80,37 @@ export const FRONT_ROUTES = {
         title: "Payment and Shipping",
         isInMenu: true,
         requireAuth: false,
-        isGuestOnly: true,
+        isGuestOnly: false,
       },
     },
 
-    Profile: {
-      path: "/profile",
-      meta: {
-        title: "Profile",
-        isInMenu: true,
-        requireAuth: true,
-        // order: 2,
-        // icon: "user",
-      },
+    // Публичная детальная страница товара — доступна без авторизации,
+    // path — функция, а не строка (нужен id)
+    ProductDetail: {
+      path: (id: string) => `/products/${id}`,
+      template: "/products/:id",
+      meta: { title: "Product", isInMenu: false, requireAuth: false },
     },
+
+    // ─────────────────────────────────────────────────────────
+    // АВТОРИЗАЦИЯ — вход, регистрация, общая точка входа
+    // ─────────────────────────────────────────────────────────
+
     Authentication: {
       path: "/authentication",
       meta: {
         title: "Authentication",
         isInMenu: true,
         requireAuth: false,
-        // isGuestOnly: true,
+        isGuestOnly: true,
       },
     },
-
     Login: {
       path: "/login",
       meta: {
         title: "Login",
         isInMenu: false,
-        requireAuth: false,
+        requireAuth: true,
       },
     },
     Registration: {
@@ -92,10 +118,24 @@ export const FRONT_ROUTES = {
       meta: {
         title: "Registration",
         isInMenu: false,
-        requireAuth: false,
+        requireAuth: true,
       },
     },
 
+    // ─────────────────────────────────────────────────────────
+    // ЛИЧНЫЙ КАБИНЕТ — доступно только авторизованному пользователю
+    // ─────────────────────────────────────────────────────────
+
+    Profile: {
+      path: "/profile",
+      meta: {
+        title: "Profile",
+        isInMenu: true,
+        requireAuth: true,
+        // order: 2,  // закомментировано в исходнике
+        // icon: "user",
+      },
+    },
     Orders: {
       path: "/orders",
       meta: {
@@ -106,23 +146,22 @@ export const FRONT_ROUTES = {
         icon: "bag",
       },
     },
-
-    ProductDetail: {
-      path: (id: string) => `/products/${id}`,
-      template: "/products/:id",
-      meta: { title: "Product", isInMenu: false, requireAuth: false },
-    },
     OrderDetail: {
       path: (id: string) => `/orders/${id}`,
       template: "/orders/:id",
       meta: { title: "Order", isInMenu: false, requireAuth: true },
     },
 
+    // ─────────────────────────────────────────────────────────
+    // АДМИНКА — все страницы ниже требуют requireAuth + roles: ["ADMIN"]
+    // ─────────────────────────────────────────────────────────
+
+    // -- Просмотр списков --
     AdminUsers: {
       path: "/admin/users",
       meta: {
         title: "Users",
-        isInMenu: true,
+        isInMenu: false,
         requireAuth: true,
         roles: ["ADMIN"],
         order: 10,
@@ -133,23 +172,19 @@ export const FRONT_ROUTES = {
       path: "/admin/products",
       meta: {
         title: "Products",
-        isInMenu: true,
+        isInMenu: false,
         requireAuth: true,
         roles: ["ADMIN"],
         order: 11,
         icon: "box",
       },
     },
-    AdminInspiration: {
-      path: "/admin/inspiration",
-      meta: {
-        title: "Create Inspiration",
-        isInMenu: false,
-        requireAuth: true,
-        roles: ["ADMIN"],
-      },
-    },
 
+    // -- Создание сущностей --
+    // ⚠️ Заметка: путь в camelCase ("/admin/createProduct"), а не kebab-case
+    // ("/admin/create-product"), как остальные — если решите унифицировать
+    // стиль URL, это ломающее изменение (нужно поправить везде, где есть
+    // прямые ссылки/редиректы на этот путь).
     CreateProduct: {
       path: "/admin/createProduct",
       meta: {
@@ -159,6 +194,31 @@ export const FRONT_ROUTES = {
         roles: ["ADMIN"],
       },
     },
+    CreateCategory: {
+      path: "/admin/createCategory",
+      meta: {
+        title: "Create Category",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+    CreateInspiration: {
+      path: "/admin/creteInspiration",
+      meta: {
+        title: "Create Inspiration",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    // -- Заметка на будущее: здесь напрашиваются симметричные разделы --
+    // -- Редактирование/удаление --
+    // (в исходном файле такие маршруты ещё не заведены — например,
+    // EditProduct: "/admin/products/:id/edit", DeleteProduct и т.д.
+    // Добавьте их сюда, в этот подраздел, когда появятся соответствующие
+    // страницы — так группировка не разъедется со временем.)
   },
 } as const;
 
@@ -177,6 +237,10 @@ export function getMenuItems({
 
       if (!meta.isInMenu) return false;
       if (meta.requireAuth && !isAuthenticated) return false;
+
+      if ("isGuestOnly" in meta && meta.isGuestOnly && isAuthenticated) {
+        return false;
+      }
 
       if ("roles" in meta && meta.roles) {
         if (!userRole) return false;

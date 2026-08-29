@@ -54,9 +54,9 @@ export const productSchema = (t: TFunction) => {
       .uuid(t("validation.uuid"))
       .required(t("validation.required")),
 
-    ownerId: yup
-      .string()
-      .uuid(t("validation.uuid"))
-      .required(t("validation.required")),
+    // ownerId: yup
+    //   .string()
+    //   .uuid(t("validation.uuid"))
+    //   .required(t("validation.required")),
   });
 };

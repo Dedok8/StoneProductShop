@@ -9,7 +9,7 @@ import {
   CATEGORY_REPOSITORY,
   type ICategoryRepository,
 } from '@/model/category/domain/interfaces';
-import { assertFound, ensureUnique } from '@/shared';
+import { assertFound, ensureUnique, ensureUniqueSlug, slugify } from '@/shared';
 
 @Injectable()
 export class CategoryService {
@@ -54,13 +54,14 @@ export class CategoryService {
       undefined,
       'Category name is already in use',
     );
-    await ensureUnique(
-      () => this.categoryRepository.findBySlug(dto.slug),
-      undefined,
-      'Category slug is already in use',
+
+    const baseSlug = slugify(dto.slug?.trim() || dto.name);
+
+    const slug = await ensureUniqueSlug(baseSlug, async (candidate) =>
+      Boolean(await this.categoryRepository.findBySlug(candidate)),
     );
 
-    const created = await this.categoryRepository.create(dto);
+    const created = await this.categoryRepository.create({ ...dto, slug });
     return CategoryMapper.toResponse(created);
   }
 

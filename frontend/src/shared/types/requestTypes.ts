@@ -211,7 +211,7 @@ export interface ICreateProductRequest {
   /** up to 10 URIs */
   images: string[];
   categoryId: string; // uuid
-  ownerId: string; // uuid
+  ownerId: string | undefined; // uuid
 }
 
 export interface IUpdateProductRequest {

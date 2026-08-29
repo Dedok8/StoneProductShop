@@ -6,3 +6,5 @@ export * from './ensure-unique.util';
 export * from './map-to-entity.util';
 export * from './update-and-invalidate.utils';
 export * from './update-or-not-found.utils';
+export * from './ensure-unique-slug.util';
+export * from './slugGenerate';

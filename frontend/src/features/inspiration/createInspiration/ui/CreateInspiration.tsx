@@ -20,6 +20,8 @@ function CreateInspiration() {
     return URL.createObjectURL(file);
   }, [file]);
 
+  console.log(file);
+
   useEffect(() => {
     if (!previewUrl) return;
     return () => URL.revokeObjectURL(previewUrl);

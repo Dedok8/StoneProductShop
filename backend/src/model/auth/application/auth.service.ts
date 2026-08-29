@@ -71,6 +71,10 @@ export class AuthService {
   ): Promise<AccessTokenResponseDto> {
     const user = await this.userRepository.findByIdWithRefreshToken(userId);
 
+    console.log('userId:', userId);
+    console.log('cookie refreshToken:', refreshToken);
+    console.log('DB hash:', user?.refreshToken);
+
     if (!user?.refreshToken) {
       throw new UnauthorizedException('Invalid refresh token');
     }
@@ -79,6 +83,8 @@ export class AuthService {
       refreshToken,
       user.refreshToken,
     );
+    
+    console.log('bcrypt compare result:', isValid);
 
     if (!isValid) throw new UnauthorizedException('Invalid refresh token');
 

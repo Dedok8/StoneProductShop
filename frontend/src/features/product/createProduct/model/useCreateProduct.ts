@@ -1,5 +1,5 @@
 import { useCreateProductMutation } from "@/entities";
-import type { ICreateProductRequest } from "@/shared";
+import type { ICreateProductRequest } from "@/shared/types";
 
 export const useCreateProduct = () => {
   const [createProductMutation, { isLoading, error, isError }] =

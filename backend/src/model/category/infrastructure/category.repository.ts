@@ -68,6 +68,7 @@ export class CategoryRepository implements ICategoryRepository {
   }
 
   create(data: ICreateCategoryData): Promise<CategoryEntity> {
+    
     return createAndInvalidate({
       createFn: () =>
         this.prisma.category.create({

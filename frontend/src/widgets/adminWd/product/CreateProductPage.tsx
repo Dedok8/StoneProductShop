@@ -1,7 +1,7 @@
 import CreateProduct from "@/features/product/createProduct/ui/CreateProduct";
 
-function CreateProductPage() {
+function CreateProductWg() {
   return <CreateProduct />;
 }
 
-export default CreateProductPage;
+export default CreateProductWg;
