@@ -20,8 +20,6 @@ function CreateInspiration() {
     return URL.createObjectURL(file);
   }, [file]);
 
-  console.log(file);
-
   useEffect(() => {
     if (!previewUrl) return;
     return () => URL.revokeObjectURL(previewUrl);
@@ -34,9 +32,11 @@ function CreateInspiration() {
       //
     }
   };
-
+  const onError = (formErrors: typeof errors) => {
+    console.log("VALIDATION ERRORS:", formErrors);
+  };
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit, onError)}>
       <div>
         <label htmlFor="image">{t("inspiration.image")}</label>
         <Input

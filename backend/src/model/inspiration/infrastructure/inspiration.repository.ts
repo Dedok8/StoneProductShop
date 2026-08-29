@@ -1,3 +1,5 @@
+import { Injectable } from '@nestjs/common';
+
 import type { InspirationImage } from '@/generated/prisma';
 import type {
   ICreateInspirationImageData,
@@ -20,6 +22,7 @@ const DETAIL_TTL_SEC = 5 * 60;
 const idKey = (id: string) => `inspiration:id:${id}`;
 const listPattern = 'inspiration:list*';
 
+@Injectable()
 export class InspirationImageRepository implements IInspirationImageRepository {
   constructor(
     private readonly prisma: PrismaService,
