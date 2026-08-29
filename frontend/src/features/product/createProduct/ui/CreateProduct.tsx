@@ -1,6 +1,8 @@
+import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useGetAllCategory } from "@/features/category/getAllCategory";
+import { useGetAllInspiration } from "@/features/inspiration/getAllInspiration";
 import {
   useCreateProduct,
   useCreateProductForm,
@@ -13,14 +15,15 @@ import { Label } from "@/shared/ui/components/label";
 function CreateProduct() {
   const { createProduct, isLoading, error, isError } = useCreateProduct();
   const { categories, isLoading: isCategoriesLoading } = useGetAllCategory();
-  const { register, handleSubmit, errors } = useCreateProductForm();
+  const { inspirations, isLoading: isInspirationsLoading } =
+    useGetAllInspiration();
+  const { register, handleSubmit, errors, control } = useCreateProductForm();
   const { t } = useTranslation();
   const user = useUser();
 
   const onSubmit = async (value: ProductFormValues) => {
     try {
       await createProduct({ ...value, ownerId: user?.id });
-      
     } catch (e) {
       console.error(e);
     }
@@ -81,6 +84,60 @@ function CreateProduct() {
           ))}
         </select>
         {errors.categoryId && <p>{errors.categoryId.message}</p>}
+      </div>
+
+      <div>
+        <Label>{t("product.images")}</Label>
+        <Controller
+          name="images"
+          control={control}
+          defaultValue={[]}
+          render={({ field }) => {
+            const selectedIds: string[] = field.value ?? [];
+
+            const toggleImage = (id: string) => {
+              const next = selectedIds.includes(id)
+                ? selectedIds.filter((existingId) => existingId !== id)
+                : [...selectedIds, id];
+              field.onChange(next);
+            };
+
+            return (
+              <div className="grid grid-cols-4 gap-2">
+                {isInspirationsLoading && (
+                  <p>{t("common.loading", "Loading...")}</p>
+                )}
+
+                {inspirations?.map((inspiration) => {
+                  const isSelected = selectedIds.includes(inspiration.id);
+
+                  return (
+                    <button
+                      key={inspiration.id}
+                      type="button"
+                      onClick={() => toggleImage(inspiration.id)}
+                      className={`relative rounded-lg overflow-hidden border-2 transition ${
+                        isSelected ? "border-blue-500" : "border-transparent"
+                      }`}
+                    >
+                      <img
+                        src={inspiration.imageUrl}
+                        alt={inspiration.alt}
+                        className="w-full h-24 object-cover"
+                      />
+                      {isSelected && (
+                        <span className="absolute top-1 right-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                          ✓
+                        </span>
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
+            );
+          }}
+        />
+        {errors.images && <p>{errors.images.message}</p>}
       </div>
 
       {isError && <p>{error?.toString()}</p>}
