@@ -13,8 +13,8 @@ import {
   findManyCached,
   findOneCached,
   updateAndInvalidate,
-  type PrismaService,
-  type RedisCacheService,
+  PrismaService,
+  RedisCacheService,
 } from '@/shared';
 
 const LIST_TTL_SEC = 60;
