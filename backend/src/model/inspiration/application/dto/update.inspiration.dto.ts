@@ -2,7 +2,7 @@ import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class UpdateInspirationImageDto {
   @IsOptional()
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   imageUrl?: string;
 
   @IsOptional()

@@ -1,7 +1,7 @@
 import { IsOptional, IsString, IsUrl } from 'class-validator';
 
 export class CreateInspirationImageDto {
-  @IsUrl()
+  @IsUrl({ require_tld: false })
   imageUrl: string;
 
   @IsOptional()
