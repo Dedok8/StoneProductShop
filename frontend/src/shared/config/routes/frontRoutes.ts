@@ -110,7 +110,8 @@ export const FRONT_ROUTES = {
       meta: {
         title: "Login",
         isInMenu: false,
-        requireAuth: true,
+        requireAuth: false,
+        isGuestOnly: true,
       },
     },
     Registration: {
@@ -118,7 +119,8 @@ export const FRONT_ROUTES = {
       meta: {
         title: "Registration",
         isInMenu: false,
-        requireAuth: true,
+        requireAuth: false,
+        isGuestOnly: true,
       },
     },
 
@@ -207,6 +209,79 @@ export const FRONT_ROUTES = {
       path: "/admin/creteInspiration",
       meta: {
         title: "Create Inspiration",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    CreateUser: {
+      path: "/admin/creteUser",
+      meta: {
+        title: "Create User",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    UpdateProduct: {
+      path: (id: string) => `/admin/updateProduct/${id}`,
+      template: "/admin/updateProduct/:id",
+      meta: {
+        title: "Update Product",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    UpdateOrder: {
+      path: (id: string) => `/admin/updateOrder/${id}/status`,
+      template: "/admin/updateOrder/:id/status",
+      meta: {
+        title: "Update Order Status",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    UpdateCategory: {
+      path: (id: string) => `/admin/updateCategory/${id}`,
+      template: "/admin/updateCategory/:id",
+      meta: {
+        title: "Update Category",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    AllUsers: {
+      path: "/admin/allUsers",
+      meta: {
+        title: "All User",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    AllCategory: {
+      path: "/admin/allCategory",
+      meta: {
+        title: "All Category",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    AllOrders: {
+      path: "/admin/allOrders",
+      meta: {
+        title: "All Orders",
         isInMenu: false,
         requireAuth: true,
         roles: ["ADMIN"],

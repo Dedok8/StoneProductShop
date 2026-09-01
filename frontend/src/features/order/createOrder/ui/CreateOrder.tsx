@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useCreateOrder } from "@/features/order/createOrder/model";
 import { useGetAllProduct } from "@/features/product/getAllProduct";
-import type { ICreateOrderItemRequest } from "@/shared";
+import type { ICreateOrderItemRequest } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 

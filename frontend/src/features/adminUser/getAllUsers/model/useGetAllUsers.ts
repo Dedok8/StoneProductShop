@@ -1,5 +1,5 @@
 import { useGetAllUsersQuery } from "@/entities";
-import type { IGetUsersQuery } from "@/shared";
+import type { IGetUsersQuery } from "@/shared/types";
 
 export const useGetAllUsers = (query: IGetUsersQuery) => {
   const { data, isLoading, error, isError, isFetching, refetch } =

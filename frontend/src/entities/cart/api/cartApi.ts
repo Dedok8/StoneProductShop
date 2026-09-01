@@ -1,10 +1,9 @@
+import { API_ROUTES, baseApi } from "@/shared";
 import {
-  API_ROUTES,
-  baseApi,
   type IAddCartItemRequest,
   type ICartResponse,
   type IUpdateCartItemRequest,
-} from "@/shared";
+} from "@/shared/types";
 
 export const cartApi = baseApi.injectEndpoints({
   endpoints: (build) => ({

@@ -1,13 +1,11 @@
+import { API_ROUTES, baseApi } from "@/shared";
 import {
-  API_ROUTES,
-  baseApi,
   type ICreateOrderRequest,
   type IGetOrdersQuery,
   type IOrderResponse,
   type IUpdateOrderStatusRequest,
   type PaginatedOrderResponse,
-} from "@/shared";
-
+} from "@/shared/types";
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
     createOrder: build.mutation<IOrderResponse, ICreateOrderRequest>({
@@ -80,6 +78,17 @@ export const orderApi = baseApi.injectEndpoints({
         { type: "Order", id: "MY_LIST" },
       ],
     }),
+
+    checkout: build.mutation<IOrderResponse, void>({
+      query: () => ({
+        url: API_ROUTES.order.checkout,
+        method: "POST",
+      }),
+      invalidatesTags: () => [
+        { type: "Order", id: "MY_LIST" },
+        { type: "Cart", id: "MY_CART" },
+      ],
+    }),
   }),
 });
 
@@ -89,4 +98,5 @@ export const {
   useGetOrderByIdQuery,
   useGetAllOrdersQuery,
   useUpdateOrderStatusMutation,
+  useCheckoutMutation,
 } = orderApi;

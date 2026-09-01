@@ -1,10 +1,10 @@
+import { Loader2, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAddToCartItem } from "@/features/cart/addCartItem/model";
-import { getApiErrorMessage } from "@/shared";
+import { getApiErrorMessage, QuantityStepper } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
-import { Input } from "@/shared/ui/components/input";
 
 function AddToCartItem({ productId }: { productId: string }) {
   const { addToCartItem, isLoading, error, isError } = useAddToCartItem();
@@ -12,11 +12,8 @@ function AddToCartItem({ productId }: { productId: string }) {
 
   const [quantity, setQuantity] = useState(1);
 
-  const handleAddItem: React.SubmitEventHandler<HTMLFormElement> = async (
-    e
-  ) => {
+  const handleAddItem: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-
     if (quantity < 1) return;
 
     try {
@@ -25,20 +22,33 @@ function AddToCartItem({ productId }: { productId: string }) {
       //
     }
   };
+
   return (
-    <form onSubmit={handleAddItem}>
-      <Input
-        type="number"
-        min={1}
-        value={quantity}
-        onChange={(e) => setQuantity(Number(e.target.value))}
-      />
+    <form onSubmit={handleAddItem} className="flex flex-col gap-2">
+      <div className="flex items-center gap-3">
+        <QuantityStepper quantity={quantity} onChange={(q) => setQuantity(q)} />
 
-      <Button type="submit" disabled={isLoading || quantity < 1}>
-        {t("cart.addToCart")}
-      </Button>
+        <Button
+          type="submit"
+          disabled={isLoading || quantity < 1}
+          className="flex-1"
+        >
+          {isLoading ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <>
+              <ShoppingCart className="mr-2 h-4 w-4" />
+              {t("cart.addToCart")}
+            </>
+          )}
+        </Button>
+      </div>
 
-      {isError && <p>{getApiErrorMessage(error, t)}</p>}
+      {isError && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {getApiErrorMessage(error, t)}
+        </p>
+      )}
     </form>
   );
 }

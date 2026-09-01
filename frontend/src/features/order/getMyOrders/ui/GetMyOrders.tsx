@@ -1,11 +1,23 @@
+import { RefreshCw, Package } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useGetMyOrders } from "@/features/order/getMyOrders/model";
-import type { IGetOrdersQuery } from "@/shared";
+import type { IGetOrdersQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 import { getApiErrorMessage } from "@/shared/ui/Error";
+
+const STATUS_STYLES: Record<string, string> = {
+  PENDING: "bg-amber-100 text-amber-800",
+  PAID: "bg-blue-100 text-blue-800",
+  SHIPPED: "bg-violet-100 text-violet-800",
+  COMPLETED: "bg-emerald-100 text-emerald-800",
+  CANCELLED: "bg-red-100 text-red-800",
+};
+
+const selectClass =
+  "rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
 
 function GetMyOrders() {
   const [query, setQuery] = useState<Omit<IGetOrdersQuery, "userId">>({
@@ -19,114 +31,200 @@ function GetMyOrders() {
 
   const { t } = useTranslation();
 
-  if (isLoading) return <div>{t("common.loading")}</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center text-muted-foreground">
+        {t("common.loading")}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
+        {getApiErrorMessage(error, t)}
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <select
-        value={query.status ?? ""}
-        onChange={(e) =>
-          setQuery((prev) => ({
-            ...prev,
-            status: (e.target.value || undefined) as IGetOrdersQuery["status"],
-            page: 1,
-          }))
-        }
-      >
-        <option value="">{t("order.allStatuses")}</option>
-        <option value="PENDING">{t("order.status.pending")}</option>
-        <option value="PAID">{t("order.status.paid")}</option>
-        <option value="SHIPPED">{t("order.status.shipped")}</option>
-        <option value="COMPLETED">{t("order.status.completed")}</option>
-        <option value="CANCELLED">{t("order.status.cancelled")}</option>
-      </select>
-
-      <select
-        value={query.sortOrder}
-        onChange={(e) =>
-          setQuery((prev) => ({
-            ...prev,
-            sortOrder: e.target.value as IGetOrdersQuery["sortOrder"],
-          }))
-        }
-      >
-        <option value="asc">{t("common.asc")}</option>
-        <option value="desc">{t("common.desc")}</option>
-      </select>
-
-      <Input
-        type="date"
-        value={query.dateFrom ?? ""}
-        onChange={(e) =>
-          setQuery((prev) => ({
-            ...prev,
-            dateFrom: e.target.value || undefined,
-          }))
-        }
-      />
-      <Input
-        type="date"
-        value={query.dateTo ?? ""}
-        onChange={(e) =>
-          setQuery((prev) => ({ ...prev, dateTo: e.target.value || undefined }))
-        }
-      />
-
-      {isFetching && <div>{t("common.updating")}</div>}
-
-      {orders?.length === 0 && <p>{t("order.empty")}</p>}
-
-      <ul>
-        {orders?.map((order) => (
-          <li key={order.id}>
-            <p>
-              {t("order.id")}: {order.id}
-            </p>
-            <p>
-              {t("order.status.label")}: {order.status}
-            </p>
-            <p>
-              {t("order.total")}: {order.total}
-            </p>
-            <p>{new Date(order.createdAt).toLocaleString()}</p>
-
-            <ul>
-              {order.items.map((item) => (
-                <li key={item.id}>
-                  {item.quantity} × {item.price} = {item.subTotal}
-                </li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
-
-      {meta && (
-        <div>
-          <Button
-            disabled={query.page === 1}
-            onClick={() =>
-              setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))
+    <div className="mx-auto flex max-w-2xl flex-col gap-4">
+      <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-card p-4">
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            {t("order.status.label", "Status")}
+          </label>
+          <select
+            value={query.status ?? ""}
+            onChange={(e) =>
+              setQuery((prev) => ({
+                ...prev,
+                status: (e.target.value ||
+                  undefined) as IGetOrdersQuery["status"],
+                page: 1,
+              }))
             }
+            className={selectClass}
           >
-            {t("common.previous")}
-          </Button>
+            <option value="">{t("order.allStatuses")}</option>
+            <option value="PENDING">{t("order.status.pending")}</option>
+            <option value="PAID">{t("order.status.paid")}</option>
+            <option value="SHIPPED">{t("order.status.shipped")}</option>
+            <option value="COMPLETED">{t("order.status.completed")}</option>
+            <option value="CANCELLED">{t("order.status.cancelled")}</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            {t("common.sort", "Sort")}
+          </label>
+          <select
+            value={query.sortOrder}
+            onChange={(e) =>
+              setQuery((prev) => ({
+                ...prev,
+                sortOrder: e.target.value as IGetOrdersQuery["sortOrder"],
+              }))
+            }
+            className={selectClass}
+          >
+            <option value="asc">{t("common.asc")}</option>
+            <option value="desc">{t("common.desc")}</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            {t("order.dateFrom", "From")}
+          </label>
+          <Input
+            type="date"
+            value={query.dateFrom ?? ""}
+            onChange={(e) =>
+              setQuery((prev) => ({
+                ...prev,
+                dateFrom: e.target.value || undefined,
+              }))
+            }
+          />
+        </div>
+
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-medium text-muted-foreground">
+            {t("order.dateTo", "To")}
+          </label>
+          <Input
+            type="date"
+            value={query.dateTo ?? ""}
+            onChange={(e) =>
+              setQuery((prev) => ({
+                ...prev,
+                dateTo: e.target.value || undefined,
+              }))
+            }
+          />
+        </div>
+
+        <button
+          onClick={() => refetch()}
+          className="ml-auto flex items-center gap-2 rounded-md border border-input px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+        >
+          <RefreshCw
+            className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`}
+          />
+          {t("common.refresh")}
+        </button>
+      </div>
+
+      {orders?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center text-muted-foreground">
+          <Package className="h-8 w-8" />
+          <p>{t("order.empty")}</p>
+        </div>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {orders?.map((order) => (
+            <li
+              key={order.id}
+              className="flex flex-col gap-3 rounded-xl border bg-card p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col gap-1">
+                  <span className="font-mono text-xs text-muted-foreground">
+                    {t("order.id")}: {order.id}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(order.createdAt).toLocaleString()}
+                  </span>
+                </div>
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    STATUS_STYLES[order.status] ?? "bg-muted text-foreground"
+                  }`}
+                >
+                  {order.status}
+                </span>
+              </div>
+
+              <ul className="flex flex-col divide-y rounded-md border">
+                {order.items.map((item) => (
+                  <li
+                    key={item.id}
+                    className="flex items-center justify-between px-3 py-2 text-sm"
+                  >
+                    <span className="text-muted-foreground">
+                      {item.quantity} × {item.price} $
+                    </span>
+                    <span className="font-medium text-foreground">
+                      {item.subTotal} $
+                    </span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="flex items-center justify-between border-t pt-3">
+                <span className="text-sm font-medium text-muted-foreground">
+                  {t("order.total")}
+                </span>
+                <span className="font-semibold text-foreground">
+                  {order.total} $
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {meta && meta.totalPages > 0 && (
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
           <span>
             {query.page} / {meta.totalPages}
           </span>
-          <Button
-            disabled={query.page === meta.totalPages}
-            onClick={() =>
-              setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))
-            }
-          >
-            {t("common.next")}
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              disabled={!query.page || query.page <= 1}
+              onClick={() =>
+                setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) - 1 }))
+              }
+            >
+              {t("common.previous")}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={
+                query.page === undefined || query.page >= meta.totalPages
+              }
+              onClick={() =>
+                setQuery((prev) => ({ ...prev, page: (prev.page ?? 1) + 1 }))
+              }
+            >
+              {t("common.next")}
+            </Button>
+          </div>
         </div>
       )}
-
-      <button onClick={() => refetch()}>{t("common.refresh")}</button>
     </div>
   );
 }

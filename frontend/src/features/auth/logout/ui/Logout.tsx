@@ -6,7 +6,6 @@ import { FRONT_ROUTES } from "@/shared";
 import {
   AlertDialog,
   AlertDialogAction,
-  AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
@@ -41,7 +40,13 @@ function Logout() {
         </AlertDialogHeader>
 
         <AlertDialogFooter>
-          <AlertDialogCancel>{t("common.cancel", "Cancel")}</AlertDialogCancel>
+          <AlertDialogTrigger
+            render={(props) => (
+              <Button {...props} variant="outline">
+                {t("logout.submit")}
+              </Button>
+            )}
+          />
           <AlertDialogAction onClick={handleConfirm} disabled={isLoading}>
             {t("logout.submit")}
           </AlertDialogAction>

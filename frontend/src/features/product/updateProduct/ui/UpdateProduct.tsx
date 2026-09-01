@@ -1,22 +1,38 @@
+import { Loader2, Plus, X } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 import { useFindProductById } from "@/features/product/findProductById";
 import { useUpdateProduct } from "@/features/product/updateProduct/model/useUpdateProduct";
-import type { IProductResponse } from "@/shared";
+import type { IProductResponse } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 
 function UpdateProduct() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
-
+  console.log("id from params:", id);
   const { product, isLoading: isProductLoading } = useFindProductById(id);
 
   if (isProductLoading || !product) return <div>{t("common.loading")}</div>;
 
   return <UpdateProductForm product={product} />;
+}
+
+function Field({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="text-sm font-medium text-foreground">{label}</label>
+      {children}
+    </div>
+  );
 }
 
 function UpdateProductForm({ product }: { product: IProductResponse }) {
@@ -96,64 +112,131 @@ function UpdateProductForm({ product }: { product: IProductResponse }) {
   };
 
   return (
-    <form onSubmit={handleUpdateProduct}>
-      <Input value={name} onChange={(e) => setName(e.target.value)} />
-      <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
-      <textarea
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <Input
-        type="number"
-        value={price}
-        onChange={(e) => setPrice(Number(e.target.value))}
-      />
-      <Input
-        type="number"
-        value={stock}
-        onChange={(e) => setStock(Number(e.target.value))}
-      />
-      <Input
-        value={categoryId}
-        onChange={(e) => setCategoryId(e.target.value)}
-      />
-      <Input
-        type="checkbox"
-        checked={isActive}
-        onChange={(e) => setIsActive(e.target.checked)}
-      />
-
-      <div>
-        <ul>
-          {images.map((url, index) => (
-            <li key={`${url}-${index}`}>
-              <img src={url} alt="" width={60} height={60} />
-              <span>{url}</span>
-              <Button type="button" onClick={() => handleRemoveImage(index)}>
-                {t("common.remove")}
-              </Button>
-            </li>
-          ))}
-        </ul>
-
-        <Input
-          value={newImageUrl}
-          onChange={(e) => setNewImageUrl(e.target.value)}
-          placeholder={t("product.imageUrlPlaceholder")}
-        />
-        <Button
-          type="button"
-          onClick={handleAddImage}
-          disabled={images.length >= 10}
-        >
-          {t("common.add")}
-        </Button>
+    <form
+      onSubmit={handleUpdateProduct}
+      className="mx-auto flex max-w-2xl flex-col gap-6 rounded-xl border bg-card p-6 shadow-sm"
+    >
+      <div className="flex items-center justify-between border-b pb-4">
+        <h2 className="text-lg font-semibold text-foreground">
+          {t("product.editTitle", "Edit product")}
+        </h2>
+        <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+          <input
+            type="checkbox"
+            checked={isActive}
+            onChange={(e) => setIsActive(e.target.checked)}
+            className="h-4 w-4 rounded border-input accent-primary"
+          />
+          {t("product.active", "Active")}
+        </label>
       </div>
 
-      <Button type="submit" disabled={!isChanged || isLoading}>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label={t("product.name", "Name")}>
+          <Input value={name} onChange={(e) => setName(e.target.value)} />
+        </Field>
+
+        <Field label={t("product.slug", "Slug")}>
+          <Input value={slug} onChange={(e) => setSlug(e.target.value)} />
+        </Field>
+
+        <Field label={t("product.price", "Price")}>
+          <Input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(Number(e.target.value))}
+          />
+        </Field>
+
+        <Field label={t("product.stock", "Stock")}>
+          <Input
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(Number(e.target.value))}
+          />
+        </Field>
+
+        <Field label={t("product.category", "Category")}>
+          <Input
+            value={categoryId}
+            onChange={(e) => setCategoryId(e.target.value)}
+          />
+        </Field>
+      </div>
+
+      <Field label={t("product.description", "Description")}>
+        <textarea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          rows={4}
+          className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+      </Field>
+
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-foreground">
+            {t("product.images", "Images")}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {images.length}/10
+          </span>
+        </div>
+
+        {images.length > 0 && (
+          <ul className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+            {images.map((url, index) => (
+              <li
+                key={`${url}-${index}`}
+                className="group relative aspect-square overflow-hidden rounded-md border bg-muted"
+              >
+                <img src={url} alt="" className="h-full w-full object-cover" />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="absolute right-1 top-1 rounded-full bg-black/60 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                  aria-label={t("common.remove")}
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <div className="flex gap-2">
+          <Input
+            value={newImageUrl}
+            onChange={(e) => setNewImageUrl(e.target.value)}
+            placeholder={t("product.imageUrlPlaceholder")}
+            className="flex-1"
+          />
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleAddImage}
+            disabled={images.length >= 10}
+          >
+            <Plus className="mr-1 h-4 w-4" />
+            {t("common.add")}
+          </Button>
+        </div>
+      </div>
+
+      {isError && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error?.toString()}
+        </p>
+      )}
+
+      <Button
+        type="submit"
+        disabled={!isChanged || isLoading}
+        className="ml-auto"
+      >
+        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         {t("save")}
       </Button>
-      {isError && <p>{error?.toString()}</p>}
     </form>
   );
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { Prisma, Product } from '@/generated/prisma/client';
+import { Category, Prisma, Product } from '@/generated/prisma/client';
 import {
   ICreateProductData,
   IProductAllResultData,
@@ -31,14 +31,18 @@ const listPattern = 'product:list*';
 const listKey = (query: IProductQuery) =>
   buildQueryCacheKey('product:list', query);
 
-type ProductCached = Omit<Product, 'price'> & { price: number };
+type ProductWithRelations = Product & {
+  images: { imageUrl: string }[];
+  category: Category;
+};
+type ProductCached = Omit<ProductWithRelations, 'price'> & { price: number };
 
-const priceToCache = (raw: Product): ProductCached => ({
+const priceToCache = (raw: ProductWithRelations): ProductCached => ({
   ...raw,
   price: raw.price.toNumber(),
 });
 
-const priceFromCache = (cached: ProductCached): Product => ({
+const priceFromCache = (cached: ProductCached): ProductWithRelations => ({
   ...cached,
   price: new Prisma.Decimal(cached.price),
 });
@@ -56,17 +60,22 @@ export class ProductRepository implements IProductRepository {
 
     const products = await this.prisma.product.findMany({
       where: { id: { in: unique } },
+      include: { images: true, category: true },
     });
 
     return products.map((p) => mapToEntity(p, ProductEntity));
   }
 
   findById(id: string): Promise<ProductEntity | null> {
-    return findOneCached<ProductCached, Product, ProductEntity>({
+    return findOneCached<ProductCached, ProductWithRelations, ProductEntity>({
       cache: this.cache,
       key: idKey(id),
       ttl: DETAIL_TTL_SEC,
-      fetch: () => this.prisma.product.findUnique({ where: { id } }),
+      fetch: () =>
+        this.prisma.product.findUnique({
+          where: { id },
+          include: { images: true, category: true },
+        }),
       entityClass: ProductEntity,
       toCache: priceToCache,
       fromCache: priceFromCache,
@@ -74,11 +83,15 @@ export class ProductRepository implements IProductRepository {
   }
 
   findBySlug(slug: string): Promise<ProductEntity | null> {
-    return findOneCached<ProductCached, Product, ProductEntity>({
+    return findOneCached<ProductCached, ProductWithRelations, ProductEntity>({
       cache: this.cache,
       key: slugKey(slug),
       ttl: DETAIL_TTL_SEC,
-      fetch: () => this.prisma.product.findUnique({ where: { slug } }),
+      fetch: () =>
+        this.prisma.product.findUnique({
+          where: { slug },
+          include: { images: true, category: true },
+        }),
       entityClass: ProductEntity,
       toCache: priceToCache,
       fromCache: priceFromCache,
@@ -86,7 +99,10 @@ export class ProductRepository implements IProductRepository {
   }
 
   async findByName(name: string): Promise<ProductEntity | null> {
-    const product = await this.prisma.product.findFirst({ where: { name } });
+    const product = await this.prisma.product.findFirst({
+      where: { name },
+      include: { images: true, category: true },
+    });
     return product ? mapToEntity(product, ProductEntity) : null;
   }
 
@@ -99,7 +115,7 @@ export class ProductRepository implements IProductRepository {
       categoryId: query.categoryId ?? undefined,
     };
 
-    return findManyCached<ProductCached, Product, ProductEntity>({
+    return findManyCached<ProductCached, ProductWithRelations, ProductEntity>({
       cache: this.cache,
       key: listKey(query),
       ttl: LIST_TTL_SEC,
@@ -110,6 +126,7 @@ export class ProductRepository implements IProductRepository {
         const [items, total] = await Promise.all([
           this.prisma.product.findMany({
             where,
+            include: { images: true, category: true },
             orderBy: query.sortBy
               ? { [query.sortBy]: query.sortOrder ?? 'asc' }
               : { createdAt: query.sortOrder ?? 'desc' },
@@ -134,10 +151,14 @@ export class ProductRepository implements IProductRepository {
             description: data.description,
             price: data.price,
             stock: data.stock,
-            images: data.images,
-            categoryId: data.categoryId,
-            ownerId: data.ownerId,
+            category: { connect: { id: data.categoryId } },
+
+            owner: { connect: { id: data.ownerId } },
+            images: {
+              connect: data.images.map((id) => ({ id })),
+            },
           },
+          include: { images: true, category: true },
         }),
       cache: this.cache,
       invalidateKeys: (product) => [
@@ -151,7 +172,25 @@ export class ProductRepository implements IProductRepository {
 
   update(id: string, data: IUpdateProductData): Promise<ProductEntity | null> {
     return updateAndInvalidate({
-      updateFn: () => this.prisma.product.update({ where: { id }, data }),
+      updateFn: () =>
+        this.prisma.product.update({
+          where: { id },
+          data: {
+            name: data.name,
+            slug: data.slug,
+            description: data.description,
+            price: data.price,
+            stock: data.stock,
+            isActive: data.isActive,
+            category: data.categoryId
+              ? { connect: { id: data.categoryId } }
+              : undefined,
+            images: data.images
+              ? { set: data.images.map((imageId) => ({ id: imageId })) }
+              : undefined,
+          },
+          include: { images: true, category: true },
+        }),
       cache: this.cache,
       invalidateKeys: (product) => [
         idKey(product.id),

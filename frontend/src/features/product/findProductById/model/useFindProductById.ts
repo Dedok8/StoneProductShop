@@ -1,8 +1,8 @@
 import { useFindProductByIdQuery } from "@/entities";
 
-export const useFindProductById = (productId?: string) => {
+export const useFindProductById = (id?: string) => {
   const { data, isLoading, error, isError, isFetching } =
-    useFindProductByIdQuery(productId ?? "", { skip: !productId });
+    useFindProductByIdQuery(id ?? "", { skip: !id });
 
   return {
     product: data,

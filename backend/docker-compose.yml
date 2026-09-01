@@ -67,6 +67,7 @@ services:
       - ./prisma:/backend/prisma
       - /backend/node_modules
       - /backend/src/generated
+      - backend_uploads:/backend/uploads
     networks:
       - stone_product_shop-net
     healthcheck:
@@ -114,3 +115,4 @@ networks:
 
 volumes:
   pgdata:
+  backend_uploads:

@@ -1,12 +1,11 @@
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 
 import { useDeleteUser } from "@/features/adminUser/deleteUser/model";
 import { getApiErrorMessage } from "@/shared/ui/Error";
 
-function DeleteUser() {
+function DeleteUser({ userId }: { userId: string }) {
   const { deleteUser, isLoading, error, isError } = useDeleteUser();
-  const { id } = useParams<{ id: string }>();
+
   const { t } = useTranslation();
 
   const handleDeleteUser: React.SubmitEventHandler<HTMLFormElement> = async (
@@ -15,9 +14,6 @@ function DeleteUser() {
     e.preventDefault();
 
     try {
-      if (!id) return;
-
-      const userId: string = id;
       await deleteUser(userId);
     } catch (e) {
       //

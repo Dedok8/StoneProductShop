@@ -44,8 +44,12 @@ export const productSchema = (t: TFunction) => {
     images: yup
       .array()
       .of(
-        yup.string().url(t("validation.url")).required(t("validation.required"))
+        yup
+          .string()
+          .uuid(t("validation.uuid"))
+          .required(t("validation.required"))
       )
+      .min(1, t("validation.required"))
       .max(10, ({ max }) => t("validation.maxItems", { count: max }))
       .required(t("validation.required")),
 

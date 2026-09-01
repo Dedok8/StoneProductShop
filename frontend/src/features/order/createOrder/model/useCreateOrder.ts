@@ -1,5 +1,5 @@
 import { useCreateOrderMutation } from "@/entities";
-import type { ICreateOrderRequest } from "@/shared";
+import type { ICreateOrderRequest } from "@/shared/types";
 
 export const useCreateOrder = () => {
   const [createOrderMutation, { isLoading, error, isError }] =

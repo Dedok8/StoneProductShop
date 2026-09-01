@@ -1,5 +1,5 @@
 import { useUpdateProductMutation } from "@/entities";
-import type { IUpdateProductRequest } from "@/shared";
+import type { IUpdateProductRequest } from "@/shared/types";
 
 export const useUpdateProduct = () => {
   const [updateProductMutation, { isLoading, error, isError }] =

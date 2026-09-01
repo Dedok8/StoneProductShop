@@ -44,6 +44,7 @@ export const API_ROUTES = {
     create: "/order",
     mine: "/order/my",
     all: "/order",
+    checkout: "/checkout",
     byId: (id: string) => `/order/${id}`,
     cancel: (id: string) => `/order/${id}/cancel`,
     status: (id: string) => `/order/${id}/status`,

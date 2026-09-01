@@ -9,7 +9,9 @@ export const useDeleteProduct = () => {
 
   async function deleteProduct(productId: string) {
     const confirmed = window.confirm(t("delete.deleteCategory"));
-    if (!confirmed) await deleteProductMutation(productId).unwrap();
+    if (!confirmed) return;
+
+    await deleteProductMutation(productId).unwrap();
   }
 
   return { deleteProduct, isLoading, error, isError };

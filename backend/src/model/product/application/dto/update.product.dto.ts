@@ -7,7 +7,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
   IsUUID,
   Matches,
   Max,
@@ -56,7 +55,7 @@ export class UpdateProductDto {
   @IsOptional()
   @IsArray()
   @ArrayMaxSize(10)
-  @IsUrl({}, { each: true })
+  @IsUUID('4', { each: true })
   images?: string[];
 
   @IsOptional()

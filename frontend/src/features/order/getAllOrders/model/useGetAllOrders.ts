@@ -1,5 +1,5 @@
 import { useGetAllOrdersQuery } from "@/entities";
-import type { IGetOrdersQuery } from "@/shared";
+import type { IGetOrdersQuery } from "@/shared/types";
 
 export const useGetAllOrders = (query: IGetOrdersQuery) => {
   const { data, isLoading, error, isError, isFetching, refetch } =

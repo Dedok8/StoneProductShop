@@ -1,3 +1,5 @@
+import type { CategoryEntity } from '@/model/category/domain/entities';
+
 export class ProductEntity {
   readonly id: string;
   readonly name: string;
@@ -7,6 +9,7 @@ export class ProductEntity {
   readonly stock: number;
   readonly images: string[];
   readonly categoryId: string;
+  readonly category: CategoryEntity;
   readonly ownerId: string;
   readonly isActive: boolean;
   readonly createdAt: Date;
@@ -19,8 +22,9 @@ export class ProductEntity {
     description: string | null;
     price: number;
     stock: number;
-    images: string[];
+    images: { imageUrl: string }[];
     categoryId: string;
+    category: CategoryEntity;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
@@ -32,8 +36,9 @@ export class ProductEntity {
     this.description = props.description;
     this.price = props.price;
     this.stock = props.stock;
-    this.images = props.images;
+    this.images = props.images.map((img) => img.imageUrl);
     this.categoryId = props.categoryId;
+    this.category = props.category;
     this.ownerId = props.ownerId;
     this.isActive = props.isActive;
     this.createdAt = props.createdAt;
@@ -47,8 +52,9 @@ export class ProductEntity {
     description: string | null;
     price: { toNumber(): number };
     stock: number;
-    images: string[];
+    images: { imageUrl: string }[];
     categoryId: string;
+    category: Parameters<typeof CategoryEntity.fromPersistence>[0];
     ownerId: string;
     isActive: boolean;
     createdAt: Date;

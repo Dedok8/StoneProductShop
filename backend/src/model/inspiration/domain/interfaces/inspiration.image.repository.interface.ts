@@ -2,7 +2,7 @@ import type { InspirationImageEntity } from '@/model/inspiration/domain/entities
 
 export interface ICreateInspirationImageData {
   imageUrl: string;
-  alt?: string;
+  alt: string;
 }
 
 export interface IUpdateInspirationImageData {

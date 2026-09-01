@@ -1,3 +1,4 @@
+import { ShoppingCart } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { ClearCart } from "@/features/cart/clearCart/ui";
@@ -21,7 +22,12 @@ function GetCart() {
   if (qState) return qState;
 
   if (!cart || cart.items.length === 0) {
-    return <div>{t("cart.empty")}</div>;
+    return (
+      <div >
+        <ShoppingCart  />
+        <p>{t("cart.empty")}</p>
+      </div>
+    );
   }
 
   const handleQuantityChange = async (productId: string, quantity: number) => {
@@ -41,38 +47,51 @@ function GetCart() {
 
   return (
     <div >
-      {cart.items.map((item) => (
-        <div
-          key={item.productId}
-        >
-          <div>
-            <div >{item.name}</div>
-            <div >{item.price} ₽ / шт.</div>
-            {!item.isStock && (
-              <div >{t("cart.outOfStock")}</div>
-            )}
-          </div>
+      <ul >
+        {cart.items.map((item) => (
+          <li
+            key={item.productId}
+          >
+            <div >
+              <span >{item.name}</span>
+              <span >
+                {item.price} $
+              </span>
+              {!item.isStock && (
+                <span className="w-fit rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
+                  {t("cart.outOfStock")}
+                </span>
+              )}
+            </div>
 
-          <div>
-            <QuantityStepper
-              quantity={item.quantity}
-              onChange={(q) => handleQuantityChange(item.productId, q)}
-              disabled={!item.isStock}
-            />
+            <div className="flex items-center gap-3">
+              <QuantityStepper
+                quantity={item.quantity}
+                onChange={(q) => handleQuantityChange(item.productId, q)}
+                disabled={!item.isStock}
+              />
+              <RemoveCartItem productId={item.productId} />
+            </div>
+          </li>
+        ))}
+      </ul>
 
-            <RemoveCartItem productId={item.productId} />
-          </div>
-        </div>
-      ))}
-
-      <div >
-        <span>{t("cart.total")}</span>
-        <span>{total} ₽</span>
+      <div className="flex items-center justify-between rounded-xl border bg-card px-4 py-3">
+        <span className="text-sm font-medium text-muted-foreground">
+          {t("cart.total")}
+        </span>
+        <span className="text-lg font-semibold text-foreground">{total} $</span>
       </div>
 
-      <ClearCart />
+      {isUpdateError && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {getApiErrorMessage(updateError, t)}
+        </p>
+      )}
 
-      {isUpdateError && <p>{getApiErrorMessage(updateError, t)}</p>}
+      <div className="flex justify-end">
+        <ClearCart />
+      </div>
     </div>
   );
 }

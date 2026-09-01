@@ -60,7 +60,7 @@
   },
   "password": "Пароль",
   "delete": {
-    "deleteAccount": "Ви впевнені, що хочете видалити акаунт?",
+    "deleteAccount": "Видалити акаунт",
     "deleting": "Видалення..."
   },
   "role": {

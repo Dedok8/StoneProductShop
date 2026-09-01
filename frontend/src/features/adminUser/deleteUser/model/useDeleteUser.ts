@@ -1,10 +1,8 @@
 import { useTranslation } from "react-i18next";
 
 import { useDeleteUserMutation } from "@/entities";
-import { setUser, useAppDispatch } from "@/shared";
 
 export const useDeleteUser = () => {
-  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const [deleteUserMutation, { isLoading, error, isError }] =
     useDeleteUserMutation();
@@ -14,7 +12,6 @@ export const useDeleteUser = () => {
     if (!confirmed) return;
     try {
       await deleteUserMutation(userId).unwrap();
-      dispatch(setUser(null));
     } catch (error) {
       console.error(error);
     }

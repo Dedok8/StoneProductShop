@@ -12,6 +12,26 @@ import { useUser } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
 import { Label } from "@/shared/ui/components/label";
 
+function Field({
+  label,
+  htmlFor,
+  error,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  error?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={htmlFor}>{label}</Label>
+      {children}
+      {error && <p className="text-sm text-destructive">{error}</p>}
+    </div>
+  );
+}
+
 function CreateProduct() {
   const { createProduct, isLoading, error, isError } = useCreateProduct();
   const { categories, isLoading: isCategoriesLoading } = useGetAllCategory();
@@ -31,46 +51,74 @@ function CreateProduct() {
   const onError = (formErrors: typeof errors) => {
     console.log("VALIDATION ERRORS:", formErrors);
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)}>
-      <div>
-        <label htmlFor="name">{t("product.name")}</label>
-        <Input id="name" {...register("name")} />
-        {errors.name && <p>{errors.name.message}</p>}
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl border bg-card p-6 shadow-sm"
+    >
+      <h2 className="text-lg font-semibold text-foreground">
+        {t("product.create")}
+      </h2>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field
+          label={t("product.name")}
+          htmlFor="name"
+          error={errors.name?.message}
+        >
+          <Input id="name" {...register("name")} />
+        </Field>
+
+        <Field
+          label={t("product.slug")}
+          htmlFor="slug"
+          error={errors.slug?.message}
+        >
+          <Input id="slug" {...register("slug")} />
+        </Field>
+
+        <Field
+          label={t("product.price")}
+          htmlFor="price"
+          error={errors.price?.message}
+        >
+          <Input id="price" type="number" step="0.01" {...register("price")} />
+        </Field>
+
+        <Field
+          label={t("product.stock")}
+          htmlFor="stock"
+          error={errors.stock?.message}
+        >
+          <Input id="stock" type="number" {...register("stock")} />
+        </Field>
       </div>
 
-      <div>
-        <label htmlFor="slug">{t("product.slug")}</label>
-        <Input id="slug" {...register("slug")} />
-        {errors.slug && <p>{errors.slug.message}</p>}
-      </div>
+      <Field
+        label={t("product.description")}
+        htmlFor="description"
+        error={errors.description?.message}
+      >
+        <textarea
+          id="description"
+          rows={4}
+          {...register("description")}
+          className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+        />
+      </Field>
 
-      <div>
-        <label htmlFor="description">{t("product.description")}</label>
-        <textarea id="description" {...register("description")} />
-        {errors.description && <p>{errors.description.message}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="price">{t("product.price")}</label>
-        <Input id="price" type="number" step="0.01" {...register("price")} />
-        {errors.price && <p>{errors.price.message}</p>}
-      </div>
-
-      <div>
-        <label htmlFor="stock">{t("product.stock")}</label>
-        <Input id="stock" type="number" {...register("stock")} />
-        {errors.stock && <p>{errors.stock.message}</p>}
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="categoryId">{t("product.category")}</Label>
+      <Field
+        label={t("product.category")}
+        htmlFor="categoryId"
+        error={errors.categoryId?.message}
+      >
         <select
           id="categoryId"
           disabled={isCategoriesLoading}
-          className="border rounded-lg px-3 py-2 text-sm"
           defaultValue=""
           {...register("categoryId")}
+          className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
           <option value="" disabled>
             {isCategoriesLoading
@@ -83,10 +131,9 @@ function CreateProduct() {
             </option>
           ))}
         </select>
-        {errors.categoryId && <p>{errors.categoryId.message}</p>}
-      </div>
+      </Field>
 
-      <div>
+      <div className="flex flex-col gap-1.5">
         <Label>{t("product.images")}</Label>
         <Controller
           name="images"
@@ -105,7 +152,9 @@ function CreateProduct() {
             return (
               <div className="grid grid-cols-4 gap-2">
                 {isInspirationsLoading && (
-                  <p>{t("common.loading", "Loading...")}</p>
+                  <p className="col-span-4 text-sm text-muted-foreground">
+                    {t("common.loading", "Loading...")}
+                  </p>
                 )}
 
                 {inspirations?.map((inspiration) => {
@@ -116,17 +165,19 @@ function CreateProduct() {
                       key={inspiration.id}
                       type="button"
                       onClick={() => toggleImage(inspiration.id)}
-                      className={`relative rounded-lg overflow-hidden border-2 transition ${
-                        isSelected ? "border-blue-500" : "border-transparent"
+                      className={`relative overflow-hidden rounded-lg border-2 transition-colors ${
+                        isSelected
+                          ? "border-primary"
+                          : "border-transparent hover:border-muted-foreground/30"
                       }`}
                     >
                       <img
                         src={inspiration.imageUrl}
                         alt={inspiration.alt}
-                        className="w-full h-24 object-cover"
+                        className="h-24 w-full object-cover"
                       />
                       {isSelected && (
-                        <span className="absolute top-1 right-1 bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                        <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
                           ✓
                         </span>
                       )}
@@ -137,13 +188,23 @@ function CreateProduct() {
             );
           }}
         />
-        {errors.images && <p>{errors.images.message}</p>}
+        {errors.images && (
+          <p className="text-sm text-destructive">{errors.images.message}</p>
+        )}
       </div>
 
-      {isError && <p>{error?.toString()}</p>}
+      {isError && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error?.toString()}
+        </p>
+      )}
 
-      <button type="submit" disabled={isLoading}>
-        {t("product.create")}{" "}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="ml-auto rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+      >
+        {t("product.create")}
       </button>
     </form>
   );

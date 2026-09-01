@@ -1,3 +1,4 @@
+import { ImagePlus } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -35,36 +36,67 @@ function CreateInspiration() {
   const onError = (formErrors: typeof errors) => {
     console.log("VALIDATION ERRORS:", formErrors);
   };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit, onError)}>
-      <div>
-        <label htmlFor="image">{t("inspiration.image")}</label>
+    <form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      className="mx-auto flex max-w-md flex-col gap-4 rounded-xl border bg-card p-6 shadow-sm"
+    >
+      <h2 className="text-lg font-semibold text-foreground">
+        {t("inspiration.create")}
+      </h2>
+
+      <div className="flex flex-col items-center gap-3">
+        <label
+          htmlFor="image"
+          className="flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-muted-foreground transition-colors hover:bg-muted/40"
+        >
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt="preview"
+              className="h-full w-full rounded-lg object-cover"
+            />
+          ) : (
+            <>
+              <ImagePlus className="h-6 w-6" />
+              <span className="text-sm">{t("inspiration.image")}</span>
+            </>
+          )}
+        </label>
         <Input
           id="image"
           type="file"
           accept="image/jpeg,image/png,image/webp"
+          className="hidden"
           {...register("image")}
         />
-        {errors.image && <p>{errors.image.message}</p>}
+        {errors.image && (
+          <p className="text-sm text-destructive">{errors.image.message}</p>
+        )}
       </div>
 
-      <div>
-        <label htmlFor="alt">{t("inspiration.alt")}</label>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="alt" className="text-sm font-medium text-foreground">
+          {t("inspiration.alt")}
+        </label>
         <Input id="alt" {...register("alt")} />
-        {errors.alt && <p>{errors.alt.message}</p>}
+        {errors.alt && (
+          <p className="text-sm text-destructive">{errors.alt.message}</p>
+        )}
       </div>
 
-      {isError && <p>{error?.toString()}</p>}
-
-      {previewUrl && (
-        <img
-          src={previewUrl}
-          alt="preview"
-          style={{ maxWidth: 200, marginTop: 8 }}
-        />
+      {isError && (
+        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
+          {error?.toString()}
+        </p>
       )}
 
-      <button type="submit" disabled={isLoading}>
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
+      >
         {t("inspiration.create")}
       </button>
     </form>

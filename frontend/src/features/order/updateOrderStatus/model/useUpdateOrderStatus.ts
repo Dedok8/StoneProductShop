@@ -1,5 +1,5 @@
 import { useUpdateOrderStatusMutation } from "@/entities";
-import type { IUpdateOrderStatusRequest } from "@/shared";
+import type { IUpdateOrderStatusRequest } from "@/shared/types";
 
 export const useUpdateOrderStatus = () => {
   const [updateOrderStatusMutation, { isLoading, error, isError }] =

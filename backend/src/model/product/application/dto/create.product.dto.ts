@@ -1,12 +1,10 @@
 import { Type } from 'class-transformer';
 import {
-  ArrayMaxSize,
   IsArray,
   IsInt,
   IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
   IsUUID,
   Matches,
   Max,
@@ -49,8 +47,7 @@ export class CreateProductDto {
   stock: number;
 
   @IsArray()
-  @ArrayMaxSize(10)
-  @IsUrl({}, { each: true })
+  @IsUUID('4', { each: true })
   images: string[];
 
   @IsUUID()

@@ -1,3 +1,4 @@
+import { CategoryMapper } from '@/model/category/application/mapper';
 import { ProductResponseDto } from '@/model/product/application/dto';
 import type { ProductEntity } from '@/model/product/domain';
 
@@ -13,7 +14,10 @@ export class ProductMapper {
       images: entity.images,
       isActive: entity.isActive,
       categoryId: entity.categoryId,
+      category: CategoryMapper.toResponse(entity.category),
+      ownerId: entity.ownerId,
       createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     });
   }
 
