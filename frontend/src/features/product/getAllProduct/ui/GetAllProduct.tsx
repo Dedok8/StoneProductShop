@@ -159,7 +159,8 @@ function GetAllProduct() {
 
         <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {products?.map((item) => {
-            const isCardActive = item.isActive && item. !== false;
+            const isCardActive =
+              item.isActive && item.category.isActive !== false;
 
             return (
               <li
@@ -212,21 +213,21 @@ function GetAllProduct() {
                         : t("product.outOfStock")}
                     </span>
 
-                    <span
+                    {/* <span
                       className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
                         item.isActive
                           ? "bg-emerald-100 text-emerald-800"
                           : "bg-stone-100 text-stone-500"
                       }`}
                     >
-                      {item.isActive
+                      {item.isActive === false
                         ? t("category.active")
                         : t("category.unActive")}
-                    </span>
+                    </span> */}
 
                     {item.category?.isActive === false && (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">
-                        {t("category.inactive", "Category inactive")}
+                        {t("category.inactive")}
                       </span>
                     )}
                   </div>

@@ -6,13 +6,21 @@ import { useAddToCartItem } from "@/features/cart/addCartItem/model";
 import { getApiErrorMessage, QuantityStepper } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
 
-function AddToCartItem({ productId }: { productId: string }) {
+interface IAddToCartItemProps {
+  productId: string;
+  disabled: boolean;
+}
+
+function AddToCartItem({ productId, disabled }: IAddToCartItemProps) {
   const { addToCartItem, isLoading, error, isError } = useAddToCartItem();
+
   const { t } = useTranslation();
 
   const [quantity, setQuantity] = useState(1);
 
-  const handleAddItem: React.FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleAddItem: React.SubmitEventHandler<HTMLFormElement> = async (
+    e
+  ) => {
     e.preventDefault();
     if (quantity < 1) return;
 
@@ -30,7 +38,7 @@ function AddToCartItem({ productId }: { productId: string }) {
 
         <Button
           type="submit"
-          disabled={isLoading || quantity < 1}
+          disabled={isLoading || quantity < 1 || disabled}
           className="flex-1"
         >
           {isLoading ? (

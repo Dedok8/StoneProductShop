@@ -4,17 +4,11 @@ import { useTranslation } from "react-i18next";
 import { ClearCart } from "@/features/cart/clearCart/ui";
 import { useGetCart } from "@/features/cart/getCart/model";
 import { RemoveCartItem } from "@/features/cart/removeCartItem/ui";
-import { useUpdateCartItem } from "@/features/cart/updateCartItem/model";
-import { QuantityStepper, useQueryState } from "@/shared";
-import { getApiErrorMessage } from "@/shared/ui/Error/getApiErrorMessage";
+import CartItemQuantity from "@/features/cart/updateCartItem/ui/CartItemQuantity";
+import { useQueryState } from "@/shared";
 
 function GetCart() {
   const { cart, isLoading, error, isError } = useGetCart();
-  const {
-    updateCartItem,
-    error: updateError,
-    isError: isUpdateError,
-  } = useUpdateCartItem();
 
   const { t } = useTranslation();
 
@@ -23,22 +17,12 @@ function GetCart() {
 
   if (!cart || cart.items.length === 0) {
     return (
-      <div >
-        <ShoppingCart  />
+      <div>
+        <ShoppingCart />
         <p>{t("cart.empty")}</p>
       </div>
     );
   }
-
-  const handleQuantityChange = async (productId: string, quantity: number) => {
-    if (quantity < 1) return;
-
-    try {
-      await updateCartItem(productId, { quantity });
-    } catch (e) {
-      //
-    }
-  };
 
   const total = cart.items.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -46,17 +30,13 @@ function GetCart() {
   );
 
   return (
-    <div >
-      <ul >
+    <div>
+      <ul>
         {cart.items.map((item) => (
-          <li
-            key={item.productId}
-          >
-            <div >
-              <span >{item.name}</span>
-              <span >
-                {item.price} $
-              </span>
+          <li key={item.productId}>
+            <div>
+              <span>{item.name}</span>
+              <span>{item.price} $</span>
               {!item.isStock && (
                 <span className="w-fit rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
                   {t("cart.outOfStock")}
@@ -65,9 +45,14 @@ function GetCart() {
             </div>
 
             <div className="flex items-center gap-3">
-              <QuantityStepper
+              {/* <QuantityStepper
                 quantity={item.quantity}
                 onChange={(q) => handleQuantityChange(item.productId, q)}
+                disabled={!item.isStock}
+              /> */}
+              <CartItemQuantity
+                productId={item.productId}
+                quantity={item.quantity}
                 disabled={!item.isStock}
               />
               <RemoveCartItem productId={item.productId} />
@@ -83,11 +68,11 @@ function GetCart() {
         <span className="text-lg font-semibold text-foreground">{total} $</span>
       </div>
 
-      {isUpdateError && (
+      {/* {isUpdateError && (
         <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
           {getApiErrorMessage(updateError, t)}
         </p>
-      )}
+      )} */}
 
       <div className="flex justify-end">
         <ClearCart />

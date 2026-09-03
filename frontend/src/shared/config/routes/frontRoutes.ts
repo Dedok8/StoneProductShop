@@ -124,6 +124,16 @@ export const FRONT_ROUTES = {
       },
     },
 
+    ChangePassword: {
+      path: "/changePassword",
+      meta: {
+        title: "ChangePassword",
+        isInMenu: false,
+        requireAuth: true,
+        isGuestOnly: false,
+      },
+    },
+
     // ─────────────────────────────────────────────────────────
     // ЛИЧНЫЙ КАБИНЕТ — доступно только авторизованному пользователю
     // ─────────────────────────────────────────────────────────

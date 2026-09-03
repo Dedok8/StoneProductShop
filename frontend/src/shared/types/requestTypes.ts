@@ -181,6 +181,8 @@ export interface IProductResponse {
   price: number;
   stock: number;
   images: string[];
+  category:ICategoryResponse;
+  ownerId:string;
   categoryId: string;
   createdAt: string;
   isActive: boolean;

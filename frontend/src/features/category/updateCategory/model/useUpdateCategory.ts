@@ -1,5 +1,5 @@
 import { useUpdateCategoryMutation } from "@/entities";
-import type { IUpdateCategoryRequest } from "@/shared";
+import type { IUpdateCategoryRequest } from "@/shared/types";
 
 export const useUpdateCategory = () => {
   const [updateCategoryMutation, { isLoading, error, isError }] =

@@ -1,5 +1,6 @@
 import { useChangeMyPasswordMutation } from "@/entities";
-import { setUser, useAppDispatch, type IChangePasswordRequest } from "@/shared";
+import { setUser, useAppDispatch } from "@/shared";
+import type { IChangePasswordRequest } from "@/shared/types";
 
 export const useChangePassword = () => {
   const dispatch = useAppDispatch();

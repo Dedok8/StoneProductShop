@@ -1,6 +1,9 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 
+import DeleteMe from "@/features/user/deleteMe/ui/DeleteMe";
 import { useGetMe } from "@/features/user/getMe/model";
+import { FRONT_ROUTES } from "@/shared";
 import {
   Card,
   CardContent,
@@ -60,6 +63,13 @@ function GetMe() {
           <span className="text-sm font-medium">{user?.email}</span>
         </div>
       </CardContent>
+
+      <CardContent>
+        <DeleteMe />
+      </CardContent>
+      <Link to={FRONT_ROUTES.pages.ChangePassword.path}>
+        {t("user.changePassword")}
+      </Link>
     </Card>
   );
 }

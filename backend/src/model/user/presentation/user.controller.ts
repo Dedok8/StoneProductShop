@@ -35,7 +35,7 @@ export class UserController {
     return this.userService.update(id, dto);
   }
 
-  @Patch('me/password')
+  @Patch('me/changePassword')
   changePassword(
     @CurrentUser('sub') id: string,
     @Body() dto: ChangePasswordDto,

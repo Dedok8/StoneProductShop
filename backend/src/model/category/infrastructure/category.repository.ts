@@ -25,6 +25,12 @@ const listPattern = () => 'category:list*';
 const idKey = (id: string) => `category:id:${id}`;
 const slugKey = (slug: string) => `category:slug:${slug}`;
 
+const PRODUCT_CACHE_PATTERNS = [
+  'product:id:*',
+  'product:slug:*',
+  'product:list*',
+];
+
 @Injectable()
 export class CategoryRepository implements ICategoryRepository {
   constructor(
@@ -68,7 +74,6 @@ export class CategoryRepository implements ICategoryRepository {
   }
 
   create(data: ICreateCategoryData): Promise<CategoryEntity> {
-    
     return createAndInvalidate({
       createFn: () =>
         this.prisma.category.create({
@@ -95,6 +100,7 @@ export class CategoryRepository implements ICategoryRepository {
         idKey(category.id),
         slugKey(category.slug),
         listPattern(),
+        ...PRODUCT_CACHE_PATTERNS,
       ],
       entityClass: CategoryEntity,
     });
@@ -108,6 +114,7 @@ export class CategoryRepository implements ICategoryRepository {
         idKey(category.id),
         slugKey(category.slug),
         listPattern(),
+        ...PRODUCT_CACHE_PATTERNS,
       ],
     });
   }
