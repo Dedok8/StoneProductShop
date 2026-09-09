@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSearchCategory } from "@/features/category/searchCategory/model";
+import { useQueryState } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function SearchCategory() {
   const { t } = useTranslation();
@@ -11,8 +11,7 @@ function SearchCategory() {
   const { category, isLoading, error, isError, isFetching } =
     useSearchCategory(query);
 
-  if (isLoading || isFetching) return <div>{t("common.loading")}</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div>
@@ -23,14 +22,7 @@ function SearchCategory() {
         placeholder="Search by name or slug"
       />
 
-      {isError && (
-        <p>
-          Error:{" "}
-          {error && "status" in error
-            ? String(error.status)
-            : "Failed to fetch user"}
-        </p>
-      )}
+      {queryState}
 
       {category && (
         <div>

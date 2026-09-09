@@ -8,7 +8,7 @@ import {
   useCreateProductForm,
   type ProductFormValues,
 } from "@/features/product/createProduct/model";
-import { useUser } from "@/shared";
+import { useQueryState, useUser } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
 import { Label } from "@/shared/ui/components/label";
 
@@ -48,13 +48,11 @@ function CreateProduct() {
       console.error(e);
     }
   };
-  const onError = (formErrors: typeof errors) => {
-    console.log("VALIDATION ERRORS:", formErrors);
-  };
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, onError)}
+      onSubmit={handleSubmit(onSubmit)}
       className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl border bg-card p-6 shadow-sm"
     >
       <h2 className="text-lg font-semibold text-foreground">
@@ -193,11 +191,7 @@ function CreateProduct() {
         )}
       </div>
 
-      {isError && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error?.toString()}
-        </p>
-      )}
+      {queryState}
 
       <button
         type="submit"

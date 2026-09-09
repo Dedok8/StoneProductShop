@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 
 import { useDeleteProduct } from "@/features/product/deleteProduct/model/useDeleteProduct";
-import { getApiErrorMessage } from "@/shared";
+import { useQueryState } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
 
 function DeleteProduct({ prodId }: { prodId: string }) {
@@ -15,10 +15,10 @@ function DeleteProduct({ prodId }: { prodId: string }) {
       console.error(e);
     }
   };
-
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <div>
-      {isError && <div>{getApiErrorMessage(error, t)}</div>}
+      {queryState}
 
       <Button onClick={handleDelete} disabled={isLoading}>
         {isLoading ? t("delete.deleting") : t("delete.deleteProduct")}

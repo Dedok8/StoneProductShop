@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 
 import { useFindCategoryById } from "@/features/category/findCategoryById";
 import { useUpdateCategory } from "@/features/category/updateCategory/model";
+import { useQueryState } from "@/shared";
 import type { ICategoryResponse } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
@@ -12,17 +13,22 @@ import { Label } from "@/shared/ui/components/label";
 
 function UpdateCategory() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
 
-  const { category, isLoading: isCategoryLoading } = useFindCategoryById(id);
+  const {
+    category,
+    isLoading: isCategoryLoading,
+    isError: isCategoryError,
+    error: categoryError,
+  } = useFindCategoryById(id);
 
-  if (isCategoryLoading || !category) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
+  const queryState = useQueryState(
+    isCategoryLoading,
+    isCategoryError,
+    categoryError
+  );
+
+  if (queryState) return queryState;
+  if (!category) return null;
 
   return <UpdateCategoryForm category={category} />;
 }

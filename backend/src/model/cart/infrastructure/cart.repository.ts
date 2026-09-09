@@ -18,14 +18,18 @@ export class ProductNotFoundError extends ConflictException {
 export class CartRepository implements ICartRepository {
   constructor(private readonly prisma: PrismaService) {}
 
+  private readonly itemsInclude = {
+    items: {
+      orderBy: { createdAt: 'asc' as const },
+    },
+  } satisfies Prisma.CartInclude;
+
   async findByUserId(userId: string): Promise<CartEntity | null> {
     const cart = await this.prisma.cart.findUnique({
       where: {
         userId,
       },
-      include: {
-        items: true,
-      },
+      include: this.itemsInclude,
     });
 
     return cart ? this.mapToEntity(cart) : null;
@@ -38,9 +42,7 @@ export class CartRepository implements ICartRepository {
       where: {
         id: cart.id,
       },
-      include: {
-        items: true,
-      },
+      include: this.itemsInclude,
     });
 
     return this.mapToEntity(fullCart);
@@ -90,9 +92,7 @@ export class CartRepository implements ICartRepository {
           where: {
             id: cart.id,
           },
-          include: {
-            items: true,
-          },
+          include: this.itemsInclude,
         });
       }),
     );
@@ -135,9 +135,7 @@ export class CartRepository implements ICartRepository {
         where: {
           id: cart.id,
         },
-        include: {
-          items: true,
-        },
+        include: this.itemsInclude,
       });
     });
 
@@ -159,9 +157,7 @@ export class CartRepository implements ICartRepository {
         where: {
           id: cart.id,
         },
-        include: {
-          items: true,
-        },
+        include: this.itemsInclude,
       });
     });
 

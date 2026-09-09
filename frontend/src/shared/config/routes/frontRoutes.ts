@@ -125,7 +125,7 @@ export const FRONT_ROUTES = {
     },
 
     ChangePassword: {
-      path: "/changePassword",
+      path: "/me/changePassword",
       meta: {
         title: "ChangePassword",
         isInMenu: false,

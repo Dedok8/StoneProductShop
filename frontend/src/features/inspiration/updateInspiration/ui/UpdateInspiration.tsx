@@ -5,19 +5,29 @@ import { useParams } from "react-router-dom";
 import { useCreateUploadMutation } from "@/entities";
 import { useFindInspirationById } from "@/features/inspiration/findInspirationById/model";
 import { useUpdateInspiration } from "@/features/inspiration/updateInspiration/model/useUpdateInspiration";
+import { useQueryState } from "@/shared";
 import type { IInspirationResponse } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 
 function UpdateInspiration() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
 
-  const { inspiration, isLoading: isInspirationLoading } =
-    useFindInspirationById(id);
 
-  if (isInspirationLoading || !inspiration)
-    return <div>{t("common.loading")}</div>;
+  const {
+    inspiration,
+    isLoading: isInspirationLoading,
+    isError: isInspirationError,
+    error: inspirationError,
+  } = useFindInspirationById(id);
 
+  const queryState = useQueryState(
+    isInspirationLoading,
+    isInspirationError,
+    inspirationError
+  );
+
+  if (queryState) return queryState;
+  if (!inspiration) return null;
   return <UpdateInspirationForm inspiration={inspiration} />;
 }
 

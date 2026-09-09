@@ -31,7 +31,7 @@ services:
     volumes:
       - ./prisma:/backend/prisma
 
-      - /backend/node_modules
+      - backend_node_modules:/backend/node_modules
     depends_on:
       db:
         condition: service_healthy
@@ -65,8 +65,8 @@ services:
     volumes:
       - ./src:/backend/src
       - ./prisma:/backend/prisma
-      - /backend/node_modules
-      - /backend/src/generated
+      - backend_node_modules:/backend/node_modules
+      - backend_generated:/backend/src/generated
       - backend_uploads:/backend/uploads
     networks:
       - stone_product_shop-net
@@ -116,3 +116,5 @@ networks:
 volumes:
   pgdata:
   backend_uploads:
+  backend_node_modules:
+  backend_generated:

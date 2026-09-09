@@ -1,27 +1,19 @@
 import { ShoppingBag } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 import { useGetCart } from "@/features/cart/getCart/model";
 import { useCheckout } from "@/features/order/checkout/model";
+import { useQueryState } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function Checkout() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   const { cart, isLoading: isCartLoading } = useGetCart();
   const { checkout, isLoading: isCheckingOut, error, isError } = useCheckout();
 
-  if (isCartLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
-
+  const queryState = useQueryState(isCartLoading, isError, error);
+  
   if (!cart || cart.items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed py-16 text-center text-muted-foreground">
@@ -39,8 +31,7 @@ function Checkout() {
 
   const handleCheckout = async () => {
     try {
-      const order = await checkout();
-      navigate(`/orders/${order.id}`);
+      await checkout();
     } catch (e) {
       //
     }
@@ -80,11 +71,7 @@ function Checkout() {
         </p>
       )}
 
-      {isError && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {getApiErrorMessage(error, t)}
-        </p>
-      )}
+      {queryState}
 
       <Button
         onClick={handleCheckout}

@@ -1,13 +1,13 @@
-import { RefreshCw, Search } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { DeleteUser } from "@/features/adminUser/deleteUser";
 import { useGetAllUsers } from "@/features/adminUser/getAllUsers/model";
+import SearchUser from "@/features/adminUser/searchUser/ui/SearchUser";
 import UpdateUserRole from "@/features/adminUser/updateUserRole/ui/UpdateUserRole";
-import { type IGetUsersQuery } from "@/shared/types";
-import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
+import { useQueryState } from "@/shared";
+import { type IGetUsersQuery, type IUserResponse } from "@/shared/types";
 
 const GRID_COLS = "grid-cols-[2fr_2fr_1fr_1.5fr]";
 
@@ -18,40 +18,18 @@ function GetAllUsers() {
     sortBy: "createdAt",
     sortOrder: "asc",
   });
+  const [selectedUser, setSelectedUser] = useState<IUserResponse | null>(null);
+
   const { users, meta, isLoading, error, isError, isFetching, refetch } =
     useGetAllUsers(query);
   const { t } = useTranslation();
 
-  if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-        {getApiErrorMessage(error, t)}
-      </div>
-    );
-  }
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <div className="relative w-full max-w-xs">
-          <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={query.search ?? ""}
-            onChange={(e) =>
-              setQuery((q) => ({ ...q, search: e.target.value, page: 1 }))
-            }
-            placeholder={t("admin.searchByEmail")}
-            className="pl-8"
-          />
-        </div>
+        <SearchUser onSelectUser={setSelectedUser} />
 
         <button
           onClick={refetch}
@@ -76,24 +54,63 @@ function GetAllUsers() {
         </div>
 
         <div className="divide-y">
-          {users.map((user) => (
-            <div
-              key={user.id}
-              className={`grid ${GRID_COLS} items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-muted/40`}
-            >
-              <div className="font-medium text-foreground">{user.name}</div>
-              <div className="truncate text-muted-foreground">{user.email}</div>
-              <div>
-                <UpdateUserRole userId={user.id} currentRole={user.role} />
+          {selectedUser && (
+            <div className="bg-primary/5">
+              <div
+                className={`grid ${GRID_COLS} items-center gap-4 px-4 py-3 text-sm`}
+              >
+                <div className="font-medium text-foreground">
+                  {selectedUser.name}
+                </div>
+                <div className="truncate text-muted-foreground">
+                  {selectedUser.email}
+                </div>
+                <div>
+                  <UpdateUserRole
+                    userId={selectedUser.id}
+                    currentRole={selectedUser.role}
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <DeleteUser userId={selectedUser.id} />
+                  <button
+                    type="button"
+                    onClick={() => setSelectedUser(null)}
+                    className="text-xs text-muted-foreground hover:underline"
+                  >
+                    {t("common.close", "Close")}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                <DeleteUser userId={user.id} />
+              <div className="px-4 pb-3 text-xs text-muted-foreground">
+                ID: {selectedUser.id} · {t("admin.createdAt", "Created")}:{" "}
+                {selectedUser.createdAt}
               </div>
             </div>
-          ))}
+          )}
+
+          {users
+            .filter((u) => u.id !== selectedUser?.id)
+            .map((user) => (
+              <div
+                key={user.id}
+                className={`grid ${GRID_COLS} items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-muted/40`}
+              >
+                <div className="font-medium text-foreground">{user.name}</div>
+                <div className="truncate text-muted-foreground">
+                  {user.email}
+                </div>
+                <div>
+                  <UpdateUserRole userId={user.id} currentRole={user.role} />
+                </div>
+                <div className="flex items-center gap-3">
+                  <DeleteUser userId={user.id} />
+                </div>
+              </div>
+            ))}
         </div>
 
-        {users.length === 0 && (
+        {users.length === 0 && !selectedUser && (
           <div className="py-10 text-center text-sm text-muted-foreground">
             {t("common.noResults")}
           </div>
@@ -127,6 +144,8 @@ function GetAllUsers() {
           </div>
         </div>
       )}
+
+      {queryState}
     </div>
   );
 }

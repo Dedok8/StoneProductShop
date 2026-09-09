@@ -2,7 +2,6 @@ import { useState } from "react";
 
 interface QuantityStepperProps {
   quantity: number;
-
   onChange: (quantity: number) => void;
   disabled?: boolean;
   min?: number;
@@ -16,11 +15,13 @@ export const QuantityStepper = ({
   min = 1,
   max,
 }: QuantityStepperProps) => {
+  const [localQuantity, setLocalQuantity] = useState(quantity);
   const [inputValue, setInputValue] = useState(String(quantity));
   const [prevQuantity, setPrevQuantity] = useState(quantity);
 
   if (quantity !== prevQuantity) {
     setPrevQuantity(quantity);
+    setLocalQuantity(quantity);
     setInputValue(String(quantity));
   }
 
@@ -30,38 +31,40 @@ export const QuantityStepper = ({
     if (max !== undefined && result > max) result = max;
     return result;
   };
+
+  const applyLocal = (next: number) => {
+    setLocalQuantity(next);
+    setInputValue(String(next));
+    onChange(next);
+  };
+
   const handleDecrease = () => {
-    if (quantity - 1 < min) return;
-    onChange(quantity - 1);
+    if (localQuantity - 1 < min) return;
+    applyLocal(localQuantity - 1);
   };
 
   const handleIncrease = () => {
-    onChange(quantity + 1);
+    const next =
+      max !== undefined ? Math.min(localQuantity + 1, max) : localQuantity + 1;
+    applyLocal(next);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-
     if (raw !== "" && !/^\d+$/.test(raw)) return;
-
     setInputValue(raw);
   };
 
   const handleInputBlur = () => {
     if (inputValue === "") {
-      setInputValue(String(quantity));
+      setInputValue(String(localQuantity));
       return;
     }
-
-    const parsed = clamp(Number(inputValue));
-    setInputValue(String(parsed));
-    onChange(parsed);
+    applyLocal(clamp(Number(inputValue)));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      e.currentTarget.blur();
-    }
+    if (e.key === "Enter") e.currentTarget.blur();
   };
 
   return (
@@ -69,16 +72,12 @@ export const QuantityStepper = ({
       <button
         type="button"
         onClick={handleDecrease}
-        disabled={disabled || quantity <= min}
+        disabled={disabled || localQuantity <= min}
         aria-label="Decrease quantity"
         className="flex h-9 w-9 items-center justify-center rounded-l-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:pointer-events-none disabled:opacity-40"
       >
         −
       </button>
-
-      {/* <span className="w-8 select-none text-center text-sm font-medium tabular-nums text-foreground">
-        {quantity}
-      </span> */}
 
       <input
         type="text"

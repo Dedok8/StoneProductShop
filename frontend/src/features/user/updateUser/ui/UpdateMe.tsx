@@ -1,13 +1,11 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 
 import { useUpdateMe } from "@/features/user/updateUser/model";
+import { useQueryState } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function UpdateMe() {
   const { updateMe, isLoading, isError, error } = useUpdateMe();
-  const { t } = useTranslation();
 
   const [name, setName] = useState("");
 
@@ -20,8 +18,7 @@ function UpdateMe() {
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <form onSubmit={handleSubmit}>
@@ -30,7 +27,7 @@ function UpdateMe() {
         <Input value={name} onChange={(e) => setName(e.target.value)} />
       </label>
 
-      {isError && <div>{getApiErrorMessage(error, t)}</div>}
+      {queryState}
 
       <button type="submit" disabled={isLoading}>
         {isLoading ? "Saving..." : "Save"}

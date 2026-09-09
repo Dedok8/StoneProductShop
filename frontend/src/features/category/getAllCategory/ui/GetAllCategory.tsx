@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 
 import DeleteCategory from "@/features/category/deleteCategory/ui/DeleteCategory";
 import { useGetAllCategory } from "@/features/category/getAllCategory/model";
-import { FRONT_ROUTES, useUser } from "@/shared";
+import { FRONT_ROUTES, useQueryState, useUser } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function GetAllCategory() {
   const { categories, isLoading, error, isError, refetch } =
@@ -14,21 +13,7 @@ function GetAllCategory() {
   const user = useUser();
   const { t } = useTranslation();
 
-  if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-        {getApiErrorMessage(error, t)}
-      </div>
-    );
-  }
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
@@ -73,6 +58,7 @@ function GetAllCategory() {
           ))}
         </ul>
       )}
+      {queryState}
     </div>
   );
 }

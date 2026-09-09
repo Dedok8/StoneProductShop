@@ -1,25 +1,23 @@
-import { useFindUserByEmailQuery, useFindUserByIdQuery } from "@/entities";
+import { useGetAllUsersQuery } from "@/entities";
+import { useDebouncedValue } from "@/shared";
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const DEBOUNCE_MS = 350;
 
 export const useSearchUser = (query?: string) => {
-  const isEmail = !!query && EMAIL_REGEX.test(query);
+  const trimmedQuery = useDebouncedValue(query ?? "", DEBOUNCE_MS).trim();
 
-  const byEmail = useFindUserByEmailQuery(query ?? "", {
-    skip: !query || !isEmail,
-  });
-
-  const byId = useFindUserByIdQuery(query ?? "", {
-    skip: !query || isEmail,
-  });
-
-  const result = isEmail ? byEmail : byId;
+  const { data, isLoading, isFetching, isError, error } = useGetAllUsersQuery(
+    { search: trimmedQuery, limit: 10 },
+    { skip: trimmedQuery.length < 2 }
+  );
 
   return {
-    user: result.data,
-    isLoading: result.isLoading,
-    isFetching: result.isFetching,
-    isError: result.isError,
-    error: result.error,
+    users: data?.items ?? [],
+    total: data?.meta.total ?? 0,
+    isLoading,
+    isFetching,
+    isError,
+    error,
+    hasQuery: trimmedQuery.length >= 2,
   };
 };

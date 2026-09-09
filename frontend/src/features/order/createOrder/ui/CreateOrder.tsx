@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useCreateOrder } from "@/features/order/createOrder/model";
 import { useGetAllProduct } from "@/features/product/getAllProduct";
+import { useQueryState } from "@/shared";
 import type { ICreateOrderItemRequest } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
@@ -46,7 +47,7 @@ function CreateOrder() {
       //
     }
   };
-
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <form onSubmit={handleSubmit}>
       {items.map((item, index) => (
@@ -93,7 +94,7 @@ function CreateOrder() {
         {t("order.create")}
       </Button>
 
-      {isError && <p>{error?.toString()}</p>}
+      {queryState}
     </form>
   );
 }

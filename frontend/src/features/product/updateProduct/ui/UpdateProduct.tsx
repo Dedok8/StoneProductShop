@@ -5,17 +5,29 @@ import { useParams } from "react-router-dom";
 
 import { useFindProductById } from "@/features/product/findProductById";
 import { useUpdateProduct } from "@/features/product/updateProduct/model/useUpdateProduct";
+import { useQueryState } from "@/shared";
 import type { IProductResponse } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
 
 function UpdateProduct() {
   const { id } = useParams<{ id: string }>();
-  const { t } = useTranslation();
-  console.log("id from params:", id);
-  const { product, isLoading: isProductLoading } = useFindProductById(id);
 
-  if (isProductLoading || !product) return <div>{t("common.loading")}</div>;
+  const {
+    product,
+    isLoading: isProductLoading,
+    isError: isProductError,
+    error: productError,
+  } = useFindProductById(id);
+
+  const queryState = useQueryState(
+    isProductLoading,
+    isProductError,
+    productError
+  );
+
+  if (queryState) return queryState;
+  if (!product) return null;
 
   return <UpdateProductForm product={product} />;
 }

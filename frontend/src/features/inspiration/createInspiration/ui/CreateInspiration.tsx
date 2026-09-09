@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { useCreateInspiration } from "@/features/inspiration/createInspiration/model/useCreateInspiration";
 import { useCreateInspirationForm } from "@/features/inspiration/createInspiration/model/useCreateInspirationForm";
+import { useQueryState } from "@/shared";
 import type { IInspirationFormValues } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 
@@ -33,13 +34,11 @@ function CreateInspiration() {
       //
     }
   };
-  const onError = (formErrors: typeof errors) => {
-    console.log("VALIDATION ERRORS:", formErrors);
-  };
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <form
-      onSubmit={handleSubmit(onSubmit, onError)}
+      onSubmit={handleSubmit(onSubmit)}
       className="mx-auto flex max-w-md flex-col gap-4 rounded-xl border bg-card p-6 shadow-sm"
     >
       <h2 className="text-lg font-semibold text-foreground">
@@ -86,11 +85,7 @@ function CreateInspiration() {
         )}
       </div>
 
-      {isError && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {error?.toString()}
-        </p>
-      )}
+      {queryState}
 
       <button
         type="submit"

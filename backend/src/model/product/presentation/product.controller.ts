@@ -16,6 +16,8 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 
 import {
   CreateProductDto,
+  FindByNameDto,
+  FindBySlugDto,
   PaginatedProductResponseDto,
   ProductQueryDto,
   ProductResponseDto,
@@ -39,6 +41,16 @@ export class ProductController {
     @Query() query: ProductQueryDto,
   ): Promise<PaginatedProductResponseDto> {
     return this.productService.findAll(query);
+  }
+
+  @Get('search')
+  search(@Query() query: FindBySlugDto): Promise<ProductResponseDto> {
+    return this.productService.findBySlug(query.slug);
+  }
+
+  @Get('search/name')
+  findByName(@Query() query: FindByNameDto): Promise<ProductResponseDto> {
+    return this.productService.findBySlug(query.name);
   }
 
   @Get(':id')

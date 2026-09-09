@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAddToCartItem } from "@/features/cart/addCartItem/model";
-import { getApiErrorMessage, QuantityStepper } from "@/shared";
+import { QuantityStepper, useQueryState } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
 
 interface IAddToCartItemProps {
@@ -31,6 +31,8 @@ function AddToCartItem({ productId, disabled }: IAddToCartItemProps) {
     }
   };
 
+  const queryState = useQueryState(isLoading, isError, error);
+
   return (
     <form onSubmit={handleAddItem} className="flex flex-col gap-2">
       <div className="flex items-center gap-3">
@@ -52,11 +54,7 @@ function AddToCartItem({ productId, disabled }: IAddToCartItemProps) {
         </Button>
       </div>
 
-      {isError && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {getApiErrorMessage(error, t)}
-        </p>
-      )}
+      {queryState}
     </form>
   );
 }

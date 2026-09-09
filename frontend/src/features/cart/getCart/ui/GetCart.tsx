@@ -13,6 +13,7 @@ function GetCart() {
   const { t } = useTranslation();
 
   const qState = useQueryState(isLoading, isError, error);
+
   if (qState) return qState;
 
   if (!cart || cart.items.length === 0) {
@@ -28,7 +29,9 @@ function GetCart() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
+  const sortedItems = [...cart.items].sort((a, b) =>
+    a.productId.localeCompare(b.productId)
+  );
   return (
     <div>
       <ul>
@@ -45,11 +48,6 @@ function GetCart() {
             </div>
 
             <div className="flex items-center gap-3">
-              {/* <QuantityStepper
-                quantity={item.quantity}
-                onChange={(q) => handleQuantityChange(item.productId, q)}
-                disabled={!item.isStock}
-              /> */}
               <CartItemQuantity
                 productId={item.productId}
                 quantity={item.quantity}
@@ -68,11 +66,7 @@ function GetCart() {
         <span className="text-lg font-semibold text-foreground">{total} $</span>
       </div>
 
-      {/* {isUpdateError && (
-        <p className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {getApiErrorMessage(updateError, t)}
-        </p>
-      )} */}
+      {qState}
 
       <div className="flex justify-end">
         <ClearCart />

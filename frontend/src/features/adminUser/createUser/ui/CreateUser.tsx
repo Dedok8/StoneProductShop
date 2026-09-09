@@ -4,9 +4,9 @@ import {
   useCreateUser,
   useCreateUserForm,
 } from "@/features/adminUser/createUser/model";
+import { useQueryState } from "@/shared";
 import type { ICreateUserRequest } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function CreateUser() {
   const { createUser, isLoading, error, isError } = useCreateUser();
@@ -20,6 +20,8 @@ function CreateUser() {
       //
     }
   };
+
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <form
@@ -77,11 +79,7 @@ function CreateUser() {
         )}
       </div>
 
-      {isError && (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {getApiErrorMessage(error, t)}
-        </div>
-      )}
+      {queryState}
 
       <button
         type="submit"

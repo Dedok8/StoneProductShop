@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useChangePassword } from "@/features/user/changePassword/model";
+import { useQueryState } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
 import {
   Card,
@@ -13,7 +14,6 @@ import {
 } from "@/shared/ui/components/card";
 import { Input } from "@/shared/ui/components/input";
 import { Label } from "@/shared/ui/components/label";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function ChangePassword() {
   const { changePassword, isLoading, error, isError } = useChangePassword();
@@ -34,6 +34,7 @@ function ChangePassword() {
       //
     }
   };
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <Card className="w-full max-w-sm rounded-2xl border border-border/60 shadow-lg shadow-black/5">
@@ -91,11 +92,7 @@ function ChangePassword() {
             />
           </div>
 
-          {isError && (
-            <div className="text-sm text-destructive">
-              {getApiErrorMessage(error, t)}
-            </div>
-          )}
+          {queryState}
         </CardContent>
 
         <CardFooter>

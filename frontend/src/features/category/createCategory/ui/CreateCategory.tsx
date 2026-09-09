@@ -5,11 +5,10 @@ import {
   useCreateCategory,
   useCreateCategoryForm,
 } from "@/features/category/createCategory/model";
-import { slugify } from "@/shared";
+import { slugify, useQueryState } from "@/shared";
 import type { ICreateCategoryRequest } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function CreateCategory() {
   const { createCategory, isLoading, error, isError } = useCreateCategory();
@@ -39,7 +38,7 @@ function CreateCategory() {
       //
     }
   };
-
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -86,11 +85,7 @@ function CreateCategory() {
         )}
       </div>
 
-      {isError && (
-        <div className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          {getApiErrorMessage(error, t)}
-        </div>
-      )}
+      {queryState}
 
       <Button type="submit" disabled={isLoading}>
         {isLoading ? t("common.loading") : t("admin.createCategory")}

@@ -10,7 +10,7 @@ export const API_ROUTES = {
     getMe: "/user/me",
     updateMe: "/user/me",
     deleteMe: "/user/me",
-    changePassword: "/user/changePassword",
+    changePassword: "/user/me/changePassword",
   },
 
   adminUser: {

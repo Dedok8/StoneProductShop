@@ -1,5 +1,5 @@
 import { useCreateLeadMutation } from "@/entities";
-import type { ICreateLead } from "@/shared";
+import type { ICreateLead } from "@/shared/types";
 
 export const useCreateLead = () => {
   const [createLeadMutation, { isLoading, error, isError }] =

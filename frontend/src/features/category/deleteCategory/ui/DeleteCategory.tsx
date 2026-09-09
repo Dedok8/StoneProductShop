@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 
 import { useDeleteCategory } from "@/features/category/deleteCategory/model";
+import { useQueryState } from "@/shared";
 import { Button } from "@/shared/ui/components/button";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function DeleteCategory({ categoryId }: { categoryId: string }) {
   const { deleteCategory, isLoading, error, isError } = useDeleteCategory();
@@ -18,9 +18,11 @@ function DeleteCategory({ categoryId }: { categoryId: string }) {
       //
     }
   };
+
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <form onSubmit={handleDelete}>
-      <div>{isError && <div>{getApiErrorMessage(error, t)}</div>}</div>
+      {queryState}
 
       <Button type="submit" disabled={isLoading}>
         {isLoading ? t("delete.deleting") : t("delete.deleteCategory")}

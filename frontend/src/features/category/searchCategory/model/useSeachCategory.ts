@@ -1,14 +1,20 @@
 import { useSearchCategoryQuery } from "@/entities";
+import { useDebouncedValue } from "@/shared";
 
+const DEBOUNCE_MS = 350;
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const useSearchCategory = (query?: string) => {
-  const isSlug = !!query && SLUG_REGEX.test(query);
+  const debouncedValue = useDebouncedValue(query ?? "", DEBOUNCE_MS).trim();
 
-  const searchParams = isSlug ? { slug: query } : { name: query };
+  const isSlug = !!debouncedValue && SLUG_REGEX.test(debouncedValue);
+
+  const searchParams = isSlug
+    ? { slug: debouncedValue }
+    : { name: debouncedValue };
 
   const result = useSearchCategoryQuery(searchParams, {
-    skip: !query,
+    skip: !debouncedValue,
   });
 
   return {

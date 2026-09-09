@@ -2,8 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import { useDeleteMe } from "@/features/user/deleteMe/model";
-import { FRONT_ROUTES } from "@/shared";
-import { getApiErrorMessage } from "@/shared/ui/Error";
+import { FRONT_ROUTES, useQueryState } from "@/shared";
 
 function DeleteMe() {
   const { deleteMe, isLoading, error, isError } = useDeleteMe();
@@ -15,11 +14,12 @@ function DeleteMe() {
     await deleteMe();
     navigate(FRONT_ROUTES.pages.Authentication.path);
   };
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <form onSubmit={handleDelete}>
       <div>
-        {isError && <div>{getApiErrorMessage(error, t)}</div>}
+        {queryState}
         <button type="submit" disabled={isLoading}>
           {isLoading ? t("delete.deleting") : t("delete.deleteAccount")}
         </button>

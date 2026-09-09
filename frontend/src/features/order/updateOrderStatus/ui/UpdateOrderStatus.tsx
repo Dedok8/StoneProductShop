@@ -2,6 +2,7 @@ import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { useUpdateOrderStatus } from "@/features/order/updateOrderStatus/model";
+import { useQueryState } from "@/shared";
 import { ORDER_STATUS_TRANSITIONS } from "@/shared/lib/orderStatus";
 import type { IOrderResponse } from "@/shared/types";
 
@@ -30,6 +31,8 @@ function UpdateOrderStatus({ order }: { order: IOrderResponse }) {
   const { updateOrderStatus, isLoading, error, isError } =
     useUpdateOrderStatus();
   const { t } = useTranslation();
+  
+  const queryState = useQueryState(isLoading, isError, error);
 
   const availableStatuses = ORDER_STATUS_TRANSITIONS[order.status];
 
@@ -54,7 +57,6 @@ function UpdateOrderStatus({ order }: { order: IOrderResponse }) {
       </span>
     );
   }
-
   return (
     <div className="flex items-center gap-2">
       <select
@@ -78,11 +80,7 @@ function UpdateOrderStatus({ order }: { order: IOrderResponse }) {
         <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
       )}
 
-      {isError && (
-        <p className="rounded-md bg-destructive/10 px-2 py-1 text-xs text-destructive">
-          {error?.toString()}
-        </p>
-      )}
+      {queryState}
     </div>
   );
 }

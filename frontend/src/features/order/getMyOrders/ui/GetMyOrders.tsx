@@ -3,10 +3,10 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useGetMyOrders } from "@/features/order/getMyOrders/model";
+import { useQueryState } from "@/shared";
 import type { IGetOrdersQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING: "bg-amber-100 text-amber-800",
@@ -31,21 +31,7 @@ function GetMyOrders() {
 
   const { t } = useTranslation();
 
-  if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-        {getApiErrorMessage(error, t)}
-      </div>
-    );
-  }
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-4">
@@ -225,6 +211,8 @@ function GetMyOrders() {
           </div>
         </div>
       )}
+
+      {queryState}
     </div>
   );
 }

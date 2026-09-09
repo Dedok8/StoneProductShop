@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 
 import { useDeleteInspiration } from "@/features/inspiration/deleteInspiration/model";
-import { getApiErrorMessage } from "@/shared";
+import { useQueryState } from "@/shared";
 
 function DeleteInspiration() {
   const { deleteInspiration, isLoading, error, isError } =
@@ -20,9 +20,11 @@ function DeleteInspiration() {
       //
     }
   };
+
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <form onSubmit={handleDelete}>
-      <div>{isError && <div>{getApiErrorMessage(error, t)}</div>}</div>
+      {queryState}
       <button type="button" disabled={isLoading}>
         {isLoading ? t("delete.deleting") : t("delete.deleteInspiration")}
       </button>

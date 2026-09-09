@@ -4,11 +4,10 @@ import { useTranslation } from "react-i18next";
 
 import { useGetAllOrders } from "@/features/order/getAllOrders/model";
 import UpdateOrderStatus from "@/features/order/updateOrderStatus/ui/UpdateOrderStatus";
-import { useUser } from "@/shared";
+import { useQueryState, useUser } from "@/shared";
 import type { IGetOrdersQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 const GRID_COLS = "grid-cols-[2fr_1.5fr_1fr]";
 
@@ -37,22 +36,7 @@ function GetAllOrders() {
 
   const { t } = useTranslation();
 
-  if (isLoading) {
-    return (
-      <div className="flex h-64 items-center justify-center text-muted-foreground">
-        {t("common.loading")}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="rounded-md bg-destructive/10 px-4 py-3 text-sm text-destructive">
-        {getApiErrorMessage(error, t)}
-      </div>
-    );
-  }
-
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
       <div className="flex flex-wrap items-end gap-3 rounded-xl border bg-card p-4">
@@ -212,6 +196,8 @@ function GetAllOrders() {
           </div>
         </div>
       )}
+
+      {queryState}
     </div>
   );
 }

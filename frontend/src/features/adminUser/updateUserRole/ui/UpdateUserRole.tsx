@@ -1,9 +1,8 @@
-import { Loader2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 import { useUpdateUserRole } from "@/features/adminUser/updateUserRole/model";
+import { useQueryState } from "@/shared";
 import type { UserRole } from "@/shared/types";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function UpdateUserRole({
   userId,
@@ -26,6 +25,8 @@ function UpdateUserRole({
     }
   };
 
+  const queryState = useQueryState(isLoading, isError, error);
+
   return (
     <div className="flex flex-col gap-1">
       <div className="relative">
@@ -39,17 +40,9 @@ function UpdateUserRole({
           <option value="MANAGER">{t("role.MANAGER")}</option>
           <option value="ADMIN">{t("role.ADMIN")}</option>
         </select>
-
-        {isLoading && (
-          <Loader2 className="pointer-events-none absolute right-1.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 animate-spin text-muted-foreground" />
-        )}
       </div>
 
-      {isError && (
-        <span className="text-xs text-destructive">
-          {getApiErrorMessage(error, t)}
-        </span>
-      )}
+      {queryState}
     </div>
   );
 }

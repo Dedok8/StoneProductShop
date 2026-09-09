@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useFindOrderById } from "@/features/order/getOrderById/model";
+import { useQueryState } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function GetOrderById() {
   const [query, setQuery] = useState("");
@@ -12,8 +12,7 @@ function GetOrderById() {
 
   const { t } = useTranslation();
 
-  if (isLoading || isFetching) return <div>{t("common.loading")}</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div>
@@ -45,6 +44,8 @@ function GetOrderById() {
           </ul>
         </div>
       )}
+
+      {queryState}
     </div>
   );
 }

@@ -1,15 +1,14 @@
 import { useTranslation } from "react-i18next";
 
 import { useGetAllInspiration } from "@/features/inspiration/getAllInspiration/model";
-import { getApiErrorMessage } from "@/shared";
+import { useQueryState } from "@/shared";
 
 function GetAllInspiration() {
   const { inspirations, isLoading, error, isError, refetch } =
     useGetAllInspiration();
   const { t } = useTranslation();
 
-  if (isLoading) return <div>{t("common.loading")}</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <div>
       <button type="button" onClick={refetch}>
@@ -28,6 +27,8 @@ function GetAllInspiration() {
           ))}
         </ul>
       )}
+
+      {queryState}
     </div>
   );
 }

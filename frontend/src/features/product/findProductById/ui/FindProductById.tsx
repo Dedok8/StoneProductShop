@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useFindProductById } from "@/features/product/findProductById/model";
+import { useQueryState } from "@/shared";
 import { Input } from "@/shared/ui/components/input";
-import { getApiErrorMessage } from "@/shared/ui/Error";
 
 function FindProductById() {
   const [query, setQuery] = useState("");
@@ -12,8 +12,7 @@ function FindProductById() {
 
   const { t } = useTranslation();
 
-  if (isLoading || isFetching) return <div>{t("common.loading")}</div>;
-  if (isError) return <div>{getApiErrorMessage(error, t)}</div>;
+  const queryState = useQueryState(isLoading, isError, error);
 
   return (
     <div>
@@ -37,6 +36,8 @@ function FindProductById() {
           <p>Created: {new Date(product.createdAt).toLocaleString()}</p>
         </div>
       )}
+
+      {queryState}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import {
   useCreateLeadForm,
   type LeadFormValues,
 } from "@/features/lead/createLead/model";
+import { useQueryState } from "@/shared";
 import { Checkbox } from "@/shared/ui/components/checkbox";
 import { Input } from "@/shared/ui/components/input";
 
@@ -21,7 +22,7 @@ function CreateLead() {
       //
     }
   };
-
+  const queryState = useQueryState(isLoading, isError, error);
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -76,13 +77,7 @@ function CreateLead() {
         {errors.consent?.message || "placeholder"}
       </p>
 
-      {isError && (
-        <p className="text-xs text-red-400">
-          {error instanceof Error
-            ? error.message
-            : t("lead.submitError", "Something went wrong. Please try again.")}
-        </p>
-      )}
+      {queryState}
 
       <button
         type="submit"
