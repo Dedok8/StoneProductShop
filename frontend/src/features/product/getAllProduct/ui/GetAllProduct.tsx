@@ -5,9 +5,12 @@ import { Link } from "react-router-dom";
 import AddToCartItem from "@/features/cart/addCartItem/ui/AddToCartItem";
 import DeleteProduct from "@/features/product/deleteProduct/ui/DeleteProduct";
 import { useGetAllProduct } from "@/features/product/getAllProduct/model";
+import SearchProduct from "@/features/product/searchProduct/ui/SearchProduct";
 import { FRONT_ROUTES, useQueryState, useUser } from "@/shared";
-import type { IGetProductsQuery } from "@/shared/types";
+import type { IGetProductsQuery, IProductResponse } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
+
+const GRID_COLS = "grid-cols-[2fr_2fr_1fr_1.5fr]";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -26,6 +29,9 @@ function GetAllProduct() {
     sortOrder: "asc",
   });
 
+  const [selectedProduct, setSelectedProduct] =
+    useState<IProductResponse | null>(null);
+
   const { products, meta, isLoading, error, isError, isFetching, refetch } =
     useGetAllProduct(query);
   const user = useUser();
@@ -37,8 +43,7 @@ function GetAllProduct() {
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-
-        <SearchPro
+        <SearchProduct onSelectProduct={setSelectedProduct} />
         {isFetching && (
           <p className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-400">
             {t("common.updating")}
@@ -92,6 +97,42 @@ function GetAllProduct() {
                     <span className="text-base font-semibold tracking-tight text-stone-900">
                       {formatPrice(item.price)}
                     </span>
+                  </div>
+
+                  <div className="border-t border-stone-100">
+                    {selectedProduct?.id === item.id && (
+                      <div className="space-y-3 bg-stone-50 p-4">
+                        <div>
+                          <p className="text-sm font-semibold text-stone-900">
+                            {selectedProduct.name}
+                          </p>
+                          <p className="text-xs text-stone-500">
+                            {selectedProduct.slug}
+                          </p>
+                        </div>
+
+                        {/* {user?.role === "ADMIN" && (
+                          <div className="space-y-2">
+                            <div className="flex items-center gap-2">
+                              <UpdateProduct />
+                              <DeleteProduct prodId={selectedProduct.id} />
+                              <button
+                                type="button"
+                                onClick={() => setSelectedProduct(null)}
+                                className="ml-auto text-xs text-stone-500 hover:text-stone-800 hover:underline"
+                              >
+                                {t("common.close", "Close")}
+                              </button>
+                            </div>
+                            <p className="text-xs text-stone-400">
+                              ID: {selectedProduct.id} ·{" "}
+                              {t("admin.createdAt", "Created")}:{" "}
+                              {selectedProduct.createdAt}
+                            </p>
+                          </div>
+                        )} */}
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex flex-wrap items-center gap-1.5">

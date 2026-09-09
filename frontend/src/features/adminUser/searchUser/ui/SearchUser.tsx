@@ -6,11 +6,11 @@ import { useQueryState } from "@/shared";
 import type { IUserResponse } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 
-interface SearchUserProps {
+interface ISearchUserProps {
   onSelectUser: (user: IUserResponse) => void;
 }
 
-function SearchUser({ onSelectUser }: SearchUserProps) {
+function SearchUser({ onSelectUser }: ISearchUserProps) {
   const { t } = useTranslation();
   const [query, setQuery] = useState("");
 

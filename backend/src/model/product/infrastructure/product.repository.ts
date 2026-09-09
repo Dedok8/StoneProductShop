@@ -35,6 +35,24 @@ type ProductWithRelations = Product & {
   images: { imageUrl: string }[];
   category: Category;
 };
+
+function getRelevanceScore(
+  product: ProductWithRelations,
+  query: string,
+): number {
+  const q = query.toLowerCase();
+  const name = product.name.toLowerCase();
+  const slug = product.slug.toLowerCase();
+
+  if (name === q) return 0;
+  if (name.startsWith(q)) return 1;
+  if (name.split(/\s+/).some((word) => word.startsWith(q))) return 2;
+  if (name.includes(q)) return 3;
+  if (slug.startsWith(q)) return 4;
+  if (slug.includes(q)) return 5;
+
+  return 6;
+}
 type ProductCached = Omit<ProductWithRelations, 'price'> & { price: number };
 
 const priceToCache = (raw: ProductWithRelations): ProductCached => ({
@@ -104,6 +122,24 @@ export class ProductRepository implements IProductRepository {
       include: { images: true, category: true },
     });
     return product ? mapToEntity(product, ProductEntity) : null;
+  }
+
+  async search(query: string): Promise<ProductEntity[]> {
+    const contains = buildContainsFilter(query);
+
+    const products = await this.prisma.product.findMany({
+      where: {
+        OR: [{ name: contains }, { slug: contains }],
+      },
+      include: { images: true, category: true },
+      take: 20,
+    });
+
+    const sorted = [...products].sort(
+      (a, b) => getRelevanceScore(a, query) - getRelevanceScore(b, query),
+    );
+
+    return sorted.map((p) => mapToEntity(p, ProductEntity));
   }
 
   findAll(query: IProductQuery): Promise<IProductAllResultData> {

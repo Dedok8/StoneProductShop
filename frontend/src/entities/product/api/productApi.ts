@@ -30,6 +30,25 @@ export const productApi = baseApi.injectEndpoints({
           : [{ type: "Product" as const, id: "LIST" }],
     }),
 
+    findProductBySlug: build.query<IProductResponse, string>({
+      query: (slug) => ({
+        url: API_ROUTES.product.search,
+        method: "GET",
+        params: { slug },
+      }),
+      providesTags: (result) =>
+        result ? [{ type: "Product" as const, id: result.id }] : [],
+    }),
+    findProductByName: build.query<IProductResponse, string>({
+      query: (name) => ({
+        url: API_ROUTES.product.searchName,
+        method: "GET",
+        params: { name },
+      }),
+      providesTags: (result) =>
+        result ? [{ type: "Product" as const, id: result.id }] : [],
+    }),
+
     findProductById: build.query<IProductResponse, string>({
       query: (id) => ({
         url: API_ROUTES.product.byId(id),

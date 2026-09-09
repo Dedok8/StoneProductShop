@@ -26,6 +26,8 @@ export const API_ROUTES = {
   product: {
     getAll: "/product",
     create: "/product",
+    search: "/product/search",
+    searchName: "/product/search/name",
     byId: (id: string) => `/product/${id}`,
     update: (id: string) => `/product/${id}`,
     delete: (id: string) => `/product/${id}`,

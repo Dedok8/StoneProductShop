@@ -17,11 +17,11 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import {
   CreateProductDto,
   FindByNameDto,
-  FindBySlugDto,
   PaginatedProductResponseDto,
   ProductQueryDto,
   ProductResponseDto,
   ProductService,
+  SearchProductDto,
   UpdateProductDto,
 } from '@/model/product/application';
 import {
@@ -44,13 +44,13 @@ export class ProductController {
   }
 
   @Get('search')
-  search(@Query() query: FindBySlugDto): Promise<ProductResponseDto> {
-    return this.productService.findBySlug(query.slug);
+  search(@Query() query: SearchProductDto): Promise<ProductResponseDto[]> {
+    return this.productService.search(query.query);
   }
 
   @Get('search/name')
   findByName(@Query() query: FindByNameDto): Promise<ProductResponseDto> {
-    return this.productService.findBySlug(query.name);
+    return this.productService.findByName(query.name);
   }
 
   @Get(':id')

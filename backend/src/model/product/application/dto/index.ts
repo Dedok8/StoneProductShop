@@ -5,3 +5,4 @@ export * from './product.response.dto';
 export * from './update.product.dto';
 export * from './find.by.name.dto';
 export * from './find.by.slug.dto';
+export * from './search.product.dto';
