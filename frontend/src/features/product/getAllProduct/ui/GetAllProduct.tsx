@@ -5,12 +5,11 @@ import { Link } from "react-router-dom";
 import AddToCartItem from "@/features/cart/addCartItem/ui/AddToCartItem";
 import DeleteProduct from "@/features/product/deleteProduct/ui/DeleteProduct";
 import { useGetAllProduct } from "@/features/product/getAllProduct/model";
+import { useSearchProduct } from "@/features/product/searchProduct/model";
 import SearchProduct from "@/features/product/searchProduct/ui/SearchProduct";
 import { FRONT_ROUTES, useQueryState, useUser } from "@/shared";
-import type { IGetProductsQuery, IProductResponse } from "@/shared/types";
+import type { IGetProductsQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
-
-const GRID_COLS = "grid-cols-[2fr_2fr_1fr_1.5fr]";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -28,23 +27,44 @@ function GetAllProduct() {
     sortBy: "createdAt",
     sortOrder: "asc",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const [selectedProduct, setSelectedProduct] =
-    useState<IProductResponse | null>(null);
+  const isSearching = searchTerm.trim().length >= 2;
 
-  const { products, meta, isLoading, error, isError, isFetching, refetch } =
-    useGetAllProduct(query);
+  const {
+    products: rankedProducts,
+    isLoading: isSearchLoading,
+    isFetching: isSearchFetching,
+    isError: isSearchErrorState,
+    error: searchError,
+  } = useSearchProduct(searchTerm);
+
+  const {
+    products: listProducts,
+    meta,
+    isLoading,
+    error,
+    isError,
+    isFetching,
+  } = useGetAllProduct(query);
+
   const user = useUser();
-
   const { t } = useTranslation();
 
-  const queryState = useQueryState(isLoading, isError, error);
+  const products = isSearching ? rankedProducts : listProducts;
+  const fetching = isSearching ? isSearchFetching : isFetching;
+  const queryState = useQueryState(
+    isSearching ? isSearchLoading : isLoading,
+    isSearching ? isSearchErrorState : isError,
+    isSearching ? searchError : error
+  );
 
   return (
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <SearchProduct onSelectProduct={setSelectedProduct} />
-        {isFetching && (
+        <SearchProduct value={searchTerm} onChange={setSearchTerm} />
+
+        {fetching && (
           <p className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-400">
             {t("common.updating")}
           </p>
@@ -99,42 +119,6 @@ function GetAllProduct() {
                     </span>
                   </div>
 
-                  <div className="border-t border-stone-100">
-                    {selectedProduct?.id === item.id && (
-                      <div className="space-y-3 bg-stone-50 p-4">
-                        <div>
-                          <p className="text-sm font-semibold text-stone-900">
-                            {selectedProduct.name}
-                          </p>
-                          <p className="text-xs text-stone-500">
-                            {selectedProduct.slug}
-                          </p>
-                        </div>
-
-                        {/* {user?.role === "ADMIN" && (
-                          <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                              <UpdateProduct />
-                              <DeleteProduct prodId={selectedProduct.id} />
-                              <button
-                                type="button"
-                                onClick={() => setSelectedProduct(null)}
-                                className="ml-auto text-xs text-stone-500 hover:text-stone-800 hover:underline"
-                              >
-                                {t("common.close", "Close")}
-                              </button>
-                            </div>
-                            <p className="text-xs text-stone-400">
-                              ID: {selectedProduct.id} ·{" "}
-                              {t("admin.createdAt", "Created")}:{" "}
-                              {selectedProduct.createdAt}
-                            </p>
-                          </div>
-                        )} */}
-                      </div>
-                    )}
-                  </div>
-
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span
                       className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
@@ -147,18 +131,6 @@ function GetAllProduct() {
                         ? t("product.inStock")
                         : t("product.outOfStock")}
                     </span>
-
-                    {/* <span
-                      className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${
-                        item.isActive
-                          ? "bg-emerald-100 text-emerald-800"
-                          : "bg-stone-100 text-stone-500"
-                      }`}
-                    >
-                      {item.isActive === false
-                        ? t("category.active")
-                        : t("category.unActive")}
-                    </span> */}
 
                     {item.category?.isActive === false && (
                       <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-800">
@@ -183,7 +155,7 @@ function GetAllProduct() {
           })}
         </ul>
 
-        {meta && meta.totalPages > 1 && (
+        {!isSearching && meta && meta.totalPages > 1 && (
           <div className="mt-10 flex items-center justify-center gap-4 border-t border-stone-200 pt-6">
             <button
               disabled={query.page === 1}

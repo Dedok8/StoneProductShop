@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 
 import { DeleteUser } from "@/features/adminUser/deleteUser";
 import { useGetAllUsers } from "@/features/adminUser/getAllUsers/model";
+import { useSearchUser } from "@/features/adminUser/searchUser";
 import SearchUser from "@/features/adminUser/searchUser/ui/SearchUser";
 import UpdateUserRole from "@/features/adminUser/updateUserRole/ui/UpdateUserRole";
 import { useQueryState } from "@/shared";
-import { type IGetUsersQuery, type IUserResponse } from "@/shared/types";
+import { type IGetUsersQuery } from "@/shared/types";
 
 const GRID_COLS = "grid-cols-[2fr_2fr_1fr_1.5fr]";
 
@@ -18,18 +19,46 @@ function GetAllUsers() {
     sortBy: "createdAt",
     sortOrder: "asc",
   });
-  const [selectedUser, setSelectedUser] = useState<IUserResponse | null>(null);
 
-  const { users, meta, isLoading, error, isError, isFetching, refetch } =
-    useGetAllUsers(query);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const isSearching = searchTerm.trim().length >= 2;
+  const {
+    users: rankedUsers,
+    isLoading: isSearchLoading,
+    isFetching: isSearchFetching,
+    isError: isSearchErrorState,
+    error: searchError,
+  } = useSearchUser(searchTerm);
+  const {
+    users: listUsers,
+    meta,
+    isLoading,
+    error,
+    isError,
+    isFetching,
+    refetch,
+  } = useGetAllUsers(query);
   const { t } = useTranslation();
 
-  const queryState = useQueryState(isLoading, isError, error);
+  const queryState = useQueryState(
+    isSearching ? isSearchLoading : isLoading,
+    isSearching ? isSearchErrorState : isError,
+    isSearching ? searchError : error
+  );
+  const users = isSearching ? rankedUsers : listUsers;
 
+  const fetching = isSearching ? isSearchFetching : isFetching;
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-4">
       <div className="flex items-center justify-between gap-3">
-        <SearchUser onSelectUser={setSelectedUser} />
+        <SearchUser value={searchTerm} onChange={setSearchTerm} />
+
+        {fetching && (
+          <p className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-400">
+            {t("common.updating")}
+          </p>
+        )}
 
         <button
           onClick={refetch}
@@ -53,7 +82,7 @@ function GetAllUsers() {
           <div>{t("common.actions")}</div>
         </div>
 
-        <div className="divide-y">
+        {/* <div className="divide-y">
           {selectedUser && (
             <div className="bg-primary/5">
               <div
@@ -88,29 +117,25 @@ function GetAllUsers() {
               </div>
             </div>
           )}
+              </div> */}
 
-          {users
-            .filter((u) => u.id !== selectedUser?.id)
-            .map((user) => (
-              <div
-                key={user.id}
-                className={`grid ${GRID_COLS} items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-muted/40`}
-              >
-                <div className="font-medium text-foreground">{user.name}</div>
-                <div className="truncate text-muted-foreground">
-                  {user.email}
-                </div>
-                <div>
-                  <UpdateUserRole userId={user.id} currentRole={user.role} />
-                </div>
-                <div className="flex items-center gap-3">
-                  <DeleteUser userId={user.id} />
-                </div>
-              </div>
-            ))}
-        </div>
+        {users.map((user) => (
+          <div
+            key={user.id}
+            className={`grid ${GRID_COLS} items-center gap-4 px-4 py-3 text-sm transition-colors hover:bg-muted/40`}
+          >
+            <div className="font-medium text-foreground">{user.name}</div>
+            <div className="truncate text-muted-foreground">{user.email}</div>
+            <div>
+              <UpdateUserRole userId={user.id} currentRole={user.role} />
+            </div>
+            <div className="flex items-center gap-3">
+              <DeleteUser userId={user.id} />
+            </div>
+          </div>
+        ))}
 
-        {users.length === 0 && !selectedUser && (
+        {users?.length === 0 && (
           <div className="py-10 text-center text-sm text-muted-foreground">
             {t("common.noResults")}
           </div>

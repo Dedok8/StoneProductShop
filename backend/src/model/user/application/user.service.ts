@@ -59,6 +59,12 @@ export class UserService {
     });
   }
 
+  async search(query: string) {
+    const users = await this.userRepository.search(query);
+
+    return UserMapper.toResponseList(users);
+  }
+
   async create(dto: CreateUserDto) {
     await ensureUnique(
       () => this.userRepository.findByEmail(dto.email),

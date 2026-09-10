@@ -34,6 +34,7 @@ export interface IUserRepository {
   findByIdWithRefreshToken(id: string): Promise<UserEntity | null>;
   findByEmail(email: string): Promise<UserEntity | null>;
   findAll(query: IUserQuery): Promise<IUserFindAllResult>;
+  search(query: string): Promise<UserEntity[]>;
   create(data: ICreateUserData): Promise<UserEntity>;
   update(id: string, data: IUpdateUserData): Promise<UserEntity | null>;
   updateRole(id: string, role: UserRole): Promise<UserEntity | null>;

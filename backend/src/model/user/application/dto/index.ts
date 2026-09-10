@@ -6,3 +6,4 @@ export * from './user-response.dto';
 export * from './user.query.dto';
 export * from './paginated.users.response.dto';
 export * from './find-by-email-query.dto';
+export * from './search.user.dto';

@@ -7,33 +7,42 @@ import type { IUserResponse } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 
 interface ISearchUserProps {
-  onSelectUser: (user: IUserResponse) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-function SearchUser({ onSelectUser }: ISearchUserProps) {
+function SearchUser({ value, onChange }: ISearchUserProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const { users, isLoading, isFetching, isError, error, hasQuery } =
-    useSearchUser(query);
+    useSearchUser(value);
 
   const queryState = useQueryState(isLoading, isError, error);
 
-  const handleSelect = (user: IUserResponse) => {
-    onSelectUser(user);
-    setQuery("");
+  const handleSearch = (user: IUserResponse) => {
+    onChange(user.name);
+    setIsOpen(false);
   };
 
+  const showDropdown = isOpen && hasQuery;
   return (
     <div className="relative w-full max-w-sm">
       <Input
         type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => {
+          setTimeout(() => setIsOpen(false), 150);
+        }}
         placeholder={t("admin.searchPlaceholder", "Search by name or email")}
       />
 
-      {hasQuery && (
+      {showDropdown && (
         <div className="absolute z-10 mt-1 w-full rounded-md border bg-background shadow-md">
           {(isLoading || isFetching) && (
             <p className="px-3 py-2 text-sm text-muted-foreground">
@@ -51,14 +60,15 @@ function SearchUser({ onSelectUser }: ISearchUserProps) {
 
           {users.length > 0 && (
             <ul className="max-h-64 overflow-auto">
-              {users.map((u) => (
-                <li key={u.id}>
+              {users.map((user) => (
+                <li key={user.id}>
                   <button
                     type="button"
-                    onClick={() => handleSelect(u)}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={() => handleSearch(user)}
                     className="w-full px-3 py-2 text-left text-sm hover:bg-muted"
                   >
-                    {u.name} — {u.email}
+                    {user.name} — {user.email}
                   </button>
                 </li>
               ))}

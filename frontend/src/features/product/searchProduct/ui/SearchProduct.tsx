@@ -7,29 +7,39 @@ import type { IProductResponse } from "@/shared/types";
 import { Input } from "@/shared/ui/components/input";
 
 interface ISearchProductProps {
-  onSelectProduct: (product: IProductResponse) => void;
+  value: string;
+  onChange: (value: string) => void;
 }
 
-function SearchProduct({ onSelectProduct }: ISearchProductProps) {
+function SearchProduct({ value, onChange }: ISearchProductProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   const { products, isLoading, isFetching, isError, error, hasQuery } =
-    useSearchProduct(query);
+    useSearchProduct(value);
 
   const queryState = useQueryState(isLoading, isError, error);
 
+  const showDropdown = isOpen && hasQuery;
+
   const handleSearch = (product: IProductResponse) => {
-    onSelectProduct(product);
-    setQuery("");
+    onChange(product.name);
+    setIsOpen(false);
   };
 
   return (
     <div className="relative mb-8">
       <Input
         type="text"
-        onChange={(e) => setQuery(e.target.value)}
-        value={query}
+        onChange={(e) => {
+          onChange(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => {
+          setTimeout(() => setIsOpen(false), 150);
+        }}
+        value={value}
         placeholder={t(
           "product.searchPlaceholder",
           "Search by name or slug/price"
@@ -37,7 +47,7 @@ function SearchProduct({ onSelectProduct }: ISearchProductProps) {
         className="w-full max-w-md"
       />
 
-      {hasQuery && (
+      {showDropdown && (
         <div className="absolute z-20 mt-1 w-full max-w-md overflow-hidden rounded-lg border border-stone-200 bg-white shadow-lg">
           {(isLoading || isFetching) && (
             <p className="px-3 py-2 text-sm text-stone-400">
@@ -59,6 +69,7 @@ function SearchProduct({ onSelectProduct }: ISearchProductProps) {
                 <li key={product.id}>
                   <button
                     type="button"
+                    onMouseDown={(e) => e.preventDefault()}
                     onClick={() => handleSearch(product)}
                     className="flex w-full flex-col items-start px-3 py-2 text-left text-sm transition-colors hover:bg-stone-50"
                   >

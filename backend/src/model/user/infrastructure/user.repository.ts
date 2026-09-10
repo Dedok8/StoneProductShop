@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { Role, User } from '@/generated/prisma/client';
+import { UserResponseDto } from '@/model/user/application';
 import {
   ICreateUserData,
   IUpdateUserData,
@@ -16,6 +17,7 @@ import {
   deleteAndInvalidate,
   findManyCached,
   findOneCached,
+  mapToEntity,
   PrismaService,
   RedisCacheService,
 } from '@/shared';
@@ -40,6 +42,21 @@ const withNullRefreshToken = (cached: CachedUser): User => ({
   ...cached,
   refreshToken: null,
 });
+
+function getRelevanceScore(user: UserResponseDto, query: string): number {
+  const q = query.toLowerCase();
+  const name = user.name.toLowerCase();
+  const slug = user.email.toLowerCase();
+
+  if (name === q) return 0;
+  if (name.startsWith(q)) return 1;
+  if (name.split(/\s+/).some((word) => word.startsWith(q))) return 2;
+  if (name.includes(q)) return 3;
+  if (slug.startsWith(q)) return 4;
+  if (slug.includes(q)) return 5;
+
+  return 6;
+}
 
 @Injectable()
 export class UserRepository implements IUserRepository {
@@ -114,6 +131,23 @@ export class UserRepository implements IUserRepository {
         return { items, total };
       },
     });
+  }
+
+  async search(query: string): Promise<UserEntity[]> {
+    const contains = buildContainsFilter(query);
+
+    const users = await this.prisma.user.findMany({
+      where: {
+        OR: [{ name: contains }, { email: contains }],
+      },
+      take: 20,
+    });
+
+    const sorted = [...users].sort(
+      (a, b) => getRelevanceScore(a, query) - getRelevanceScore(b, query),
+    );
+
+    return sorted.map((u) => mapToEntity(u, UserEntity));
   }
 
   create(data: ICreateUserData): Promise<UserEntity> {

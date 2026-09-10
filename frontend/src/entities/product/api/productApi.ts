@@ -57,6 +57,18 @@ export const productApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Product", id }],
     }),
 
+    searchProduct: build.query<IProductResponse[], string>({
+      query: (query) => ({
+        url: API_ROUTES.product.search,
+        method: "GET",
+        params: { query },
+      }),
+      providesTags: (result) =>
+        result
+          ? result.map(({ id }) => ({ type: "Product" as const, id }))
+          : [],
+    }),
+
     createProduct: build.mutation<IProductResponse, ICreateProductRequest>({
       query: (credentials) => ({
         url: API_ROUTES.product.create,
@@ -97,6 +109,9 @@ export const productApi = baseApi.injectEndpoints({
 export const {
   useGetAllProductQuery,
   useFindProductByIdQuery,
+  useFindProductByNameQuery,
+  useFindProductBySlugQuery,
+  useSearchProductQuery,
   useCreateProductMutation,
   useUpdateProductMutation,
   useDeleteProductMutation,

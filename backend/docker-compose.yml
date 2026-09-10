@@ -52,6 +52,8 @@ services:
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}
       - REDIS_HOST=redis
       - REDIS_PORT=${REDIS_PORT}
+      - CHOKIDAR_USEPOLLING=true
+      - CHOKIDAR_INTERVAL=300
     ports:
       - '${PORT}:${PORT}'
 

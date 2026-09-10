@@ -30,7 +30,7 @@ export const adminApi = baseApi.injectEndpoints({
 
     findUserByEmail: build.query<IUserResponse, string>({
       query: (email) => ({
-        url: API_ROUTES.adminUser.search,
+        url: API_ROUTES.adminUser.searchEmail,
         method: "GET",
         params: { email },
       }),
@@ -46,6 +46,15 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: (_result, _error, id) => [{ type: "Admin", id }],
     }),
 
+    searchUser: build.query<IUserResponse[], string>({
+      query: (query) => ({
+        url: API_ROUTES.adminUser.search,
+        method: "GET",
+        params: { query },
+      }),
+      providesTags: (result) =>
+        result ? result.map(({ id }) => ({ type: "Admin" as const, id })) : [],
+    }),
     createUser: build.mutation<IUserResponse, ICreateUserRequest>({
       query: (credentials) => ({
         url: API_ROUTES.adminUser.create,
@@ -104,6 +113,7 @@ export const {
   useFindUserByIdQuery,
   useCreateUserMutation,
   useUpdateUserMutation,
+  useSearchUserQuery,
   useUpdateUserRoleMutation,
   useDeleteUserMutation,
 } = adminApi;

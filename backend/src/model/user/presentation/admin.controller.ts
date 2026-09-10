@@ -17,6 +17,7 @@ import {
   CreateUserDto,
   FindByEmailQueryDto,
   PaginatedUsersResponseDto,
+  SearchUserDto,
   UpdateUserDto,
   UpdateUserRoleDto,
   UserQueryDto,
@@ -38,6 +39,11 @@ export class AdminController {
   }
 
   @Get('search')
+  search(@Query() query: SearchUserDto): Promise<UserResponseDto> {
+    return this.userService.findByEmail(query.query);
+  }
+
+  @Get('search/email')
   findByEmail(@Query() query: FindByEmailQueryDto): Promise<UserResponseDto> {
     return this.userService.findByEmail(query.email);
   }

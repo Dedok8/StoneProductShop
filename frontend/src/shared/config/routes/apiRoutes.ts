@@ -17,6 +17,8 @@ export const API_ROUTES = {
     getAll: "/admin/user",
     create: "/admin/user",
     search: "/admin/user/search",
+    searchEmail: "/admin/user/search/Email",
+
     byId: (id: string) => `/admin/user/${id}`,
     update: (id: string) => `/admin/user/${id}`,
     role: (id: string) => `/admin/user/${id}/role`,
