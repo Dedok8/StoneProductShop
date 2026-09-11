@@ -65,4 +65,16 @@ export class UpdateProductDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsUUID()
+  productTypeId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  originId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  colorId?: string;
 }

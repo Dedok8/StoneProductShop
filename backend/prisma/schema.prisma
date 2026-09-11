@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -6,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
 }
 
 enum Role {
@@ -41,26 +39,63 @@ model User {
   updatedAt    DateTime  @updatedAt @map("updated_at")
 
   cart         Cart?
-  
+
   products     Product[]
   orders       Order[]
 
   @@map("users")
 }
 
-model Category  {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  slug      String    @unique
-  products  Product[]
+model Category {
+  id       String     @id @default(uuid())
+  name     String     @unique
+  slug     String     @unique
+  products Product[]
 
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  parentId String?    @map("parent_id")
+  children Category[] @relation("CategoryTree")
 
-  isActive  Boolean  @default(true)
-
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  isActive  Boolean  @default(true) @map("is_active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("categories")
+  @@index([parentId])
+}
+
+
+model ProductType {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  products Product[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("product_types")
+}
+
+model Origin {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  slug     String    @unique
+  products Product[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("origins")
+}
+
+model Color {
+  id       String    @id @default(uuid())
+  name     String    @unique
+  hex      String?
+  products Product[]
+
+  @@map("colors")
 }
 
 model Product {
@@ -70,10 +105,19 @@ model Product {
   description String?
   price       Decimal  @db.Decimal(10, 2)
   stock       Int      @default(0)
-  images InspirationImage[] @relation("ProductImages")
+  images      InspirationImage[] @relation("ProductImages")
 
-  category   Category @relation(fields: [categoryId], references: [id])
-  categoryId String   @map("category_id")
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  String   @map("category_id")
+
+  productType   ProductType? @relation(fields: [productTypeId], references: [id])
+  productTypeId String?      @map("product_type_id")
+
+  origin      Origin?  @relation(fields: [originId], references: [id])
+  originId    String?  @map("origin_id")
+
+  color       Color?   @relation(fields: [colorId], references: [id])
+  colorId     String?  @map("color_id")
 
   owner       User     @relation(fields: [ownerId], references: [id])
   ownerId     String   @map("owner_id")
@@ -86,8 +130,11 @@ model Product {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   @@map("products")
-  @@index([categoryId])  
+  @@index([categoryId])
   @@index([ownerId])
+  @@index([productTypeId])
+  @@index([originId])
+  @@index([colorId])
 }
 
 model Order {

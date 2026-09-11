@@ -55,5 +55,13 @@ export class CreateProductDto {
 
   @IsOptional()
   @IsUUID()
-  ownerId: string;
+  productTypeId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  originId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  colorId?: string;
 }

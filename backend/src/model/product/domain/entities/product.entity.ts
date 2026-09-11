@@ -1,4 +1,9 @@
-import type { CategoryEntity } from '@/model/category/domain/entities';
+import { CategoryEntity } from '@/model/category/domain/entities';
+import type {
+  ColorRef,
+  OriginRef,
+  ProductTypeRef,
+} from '@/model/product/domain/entities/product-refs.types';
 
 export class ProductEntity {
   readonly id: string;
@@ -10,6 +15,12 @@ export class ProductEntity {
   readonly images: string[];
   readonly categoryId: string;
   readonly category: CategoryEntity;
+  readonly productTypeId: string | null;
+  readonly productType: ProductTypeRef | null;
+  readonly originId: string | null;
+  readonly origin: OriginRef | null;
+  readonly colorId: string | null;
+  readonly color: ColorRef | null;
   readonly ownerId: string;
   readonly isActive: boolean;
   readonly createdAt: Date;
@@ -25,6 +36,12 @@ export class ProductEntity {
     images: { imageUrl: string }[];
     categoryId: string;
     category: CategoryEntity;
+    productTypeId: string | null;
+    productType: ProductTypeRef | null;
+    originId: string | null;
+    origin: OriginRef | null;
+    colorId: string | null;
+    color: ColorRef | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
@@ -39,6 +56,12 @@ export class ProductEntity {
     this.images = props.images.map((img) => img.imageUrl);
     this.categoryId = props.categoryId;
     this.category = props.category;
+    this.productTypeId = props.productTypeId;
+    this.productType = props.productType;
+    this.originId = props.originId;
+    this.origin = props.origin;
+    this.colorId = props.colorId;
+    this.color = props.color;
     this.ownerId = props.ownerId;
     this.isActive = props.isActive;
     this.createdAt = props.createdAt;
@@ -55,11 +78,21 @@ export class ProductEntity {
     images: { imageUrl: string }[];
     categoryId: string;
     category: Parameters<typeof CategoryEntity.fromPersistence>[0];
+    productTypeId: string | null;
+    productType: ProductTypeRef | null;
+    originId: string | null;
+    origin: OriginRef | null;
+    colorId: string | null;
+    color: ColorRef | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
   }): ProductEntity {
-    return new ProductEntity({ ...raw, price: raw.price.toNumber() });
+    return new ProductEntity({
+      ...raw,
+      price: raw.price.toNumber(),
+      category: CategoryEntity.fromPersistence(raw.category),
+    });
   }
 }

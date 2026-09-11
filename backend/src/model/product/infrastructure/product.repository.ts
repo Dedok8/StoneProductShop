@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import { Category, Prisma, Product } from '@/generated/prisma/client';
+import {
+  Category,
+  Color,
+  Origin,
+  Prisma,
+  Product,
+  ProductType,
+} from '@/generated/prisma/client';
 import {
   ICreateProductData,
   IProductAllResultData,
@@ -34,6 +41,9 @@ const listKey = (query: IProductQuery) =>
 type ProductWithRelations = Product & {
   images: { imageUrl: string }[];
   category: Category;
+  productType: ProductType | null;
+  color: Color | null;
+  origin: Origin | null;
 };
 
 function getRelevanceScore(
@@ -65,6 +75,14 @@ const priceFromCache = (cached: ProductCached): ProductWithRelations => ({
   price: new Prisma.Decimal(cached.price),
 });
 
+const PRODUCT_INCLUDE = {
+  images: true,
+  category: true,
+  productType: true,
+  origin: true,
+  color: true,
+} as const;
+
 @Injectable()
 export class ProductRepository implements IProductRepository {
   constructor(
@@ -78,7 +96,7 @@ export class ProductRepository implements IProductRepository {
 
     const products = await this.prisma.product.findMany({
       where: { id: { in: unique } },
-      include: { images: true, category: true },
+      include: PRODUCT_INCLUDE,
     });
 
     return products.map((p) => mapToEntity(p, ProductEntity));
@@ -92,7 +110,7 @@ export class ProductRepository implements IProductRepository {
       fetch: () =>
         this.prisma.product.findUnique({
           where: { id },
-          include: { images: true, category: true },
+          include: PRODUCT_INCLUDE,
         }),
       entityClass: ProductEntity,
       toCache: priceToCache,
@@ -108,7 +126,7 @@ export class ProductRepository implements IProductRepository {
       fetch: () =>
         this.prisma.product.findUnique({
           where: { slug },
-          include: { images: true, category: true },
+          include: PRODUCT_INCLUDE,
         }),
       entityClass: ProductEntity,
       toCache: priceToCache,
@@ -119,7 +137,7 @@ export class ProductRepository implements IProductRepository {
   async findByName(name: string): Promise<ProductEntity | null> {
     const product = await this.prisma.product.findFirst({
       where: { name },
-      include: { images: true, category: true },
+      include: PRODUCT_INCLUDE,
     });
     return product ? mapToEntity(product, ProductEntity) : null;
   }
@@ -131,7 +149,7 @@ export class ProductRepository implements IProductRepository {
       where: {
         OR: [{ name: contains }, { slug: contains }],
       },
-      include: { images: true, category: true },
+      include: PRODUCT_INCLUDE,
       take: 20,
     });
 
@@ -149,6 +167,9 @@ export class ProductRepository implements IProductRepository {
     const where = {
       name: query.search ? buildContainsFilter(query.search) : undefined,
       categoryId: query.categoryId ?? undefined,
+      productTypeId: query.productTypeId ?? undefined,
+      originId: query.originId ?? undefined,
+      colorId: query.colorId ?? undefined,
     };
 
     return findManyCached<ProductCached, ProductWithRelations, ProductEntity>({
@@ -162,7 +183,7 @@ export class ProductRepository implements IProductRepository {
         const [items, total] = await Promise.all([
           this.prisma.product.findMany({
             where,
-            include: { images: true, category: true },
+            include: PRODUCT_INCLUDE,
             orderBy: query.sortBy
               ? { [query.sortBy]: query.sortOrder ?? 'asc' }
               : { createdAt: query.sortOrder ?? 'desc' },
@@ -188,13 +209,19 @@ export class ProductRepository implements IProductRepository {
             price: data.price,
             stock: data.stock,
             category: { connect: { id: data.categoryId } },
-
+            productType: data.productTypeId
+              ? { connect: { id: data.productTypeId } }
+              : undefined,
+            origin: data.originId
+              ? { connect: { id: data.originId } }
+              : undefined,
+            color: data.colorId ? { connect: { id: data.colorId } } : undefined,
             owner: { connect: { id: data.ownerId } },
             images: {
               connect: data.images.map((id) => ({ id })),
             },
           },
-          include: { images: true, category: true },
+          include: PRODUCT_INCLUDE,
         }),
       cache: this.cache,
       invalidateKeys: (product) => [
@@ -221,11 +248,18 @@ export class ProductRepository implements IProductRepository {
             category: data.categoryId
               ? { connect: { id: data.categoryId } }
               : undefined,
+            productType: data.productTypeId
+              ? { connect: { id: data.productTypeId } }
+              : undefined,
+            origin: data.originId
+              ? { connect: { id: data.originId } }
+              : undefined,
+            color: data.colorId ? { connect: { id: data.colorId } } : undefined,
             images: data.images
               ? { set: data.images.map((imageId) => ({ id: imageId })) }
               : undefined,
           },
-          include: { images: true, category: true },
+          include: PRODUCT_INCLUDE,
         }),
       cache: this.cache,
       invalidateKeys: (product) => [

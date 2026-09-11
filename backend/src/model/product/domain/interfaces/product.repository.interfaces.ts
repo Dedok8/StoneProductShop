@@ -6,6 +6,9 @@ export interface IProductQuery {
   sortBy?: string;
   sortOrder?: SortOrder;
   categoryId?: string;
+  productTypeId?: string;
+  originId?: string;
+  colorId?: string;
   page?: number;
   limit?: number;
 }
@@ -23,6 +26,9 @@ export interface ICreateProductData {
   stock: number;
   images: string[];
   categoryId: string;
+  productTypeId?: string;
+  colorId?: string;
+  originId?: string;
   ownerId: string;
 }
 
@@ -34,6 +40,9 @@ export interface IUpdateProductData {
   stock?: number;
   images?: string[];
   categoryId?: string;
+  productTypeId?: string;
+  colorId?: string;
+  originId?: string;
   isActive?: boolean;
 }
 

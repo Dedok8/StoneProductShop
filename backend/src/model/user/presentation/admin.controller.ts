@@ -39,8 +39,8 @@ export class AdminController {
   }
 
   @Get('search')
-  search(@Query() query: SearchUserDto): Promise<UserResponseDto> {
-    return this.userService.findByEmail(query.query);
+  search(@Query() query: SearchUserDto): Promise<UserResponseDto[]> {
+    return this.userService.search(query.query);
   }
 
   @Get('search/email')
