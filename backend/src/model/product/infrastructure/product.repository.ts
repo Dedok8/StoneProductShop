@@ -50,19 +50,31 @@ function getRelevanceScore(
   product: ProductWithRelations,
   query: string,
 ): number {
-  const q = query.toLowerCase();
+  const q = query.toLowerCase().trim();
+  if (!q) return 100;
+
   const name = product.name.toLowerCase();
   const slug = product.slug.toLowerCase();
+  const category = product.category?.name?.toLowerCase() ?? '';
+  const productType = product.productType?.name?.toLowerCase() ?? '';
+  const origin = product.origin?.name?.toLowerCase() ?? '';
+  const color = product.color?.name?.toLowerCase() ?? '';
 
   if (name === q) return 0;
   if (name.startsWith(q)) return 1;
   if (name.split(/\s+/).some((word) => word.startsWith(q))) return 2;
   if (name.includes(q)) return 3;
-  if (slug.startsWith(q)) return 4;
+
+  if (slug === q || slug.startsWith(q)) return 4;
   if (slug.includes(q)) return 5;
 
-  return 6;
+  if (category.includes(q)) return 6;
+  if (productType.includes(q)) return 7;
+  if (origin.includes(q) || color.includes(q)) return 8;
+
+  return 9;
 }
+
 type ProductCached = Omit<ProductWithRelations, 'price'> & { price: number };
 
 const priceToCache = (raw: ProductWithRelations): ProductCached => ({
@@ -147,17 +159,49 @@ export class ProductRepository implements IProductRepository {
 
     const products = await this.prisma.product.findMany({
       where: {
-        OR: [{ name: contains }, { slug: contains }],
+        OR: [
+          {
+            name: contains,
+          },
+          {
+            slug: contains,
+          },
+          {
+            category: {
+              name: contains,
+            },
+          },
+          {
+            productType: {
+              name: contains,
+            },
+          },
+          {
+            origin: {
+              name: contains,
+            },
+          },
+          {
+            color: {
+              name: contains,
+            },
+          },
+        ],
       },
       include: PRODUCT_INCLUDE,
-      take: 20,
+      take: 60,
     });
 
-    const sorted = [...products].sort(
-      (a, b) => getRelevanceScore(a, query) - getRelevanceScore(b, query),
-    );
+    const sorted = [...products].sort((a, b) => {
+      const scoreDiff =
+        getRelevanceScore(a, query) - getRelevanceScore(b, query);
 
-    return sorted.map((p) => mapToEntity(p, ProductEntity));
+      if (scoreDiff !== 0) return scoreDiff;
+
+      return b.createdAt.getTime() - a.createdAt.getTime();
+    });
+
+    return sorted.slice(0, 20).map((p) => mapToEntity(p, ProductEntity));
   }
 
   findAll(query: IProductQuery): Promise<IProductAllResultData> {
