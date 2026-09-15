@@ -23,7 +23,7 @@ import {
 import { ProductColorService } from '@/model/productColor/application/product-color.service';
 import { JWTAuthGuard, Roles, RolesGuard, UserRole } from '@/shared';
 
-@Controller('Product Color')
+@Controller('product-color')
 @ApiTags('Product Color')
 export class ProductColorController {
   constructor(private readonly productColorService: ProductColorService) {}

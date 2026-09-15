@@ -23,7 +23,7 @@ import {
 import { ProductOriginService } from '@/model/productOrigin/application/product-origin.service';
 import { JWTAuthGuard, Roles, RolesGuard, UserRole } from '@/shared';
 
-@Controller('product Origin')
+@Controller('product-origin')
 @ApiTags('product Origin')
 export class ProductOriginController {
   constructor(private readonly productOriginService: ProductOriginService) {}

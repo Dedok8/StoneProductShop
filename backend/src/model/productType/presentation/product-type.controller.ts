@@ -23,7 +23,7 @@ import {
 import { ProductTypeService } from '@/model/productType/application/product-type.service';
 import { JWTAuthGuard, Roles, RolesGuard, UserRole } from '@/shared';
 
-@Controller('product type')
+@Controller('product-type')
 @ApiTags('product-type')
 export class ProductTypeController {
   constructor(private readonly productTypeService: ProductTypeService) {}
