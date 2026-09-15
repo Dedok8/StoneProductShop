@@ -20,6 +20,24 @@ export type LeadStatus = "NEW" | "CONTACTED" | "CLOSED";
 
 export type SortOrder = "asc" | "desc";
 
+export interface IProductTypeRef {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface IOriginRef {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface IColorRef {
+  id: string;
+  name: string;
+  hex: string | null;
+}
+
 // ---------------------------------------------------------------------------
 // Pagination (shared)
 // ---------------------------------------------------------------------------
@@ -177,15 +195,22 @@ export interface IProductResponse {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   price: number;
   stock: number;
   images: string[];
-  category:ICategoryResponse;
-  ownerId:string;
   categoryId: string;
-  createdAt: string;
+  category: ICategoryResponse;
+  productTypeId: string | null;
+  productType: IProductTypeRef | null;
+  originId: string | null;
+  origin: IOriginRef | null;
+  colorId: string | null;
+  color: IColorRef | null;
+  ownerId: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export type PaginatedProductResponse = IPaginated<IProductResponse>;
@@ -197,6 +222,10 @@ export interface IGetProductsQuery {
   sortOrder?: SortOrder; // default 'asc'
   page?: number; // min 1, default 1
   limit?: number; // min 1, max 100, default 20
+
+  productTypeId: string | null;
+  originId: string | null;
+  colorId: string | null;
 }
 
 export interface ICreateProductRequest {
@@ -213,6 +242,9 @@ export interface ICreateProductRequest {
   /** up to 10 URIs */
   images: string[];
   categoryId: string; // uuid
+  productTypeId: string | null;
+  originId: string | null;
+  colorId: string | null;
   ownerId: string | undefined; // uuid
 }
 
@@ -224,6 +256,9 @@ export interface IUpdateProductRequest {
   stock?: number;
   images?: string[];
   categoryId?: string;
+  productTypeId?: string | null;
+  originId?: string | null;
+  colorId?: string | null;
   isActive?: boolean;
 }
 

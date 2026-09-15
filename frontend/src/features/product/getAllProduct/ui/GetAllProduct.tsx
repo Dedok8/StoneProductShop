@@ -10,6 +10,7 @@ import SearchProduct from "@/features/product/searchProduct/ui/SearchProduct";
 import { FRONT_ROUTES, useQueryState, useUser } from "@/shared";
 import type { IGetProductsQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
+import ProductFilterSidebar from "../../searchProduct/ui/ProductFilterAside";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -63,6 +64,7 @@ function GetAllProduct() {
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <SearchProduct value={searchTerm} onChange={setSearchTerm} />
+        <ProductFilterSidebar/>
 
         {fetching && (
           <p className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-400">
@@ -118,6 +120,18 @@ function GetAllProduct() {
                       {formatPrice(item.price)}
                     </span>
                   </div>
+
+                  <p className="text-sm font-medium leading-snug text-stone-900">
+                    {t("product.slug")} - {item.productType?.slug}
+                  </p>
+
+                  <p className="text-sm font-medium leading-snug text-stone-900">
+                    {t("product.origin")} - {item.origin?.name}
+                  </p>
+
+                  <p className="text-sm font-medium leading-snug text-stone-900">
+                    {t("product.color")} - {item.color?.name}
+                  </p>
 
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span

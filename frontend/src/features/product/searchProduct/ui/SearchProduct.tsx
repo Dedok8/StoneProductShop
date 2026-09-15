@@ -86,6 +86,10 @@ function SearchProduct({ value, onChange }: ISearchProductProps) {
           )}
         </div>
       )}
+
+      <div>
+        
+      </div>
     </div>
   );
 }
