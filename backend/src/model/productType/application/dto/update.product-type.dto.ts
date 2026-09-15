@@ -1,17 +1,25 @@
-import { IsString, Matches, MaxLength, MinLength } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
 
-export class CreateCategoryDto {
+export class UpdateProductTypeDto {
+  @IsOptional()
   @IsString()
   @MinLength(2)
   @MaxLength(50)
-  name: string;
+  name?: string;
 
+  @IsOptional()
   @IsString()
   @MinLength(2)
-  @MaxLength(50)
+  @MaxLength(60)
   @Matches(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
     message:
       'Slug must be lowercase, contain only letters, numbers and hyphens',
   })
-  slug: string;
+  slug?: string;
 }

@@ -13,8 +13,11 @@ import {
   LeadsModule,
   OrderModule,
   ProductModule,
+  ProductOriginModule,
+  ProductTypeModule,
   UserModule,
 } from '@/model';
+import { ProductColorModule } from '@/model/productColor';
 import {
   AppThrottlerGuard,
   HealthController,
@@ -51,6 +54,9 @@ import {
     LeadsModule,
     InspirationModule,
     UploadModule,
+    ProductTypeModule,
+    ProductOriginModule,
+    ProductColorModule,
   ],
   controllers: [HealthController],
   providers: [

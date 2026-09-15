@@ -39,14 +39,6 @@ export class ProductService {
     return ProductMapper.toResponse(product);
   }
 
-  async findBySlug(slug: string) {
-    const product = await this.productRepository.findBySlug(slug);
-
-    if (!product) throw new NotFoundException('Slug not found');
-
-    return ProductMapper.toResponse(product);
-  }
-
   async findByName(name: string) {
     const product = await this.productRepository.findByName(name);
 
@@ -55,6 +47,14 @@ export class ProductService {
     return ProductMapper.toResponse(product);
   }
 
+  async findBySlug(slug: string) {
+    const product = await this.productRepository.findBySlug(slug);
+
+    if (!product) throw new NotFoundException('Slug not found');
+
+    return ProductMapper.toResponse(product);
+  }
+  
   async search(query: string) {
     const products = await this.productRepository.search(query);
     return ProductMapper.toResponseList(products);
@@ -103,6 +103,11 @@ export class ProductService {
   }
 
   async update(id: string, dto: UpdateProductDto) {
+    assertFound(
+      await this.productRepository.findById(id),
+      'Product id is not found',
+    );
+
     if (dto.name)
       await ensureUnique(
         () => this.productRepository.findByName(dto.name!),

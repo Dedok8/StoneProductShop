@@ -1,9 +1,7 @@
 import { CategoryEntity } from '@/model/category/domain/entities';
-import type {
-  ColorRef,
-  OriginRef,
-  ProductTypeRef,
-} from '@/model/product/domain/entities/product-refs.types';
+import type { ProductColorEntity } from '@/model/productColor/domain';
+import type { ProductOriginsEntity } from '@/model/productOrigin/domain';
+import type { ProductTypesEntity } from '@/model/productType/domain';
 
 export class ProductEntity {
   readonly id: string;
@@ -16,11 +14,11 @@ export class ProductEntity {
   readonly categoryId: string;
   readonly category: CategoryEntity;
   readonly productTypeId: string | null;
-  readonly productType: ProductTypeRef | null;
+  readonly productType: ProductTypesEntity | null;
   readonly originId: string | null;
-  readonly origin: OriginRef | null;
+  readonly origin: ProductOriginsEntity | null;
   readonly colorId: string | null;
-  readonly color: ColorRef | null;
+  readonly color: ProductColorEntity | null;
   readonly ownerId: string;
   readonly isActive: boolean;
   readonly createdAt: Date;
@@ -37,11 +35,11 @@ export class ProductEntity {
     categoryId: string;
     category: CategoryEntity;
     productTypeId: string | null;
-    productType: ProductTypeRef | null;
+    productType: ProductTypesEntity | null;
     originId: string | null;
-    origin: OriginRef | null;
+    origin: ProductOriginsEntity | null;
     colorId: string | null;
-    color: ColorRef | null;
+    color: ProductColorEntity | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
@@ -79,11 +77,13 @@ export class ProductEntity {
     categoryId: string;
     category: Parameters<typeof CategoryEntity.fromPersistence>[0];
     productTypeId: string | null;
-    productType: ProductTypeRef | null;
+    productType:
+      | Parameters<typeof ProductTypesEntity.fromPersistence>[0]
+      | null;
     originId: string | null;
-    origin: OriginRef | null;
+    origin: Parameters<typeof ProductOriginsEntity.fromPersistence>[0] | null;
     colorId: string | null;
-    color: ColorRef | null;
+    color: Parameters<typeof ProductColorEntity.fromPersistence>[0] | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;

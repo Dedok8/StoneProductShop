@@ -66,6 +66,11 @@ export class CategoryService {
   }
 
   async update(id: string, dto: UpdateCategoryDto) {
+    assertFound(
+      await this.categoryRepository.findById(id),
+      'Category id is not found',
+    );
+
     if (dto.name)
       await ensureUnique(
         () => this.categoryRepository.findByName(dto.name!),

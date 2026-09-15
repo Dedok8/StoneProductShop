@@ -1,8 +1,7 @@
-export class CategoryResponseDto {
+export class ProductOriginResponseDto {
   readonly id: string;
   readonly name: string;
   readonly slug: string;
-  readonly isActive: boolean;
   readonly createdAt: Date;
   readonly updatedAt: Date;
 
@@ -10,14 +9,12 @@ export class CategoryResponseDto {
     id: string;
     name: string;
     slug: string;
-    isActive: boolean;
-    readonly createdAt: Date;
-    readonly updatedAt: Date;
+    createdAt: Date;
+    updatedAt: Date;
   }) {
     this.id = props.id;
     this.name = props.name;
     this.slug = props.slug;
-    this.isActive = props.isActive;
     this.createdAt = props.createdAt;
     this.updatedAt = props.updatedAt;
   }

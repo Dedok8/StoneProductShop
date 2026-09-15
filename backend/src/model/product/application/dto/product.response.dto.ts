@@ -1,9 +1,7 @@
 import { CategoryEntity } from '@/model/category/domain/entities';
-import type {
-  ColorRef,
-  OriginRef,
-  ProductTypeRef,
-} from '@/model/product/domain';
+import type { ProductColorEntity } from '@/model/productColor/domain';
+import type { ProductOriginsEntity } from '@/model/productOrigin/domain';
+import type { ProductTypesEntity } from '@/model/productType/domain';
 
 export class ProductResponseDto {
   readonly id: string;
@@ -16,11 +14,11 @@ export class ProductResponseDto {
   readonly categoryId: string;
   readonly category: CategoryEntity;
   readonly productTypeId: string | null;
-  readonly productType: ProductTypeRef | null;
+  readonly productType: ProductTypesEntity | null;
   readonly originId: string | null;
-  readonly origin: OriginRef | null;
+  readonly origin: ProductOriginsEntity | null;
   readonly colorId: string | null;
-  readonly color: ColorRef | null;
+  readonly color: ProductColorEntity | null;
   readonly ownerId: string;
   readonly isActive: boolean;
   readonly createdAt: Date;
@@ -37,11 +35,11 @@ export class ProductResponseDto {
     categoryId: string;
     category: CategoryEntity;
     productTypeId: string | null;
-    productType: ProductTypeRef | null;
+    productType: ProductTypesEntity | null;
     originId: string | null;
-    origin: OriginRef | null;
+    origin: ProductOriginsEntity | null;
     colorId: string | null;
-    color: ColorRef | null;
+    color: ProductColorEntity | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;
@@ -79,11 +77,11 @@ export class ProductResponseDto {
     categoryId: string;
     category: Parameters<typeof CategoryEntity.fromPersistence>[0];
     productTypeId: string | null;
-    productType: ProductTypeRef | null;
+    productType: ProductTypesEntity | null;
     originId: string | null;
-    origin: OriginRef | null;
+    origin: ProductOriginsEntity | null;
     colorId: string | null;
-    color: ColorRef | null;
+    color: ProductColorEntity | null;
     ownerId: string;
     isActive: boolean;
     createdAt: Date;

@@ -7,3 +7,5 @@ export * from './leads';
 export * from './cart';
 export * from './checkout';
 export * from './inspiration';
+export * from './productType';
+export * from './productOrigin';
