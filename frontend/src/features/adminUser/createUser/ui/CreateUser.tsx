@@ -6,6 +6,12 @@ import {
 } from "@/features/adminUser/createUser/model";
 import { useQueryState } from "@/shared";
 import type { ICreateUserRequest } from "@/shared/types";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
 
 function CreateUser() {
@@ -17,7 +23,7 @@ function CreateUser() {
     try {
       await createUser(value);
     } catch (e) {
-      //
+      console.error(e);
     }
   };
 
@@ -32,52 +38,51 @@ function CreateUser() {
         {t("admin.createUser")}
       </h2>
 
-      <div className="flex flex-col gap-1.5">
-        <Input {...register("name")} placeholder={t("user.name")} />
-        {errors.name && (
-          <span className="text-sm text-destructive">
-            {errors.name.message}
-          </span>
-        )}
-      </div>
+      <FieldGroup>
+        <Field data-invalid={!!errors.name}>
+          <FieldLabel htmlFor="name">{t("user.name")}</FieldLabel>
+          <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
+          {errors.name && <FieldError>{errors.name.message}</FieldError>}
+        </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <Input {...register("email")} placeholder={t("user.email")} />
-        {errors.email && (
-          <span className="text-sm text-destructive">
-            {errors.email.message}
-          </span>
-        )}
-      </div>
+        <Field data-invalid={!!errors.email}>
+          <FieldLabel htmlFor="email">{t("user.email")}</FieldLabel>
+          <Input
+            id="email"
+            aria-invalid={!!errors.email}
+            {...register("email")}
+          />
+          {errors.email && <FieldError>{errors.email.message}</FieldError>}
+        </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <Input
-          {...register("password")}
-          type="password"
-          placeholder={t("auth.password")}
-        />
-        {errors.password && (
-          <span className="text-sm text-destructive">
-            {errors.password.message}
-          </span>
-        )}
-      </div>
+        <Field data-invalid={!!errors.password}>
+          <FieldLabel htmlFor="password">{t("auth.password")}</FieldLabel>
+          <Input
+            id="password"
+            type="password"
+            aria-invalid={!!errors.password}
+            {...register("password")}
+          />
+          {errors.password && (
+            <FieldError>{errors.password.message}</FieldError>
+          )}
+        </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <select
-          {...register("role")}
-          className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-        >
-          <option value="USER">{t("role.USER")}</option>
-          <option value="MANAGER">{t("role.MANAGER")}</option>
-          <option value="ADMIN">{t("role.ADMIN")}</option>
-        </select>
-        {errors.role && (
-          <span className="text-sm text-destructive">
-            {errors.role.message}
-          </span>
-        )}
-      </div>
+        <Field data-invalid={!!errors.role}>
+          <FieldLabel htmlFor="role">{t("user.role")}</FieldLabel>
+          <select
+            id="role"
+            aria-invalid={!!errors.role}
+            {...register("role")}
+            className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+          >
+            <option value="USER">{t("role.USER")}</option>
+            <option value="MANAGER">{t("role.MANAGER")}</option>
+            <option value="ADMIN">{t("role.ADMIN")}</option>
+          </select>
+          {errors.role && <FieldError>{errors.role.message}</FieldError>}
+        </Field>
+      </FieldGroup>
 
       {queryState}
 

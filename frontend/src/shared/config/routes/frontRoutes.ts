@@ -245,6 +245,16 @@ export const FRONT_ROUTES = {
         roles: ["ADMIN"],
       },
     },
+    UpdateProductColor: {
+      path: (id: string) => `/admin/updateProductColor/${id}`,
+      template: "/admin/updateProductColor/:id",
+      meta: {
+        title: "Update Product Color",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
 
     UpdateOrder: {
       path: (id: string) => `/admin/updateOrder/${id}/status`,
@@ -292,6 +302,16 @@ export const FRONT_ROUTES = {
       path: "/admin/allOrders",
       meta: {
         title: "All Orders",
+        isInMenu: false,
+        requireAuth: true,
+        roles: ["ADMIN"],
+      },
+    },
+
+    AllProductColor: {
+      path: "/admin/allProductColor",
+      meta: {
+        title: "All Product Color",
         isInMenu: false,
         requireAuth: true,
         roles: ["ADMIN"],

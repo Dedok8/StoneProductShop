@@ -107,6 +107,9 @@ export const baseApi = createApi({
     "InspirationAdmin",
     "Inspiration",
     "Upload",
+    "ProductOrigin",
+    "ProductColor",
+    "ProductType",
   ],
 
   endpoints: () => ({}),

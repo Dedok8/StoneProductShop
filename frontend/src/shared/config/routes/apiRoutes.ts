@@ -83,4 +83,31 @@ export const API_ROUTES = {
   upload: {
     createUpload: "/admin/upload",
   },
+
+  productType: {
+    getAll: "/product-type",
+    create: "/product-type",
+    search: "/product-type/search",
+    byId: (id: string) => `/product-type/${id}`,
+    update: (id: string) => `/product-type/${id}`,
+    delete: (id: string) => `/product-type/${id}`,
+  },
+
+  productOrigin: {
+    getAll: "/product-origin",
+    create: "/product-origin",
+    search: "/product-origin/search",
+    byId: (id: string) => `/product-origin/${id}`,
+    update: (id: string) => `/product-origin/${id}`,
+    delete: (id: string) => `/product-origin/${id}`,
+  },
+
+  productColor: {
+    getAll: "/product-color",
+    create: "/product-color",
+    search: "/product-color/search",
+    byId: (id: string) => `/product-color/${id}`,
+    update: (id: string) => `/product-color/${id}`,
+    delete: (id: string) => `/product-color/${id}`,
+  },
 } as const;

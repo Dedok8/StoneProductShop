@@ -6,6 +6,12 @@ import { useCreateInspiration } from "@/features/inspiration/createInspiration/m
 import { useCreateInspirationForm } from "@/features/inspiration/createInspiration/model/useCreateInspirationForm";
 import { useQueryState } from "@/shared";
 import type { IInspirationFormValues } from "@/shared/types";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
 
 function CreateInspiration() {
@@ -31,7 +37,7 @@ function CreateInspiration() {
     try {
       await createInspiration(value);
     } catch (e) {
-      //
+      console.error(e);
     }
   };
   const queryState = useQueryState(isLoading, isError, error);
@@ -45,45 +51,43 @@ function CreateInspiration() {
         {t("inspiration.create")}
       </h2>
 
-      <div className="flex flex-col items-center gap-3">
-        <label
-          htmlFor="image"
-          className="flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-muted-foreground transition-colors hover:bg-muted/40"
-        >
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="preview"
-              className="h-full w-full rounded-lg object-cover"
-            />
-          ) : (
-            <>
-              <ImagePlus className="h-6 w-6" />
-              <span className="text-sm">{t("inspiration.image")}</span>
-            </>
-          )}
-        </label>
-        <Input
-          id="image"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className="hidden"
-          {...register("image")}
-        />
-        {errors.image && (
-          <p className="text-sm text-destructive">{errors.image.message}</p>
-        )}
-      </div>
+      <FieldGroup>
+        <Field data-invalid={!!errors.image}>
+          <FieldLabel htmlFor="image">{t("inspiration.image")}</FieldLabel>
+          <label
+            htmlFor="image"
+            className="flex h-40 w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed text-muted-foreground transition-colors hover:bg-muted/40"
+          >
+            {previewUrl ? (
+              <img
+                src={previewUrl}
+                alt="preview"
+                className="h-full w-full rounded-lg object-cover"
+              />
+            ) : (
+              <>
+                <ImagePlus className="h-6 w-6" />
+                <span className="text-sm">{t("inspiration.image")}</span>
+              </>
+            )}
+          </label>
+          <Input
+            id="image"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            aria-invalid={!!errors.image}
+            {...register("image")}
+          />
+          {errors.image && <FieldError>{errors.image.message}</FieldError>}
+        </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="alt" className="text-sm font-medium text-foreground">
-          {t("inspiration.alt")}
-        </label>
-        <Input id="alt" {...register("alt")} />
-        {errors.alt && (
-          <p className="text-sm text-destructive">{errors.alt.message}</p>
-        )}
-      </div>
+        <Field data-invalid={!!errors.alt}>
+          <FieldLabel htmlFor="alt">{t("inspiration.alt")}</FieldLabel>
+          <Input id="alt" aria-invalid={!!errors.alt} {...register("alt")} />
+          {errors.alt && <FieldError>{errors.alt.message}</FieldError>}
+        </Field>
+      </FieldGroup>
 
       {queryState}
 

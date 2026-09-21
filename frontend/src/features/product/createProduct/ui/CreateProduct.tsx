@@ -9,37 +9,33 @@ import {
   type ProductFormValues,
 } from "@/features/product/createProduct/model";
 import { useQueryState, useUser } from "@/shared";
+import { useSlugField } from "@/shared/hooks/useSlugField";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
-import { Label } from "@/shared/ui/components/label";
-
-function Field({
-  label,
-  htmlFor,
-  error,
-  children,
-}: {
-  label: string;
-  htmlFor?: string;
-  error?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-      {error && <p className="text-sm text-destructive">{error}</p>}
-    </div>
-  );
-}
 
 function CreateProduct() {
   const { createProduct, isLoading, error, isError } = useCreateProduct();
   const { categories, isLoading: isCategoriesLoading } = useGetAllCategory();
   const { inspirations, isLoading: isInspirationsLoading } =
     useGetAllInspiration();
-  const { register, handleSubmit, errors, control } = useCreateProductForm();
+  const { register, handleSubmit, errors, control, watch, setValue } =
+    useCreateProductForm();
   const { t } = useTranslation();
   const user = useUser();
+
+  const nameValue = watch("name");
+  const slugRegister = register("slug");
+
+  const { isSlugTouched, onSlugChange, resetSlug } = useSlugField(
+    nameValue,
+    setValue,
+    "slug"
+  );
 
   const onSubmit = async (value: ProductFormValues) => {
     try {
@@ -59,62 +55,86 @@ function CreateProduct() {
         {t("product.create")}
       </h2>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Field
-          label={t("product.name")}
-          htmlFor="name"
-          error={errors.name?.message}
-        >
-          <Input id="name" {...register("name")} />
+      <FieldGroup className="grid gap-4 sm:grid-cols-2">
+        <Field data-invalid={!!errors.name}>
+          <FieldLabel htmlFor="name">{t("product.name")}</FieldLabel>
+          <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
+          {errors.name && <FieldError>{errors.name.message}</FieldError>}
         </Field>
 
-        <Field
-          label={t("product.slug")}
-          htmlFor="slug"
-          error={errors.slug?.message}
-        >
-          <Input id="slug" {...register("slug")} />
+        <Field data-invalid={!!errors.slug}>
+          <FieldLabel htmlFor="slug">{t("product.slug")}</FieldLabel>
+          <div className="flex items-center gap-2">
+            <Input
+              id="slug"
+              aria-invalid={!!errors.slug}
+              {...slugRegister}
+              onChange={(e) => {
+                onSlugChange();
+                slugRegister.onChange(e);
+              }}
+              className="flex-1"
+            />
+            {isSlugTouched && (
+              <button
+                type="button"
+                onClick={resetSlug}
+                className="whitespace-nowrap text-sm font-medium text-primary hover:underline"
+              >
+                {t("common.resetSlug")}
+              </button>
+            )}
+          </div>
+          {errors.slug && <FieldError>{errors.slug.message}</FieldError>}
         </Field>
 
-        <Field
-          label={t("product.price")}
-          htmlFor="price"
-          error={errors.price?.message}
-        >
-          <Input id="price" type="number" step="0.01" {...register("price")} />
+        <Field data-invalid={!!errors.price}>
+          <FieldLabel htmlFor="price">{t("product.price")}</FieldLabel>
+          <Input
+            id="price"
+            type="number"
+            step="0.01"
+            aria-invalid={!!errors.price}
+            {...register("price")}
+          />
+          {errors.price && <FieldError>{errors.price.message}</FieldError>}
         </Field>
 
-        <Field
-          label={t("product.stock")}
-          htmlFor="stock"
-          error={errors.stock?.message}
-        >
-          <Input id="stock" type="number" {...register("stock")} />
+        <Field data-invalid={!!errors.stock}>
+          <FieldLabel htmlFor="stock">{t("product.stock")}</FieldLabel>
+          <Input
+            id="stock"
+            type="number"
+            aria-invalid={!!errors.stock}
+            {...register("stock")}
+          />
+          {errors.stock && <FieldError>{errors.stock.message}</FieldError>}
         </Field>
-      </div>
+      </FieldGroup>
 
-      <Field
-        label={t("product.description")}
-        htmlFor="description"
-        error={errors.description?.message}
-      >
+      <Field data-invalid={!!errors.description}>
+        <FieldLabel htmlFor="description">
+          {t("product.description")}
+        </FieldLabel>
         <textarea
           id="description"
           rows={4}
+          aria-invalid={!!errors.description}
           {...register("description")}
           className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         />
+        {errors.description && (
+          <FieldError>{errors.description.message}</FieldError>
+        )}
       </Field>
 
-      <Field
-        label={t("product.category")}
-        htmlFor="categoryId"
-        error={errors.categoryId?.message}
-      >
+      <Field data-invalid={!!errors.categoryId}>
+        <FieldLabel htmlFor="categoryId">{t("product.category")}</FieldLabel>
         <select
           id="categoryId"
           disabled={isCategoriesLoading}
           defaultValue=""
+          aria-invalid={!!errors.categoryId}
           {...register("categoryId")}
           className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         >
@@ -129,10 +149,13 @@ function CreateProduct() {
             </option>
           ))}
         </select>
+        {errors.categoryId && (
+          <FieldError>{errors.categoryId.message}</FieldError>
+        )}
       </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <Label>{t("product.images")}</Label>
+      <Field data-invalid={!!errors.images}>
+        <FieldLabel>{t("product.images")}</FieldLabel>
         <Controller
           name="images"
           control={control}
@@ -186,10 +209,8 @@ function CreateProduct() {
             );
           }}
         />
-        {errors.images && (
-          <p className="text-sm text-destructive">{errors.images.message}</p>
-        )}
-      </div>
+        {errors.images && <FieldError>{errors.images.message}</FieldError>}
+      </Field>
 
       {queryState}
 

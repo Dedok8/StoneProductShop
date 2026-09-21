@@ -18,7 +18,7 @@ export const useSearchCategory = (query?: string) => {
   });
 
   return {
-    category: result.data,
+    categories: result.data,
     isLoading: result.isLoading,
     isFetching: result.isFetching,
     isError: result.isError,

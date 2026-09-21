@@ -8,6 +8,7 @@ import {
 } from "@/features/lead/createLead/model";
 import { useQueryState } from "@/shared";
 import { Checkbox } from "@/shared/ui/components/checkbox";
+import { Field, FieldGroup } from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
 
 function CreateLead() {
@@ -18,28 +19,36 @@ function CreateLead() {
   const onSubmit = async (value: LeadFormValues) => {
     try {
       await createLead(value);
-    } catch {
-      //
+    } catch (e) {
+      console.error(e);
     }
   };
   const queryState = useQueryState(isLoading, isError, error);
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="flex w-full flex-col gap-5 text-background"
     >
-      <div className="flex flex-col gap-4">
-        <div>
-          <Input id="name" {...register("name")} placeholder={t("lead.name")} />
+      <FieldGroup className="gap-4">
+        <Field data-invalid={!!errors.name}>
+          <Input
+            id="name"
+            aria-invalid={!!errors.name}
+            {...register("name")}
+            placeholder={t("lead.name")}
+          />
           <p
             className={`mt-1 text-xs text-red-400 ${errors.name ? "" : "invisible"}`}
           >
             {errors.name?.message || "placeholder"}
           </p>
-        </div>
-        <div>
+        </Field>
+
+        <Field data-invalid={!!errors.phone}>
           <Input
             id="phone"
+            aria-invalid={!!errors.phone}
             {...register("phone")}
             placeholder={t("lead.phone")}
           />
@@ -48,10 +57,14 @@ function CreateLead() {
           >
             {errors.phone?.message || "placeholder"}
           </p>
-        </div>
-      </div>
+        </Field>
+      </FieldGroup>
 
-      <div className="flex items-start gap-2">
+      <Field
+        data-invalid={!!errors.consent}
+        orientation="horizontal"
+        className="items-start gap-2"
+      >
         <Controller
           name="consent"
           control={control}
@@ -70,7 +83,7 @@ function CreateLead() {
             {t("lead.pd")}
           </a>
         </label>
-      </div>
+      </Field>
       <p
         className={`mt-1 text-xs text-red-400 ${errors.consent ? "" : "invisible"}`}
       >

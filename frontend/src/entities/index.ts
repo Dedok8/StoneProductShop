@@ -7,3 +7,6 @@ export * from "./cart";
 export * from "./lead";
 export * from "./adminInspiration";
 export * from "./upload";
+export * from "./productColor";
+export * from "./productOrigin";
+export * from "./productType";

@@ -1,38 +1,40 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useSearchCategory } from "@/features/category/searchCategory/model";
-import { useQueryState } from "@/shared";
-import { Input } from "@/shared/ui/components/input";
-
-function SearchCategory() {
+import type { ICategoryResponse } from "@/shared/types";
+import Search from "@/shared/ui/search/Search";
+interface ISearchCategoryProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+function SearchCategory({ value, onChange }: ISearchCategoryProps) {
   const { t } = useTranslation();
-  const [query, setQuery] = useState("");
-  const { category, isLoading, error, isError, isFetching } =
-    useSearchCategory(query);
 
-  const queryState = useQueryState(isLoading, isError, error);
+  const { categories, isLoading, error, isError, isFetching } =
+    useSearchCategory(value);
 
   return (
-    <div>
-      <Input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search by name or slug"
-      />
-
-      {queryState}
-
-      {category && (
-        <div>
-          <p>ID: {category.id}</p>
-          <p>Name: {category.name}</p>
-          <p>isActive: {category.isActive}</p>
-          <p>Created: {new Date(category.createdAt).toLocaleString()}</p>
-        </div>
+    <Search<ICategoryResponse>
+      value={value}
+      onChange={onChange}
+      onSelect={(category) => onChange(category.id)}
+      items={categories ? [categories] : []}
+      isLoading={isLoading}
+      isFetching={isFetching}
+      isError={isError}
+      error={error}
+      hasQuery={value.trim().length > 0}
+      getKey={(category) => category.id}
+      renderItem={(item) => (
+        <>
+          <span className="font-medium text-stone-900">{item.name}</span>
+          <span className="text-xs text-stone-400">{item.slug}</span>
+          <span className="text-xs text-stone-400">{item.isActive}</span>
+        </>
       )}
-    </div>
+      placeholder={t("category.searchPlaceholder", "Search by name or slug")}
+      emptyText={t("category.noCategoryFound")}
+    />
   );
 }
 

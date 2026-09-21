@@ -31,6 +31,14 @@ function GetAllAdminWd() {
           <Link to={FRONT_ROUTES.pages.AllOrders.path}>All Orders</Link>
         </div>
       </CardContent>
+      <CardContent>
+        <h2>Product color</h2>
+        <div>
+          <Link to={FRONT_ROUTES.pages.AllProductColor.path}>
+            All Product Color
+          </Link>
+        </div>
+      </CardContent>
     </Card>
   );
 }

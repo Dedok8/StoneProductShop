@@ -62,7 +62,7 @@ export class ProductOriginController {
     return this.productOriginService.create(dto);
   }
 
-  @Patch('id')
+  @Patch(':id')
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JWTAuthGuard, RolesGuard)

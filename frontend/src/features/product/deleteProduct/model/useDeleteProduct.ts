@@ -8,7 +8,7 @@ export const useDeleteProduct = () => {
     useDeleteProductMutation();
 
   async function deleteProduct(productId: string) {
-    const confirmed = window.confirm(t("delete.deleteCategory"));
+    const confirmed = window.confirm(t("delete.deleteProduct"));
     if (!confirmed) return;
 
     await deleteProductMutation(productId).unwrap();

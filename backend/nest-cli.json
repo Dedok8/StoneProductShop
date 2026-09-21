@@ -6,6 +6,8 @@
     "deleteOutDir": false,
     "plugins": ["@nestjs/swagger"],
     "assets": ["generated/**/*"],
-    "watchAssets": true
+    "watchAssets": false,
+    "builder": "swc",
+    "typeCheck": true
   }
 }

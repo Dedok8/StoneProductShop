@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 
 import { useFindProductById } from "@/features/product/findProductById/model";
 import { useQueryState } from "@/shared";
+import { CardContent } from "@/shared/ui/components/card";
 import { Input } from "@/shared/ui/components/input";
 
 function FindProductById() {
@@ -15,7 +16,7 @@ function FindProductById() {
   const queryState = useQueryState(isLoading, isError, error);
 
   return (
-    <div>
+    <CardContent>
       <Input
         type="text"
         value={query}
@@ -38,7 +39,7 @@ function FindProductById() {
       )}
 
       {queryState}
-    </div>
+    </CardContent>
   );
 }
 

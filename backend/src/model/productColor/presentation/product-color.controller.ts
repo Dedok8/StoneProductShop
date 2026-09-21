@@ -56,7 +56,7 @@ export class ProductColorController {
     return this.productColorService.create(dto);
   }
 
-  @Patch('id')
+  @Patch(':id')
   @ApiBearerAuth()
   @Roles(UserRole.ADMIN)
   @UseGuards(JWTAuthGuard, RolesGuard)

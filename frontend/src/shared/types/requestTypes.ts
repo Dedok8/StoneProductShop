@@ -20,24 +20,6 @@ export type LeadStatus = "NEW" | "CONTACTED" | "CLOSED";
 
 export type SortOrder = "asc" | "desc";
 
-export interface IProductTypeRef {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-export interface IOriginRef {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-export interface IColorRef {
-  id: string;
-  name: string;
-  hex: string | null;
-}
-
 // ---------------------------------------------------------------------------
 // Pagination (shared)
 // ---------------------------------------------------------------------------
@@ -202,11 +184,11 @@ export interface IProductResponse {
   categoryId: string;
   category: ICategoryResponse;
   productTypeId: string | null;
-  productType: IProductTypeRef | null;
+  productType?: IProductTypeResponse | null;
   originId: string | null;
-  origin: IOriginRef | null;
+  origin?: IProductOriginResponse | null;
   colorId: string | null;
-  color: IColorRef | null;
+  color?: IProductColorResponse | null;
   ownerId: string;
   isActive: boolean;
   createdAt: string;
@@ -423,4 +405,60 @@ export interface IUpdateInspiration {
 
 export interface IUploadResponse {
   url: string;
+}
+
+export interface IProductTypeResponse {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICreateProductTypeRequest {
+  name: string;
+  slug: string;
+}
+
+export interface IUpdateProductTypeRequest {
+  name?: string;
+  slug?: string;
+}
+
+export interface IProductOriginResponse {
+  id: string;
+  name: string;
+  slug: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICreateProductOriginRequest {
+  name: string;
+  slug: string;
+}
+
+export interface IUpdateProductOriginRequest {
+  name?: string;
+  slug?: string;
+}
+
+// ===== Product Color =====
+
+export interface IProductColorResponse {
+  id: string;
+  name: string;
+  hex?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ICreateProductColorRequest {
+  name: string;
+  hex?: string;
+}
+
+export interface IUpdateProductColorRequest {
+  name?: string;
+  hex?: string;
 }
