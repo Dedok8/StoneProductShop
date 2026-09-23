@@ -3,6 +3,13 @@ import type { ProductColorEntity } from '@/model/productColor/domain';
 import type { ProductOriginsEntity } from '@/model/productOrigin/domain';
 import type { ProductTypesEntity } from '@/model/productType/domain';
 
+export interface IProductImageResponse {
+  id: string;
+  url: string;
+  alt: string;
+  order: number;
+}
+
 export class ProductResponseDto {
   readonly id: string;
   readonly name: string;
@@ -10,7 +17,7 @@ export class ProductResponseDto {
   readonly description: string | null;
   readonly price: number;
   readonly stock: number;
-  readonly images: string[];
+  readonly images: IProductImageResponse[];
   readonly categoryId: string;
   readonly category: CategoryEntity;
   readonly productTypeId: string | null;
@@ -31,7 +38,7 @@ export class ProductResponseDto {
     description: string | null;
     price: number;
     stock: number;
-    images: string[];
+    images: IProductImageResponse[];
     categoryId: string;
     category: CategoryEntity;
     productTypeId: string | null;
@@ -73,7 +80,7 @@ export class ProductResponseDto {
     description: string | null;
     price: { toNumber(): number };
     stock: number;
-    images: { imageUrl: string }[];
+    images: IProductImageResponse[];
     categoryId: string;
     category: Parameters<typeof CategoryEntity.fromPersistence>[0];
     productTypeId: string | null;
@@ -89,7 +96,6 @@ export class ProductResponseDto {
   }): ProductResponseDto {
     return new ProductResponseDto({
       ...raw,
-      images: raw.images.map((img) => img.imageUrl),
       price: raw.price.toNumber(),
       category: CategoryEntity.fromPersistence(raw.category),
     });

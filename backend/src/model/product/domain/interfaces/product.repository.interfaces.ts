@@ -1,12 +1,23 @@
 import type { ProductEntity } from '@/model/product/domain/entities';
 import type { SortOrder } from '@/shared/dto';
 
+export interface IProductImageInput {
+  url: string;
+  alt?: string;
+}
+export interface IProductImageData {
+  id: string;
+  url: string;
+  alt: string;
+  order: number;
+}
 export interface IProductQuery {
   search?: string;
   sortBy?: string;
   sortOrder?: SortOrder;
   categoryId?: string;
   productTypeId?: string;
+
   originId?: string;
   colorId?: string;
   page?: number;
@@ -24,7 +35,7 @@ export interface ICreateProductData {
   description?: string;
   price: number;
   stock: number;
-  images: string[];
+  images: IProductImageInput[];
   categoryId: string;
   productTypeId?: string;
   colorId?: string;
@@ -38,7 +49,7 @@ export interface IUpdateProductData {
   description?: string;
   price?: number;
   stock?: number;
-  images?: string[];
+  images?: IProductImageInput[];
   categoryId?: string;
   productTypeId?: string;
   colorId?: string;

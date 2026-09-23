@@ -3,6 +3,12 @@ import type { ProductColorEntity } from '@/model/productColor/domain';
 import type { ProductOriginsEntity } from '@/model/productOrigin/domain';
 import type { ProductTypesEntity } from '@/model/productType/domain';
 
+export interface IProductImageProps {
+  id: string;
+  url: string;
+  alt: string;
+  order: number;
+}
 export class ProductEntity {
   readonly id: string;
   readonly name: string;
@@ -10,7 +16,7 @@ export class ProductEntity {
   readonly description: string | null;
   readonly price: number;
   readonly stock: number;
-  readonly images: string[];
+  readonly images: IProductImageProps[];
   readonly categoryId: string;
   readonly category: CategoryEntity;
   readonly productTypeId: string | null;
@@ -31,7 +37,7 @@ export class ProductEntity {
     description: string | null;
     price: number;
     stock: number;
-    images: { imageUrl: string }[];
+    images: IProductImageProps[];
     categoryId: string;
     category: CategoryEntity;
     productTypeId: string | null;
@@ -51,7 +57,7 @@ export class ProductEntity {
     this.description = props.description;
     this.price = props.price;
     this.stock = props.stock;
-    this.images = props.images.map((img) => img.imageUrl);
+    this.images = [...props.images].sort((a, b) => a.order - b.order);
     this.categoryId = props.categoryId;
     this.category = props.category;
     this.productTypeId = props.productTypeId;
@@ -73,7 +79,7 @@ export class ProductEntity {
     description: string | null;
     price: { toNumber(): number };
     stock: number;
-    images: { imageUrl: string }[];
+    images: IProductImageProps[];
     categoryId: string;
     category: Parameters<typeof CategoryEntity.fromPersistence>[0];
     productTypeId: string | null;

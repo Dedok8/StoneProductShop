@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import {
   ArrayMaxSize,
-  IsArray,
+  ArrayMinSize,
   IsBoolean,
   IsInt,
   IsNumber,
@@ -13,7 +13,10 @@ import {
   MaxLength,
   Min,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+
+import { ProductImageInputDto } from '@/model/product/application/dto/product.image.input.dto';
 
 export class UpdateProductDto {
   @IsOptional()
@@ -52,11 +55,12 @@ export class UpdateProductDto {
   @Type(() => Number)
   stock?: number;
 
-  @IsOptional()
-  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ProductImageInputDto)
+  @ArrayMinSize(1)
   @ArrayMaxSize(10)
-  @IsUUID('4', { each: true })
-  images?: string[];
+  @IsOptional()
+  images: ProductImageInputDto[];
 
   @IsOptional()
   @IsUUID()

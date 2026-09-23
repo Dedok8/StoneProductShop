@@ -20,7 +20,10 @@ export const useCreateProductForm = () => {
       stock: 0,
       images: [],
       categoryId: "",
-      
+      productTypeId: undefined,
+      originId: undefined,
+      colorId: undefined,
+      // ownerId: "",
     },
     resolver: yupResolver(schema) as Resolver<ProductFormValues>,
   });

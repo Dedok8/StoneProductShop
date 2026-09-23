@@ -39,7 +39,7 @@ const listKey = (query: IProductQuery) =>
   buildQueryCacheKey('product:list', query);
 
 type ProductWithRelations = Product & {
-  images: { imageUrl: string }[];
+  images: { id: string; url: string; alt: string; order: number }[];
   category: Category;
   productType: ProductType | null;
   color: Color | null;
@@ -88,7 +88,7 @@ const priceFromCache = (cached: ProductCached): ProductWithRelations => ({
 });
 
 const PRODUCT_INCLUDE = {
-  images: true,
+  images: { orderBy: { order: 'asc' as const } },
   category: true,
   productType: true,
   origin: true,
@@ -262,7 +262,11 @@ export class ProductRepository implements IProductRepository {
             color: data.colorId ? { connect: { id: data.colorId } } : undefined,
             owner: { connect: { id: data.ownerId } },
             images: {
-              connect: data.images.map((id) => ({ id })),
+              create: data.images.map((img, index) => ({
+                url: img.url,
+                alt: img.alt ?? '',
+                order: index,
+              })),
             },
           },
           include: PRODUCT_INCLUDE,
@@ -300,7 +304,14 @@ export class ProductRepository implements IProductRepository {
               : undefined,
             color: data.colorId ? { connect: { id: data.colorId } } : undefined,
             images: data.images
-              ? { set: data.images.map((imageId) => ({ id: imageId })) }
+              ? {
+                  deleteMany: {},
+                  create: data.images.map((img, index) => ({
+                    url: img.url,
+                    alt: img.alt ?? '',
+                    order: index,
+                  })),
+                }
               : undefined,
           },
           include: PRODUCT_INCLUDE,

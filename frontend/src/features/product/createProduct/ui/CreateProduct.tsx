@@ -2,14 +2,15 @@ import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { useGetAllCategory } from "@/features/category/getAllCategory";
-import { useGetAllInspiration } from "@/features/inspiration/getAllInspiration";
 import {
   useCreateProduct,
   useCreateProductForm,
   type ProductFormValues,
 } from "@/features/product/createProduct/model";
-import { useQueryState, useUser } from "@/shared";
+import UploadImage from "@/features/upload/ui";
+import { useQueryState } from "@/shared";
 import { useSlugField } from "@/shared/hooks/useSlugField";
+import { Button } from "@/shared/ui/components/button";
 import {
   Field,
   FieldError,
@@ -17,16 +18,18 @@ import {
   FieldLabel,
 } from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
+import FormFields from "@/shared/ui/form-parts/FormField/FormField";
+import FormShell from "@/shared/ui/form-parts/FormShell";
 
 function CreateProduct() {
   const { createProduct, isLoading, error, isError } = useCreateProduct();
-  const { categories, isLoading: isCategoriesLoading } = useGetAllCategory();
-  const { inspirations, isLoading: isInspirationsLoading } =
-    useGetAllInspiration();
+  const { categories } = useGetAllCategory();
+  // const { inspirations, isLoading: isInspirationsLoading } =
+  //   useGetAllInspiration();
   const { register, handleSubmit, errors, control, watch, setValue } =
     useCreateProductForm();
   const { t } = useTranslation();
-  const user = useUser();
+  // const user = useUser();
 
   const nameValue = watch("name");
   const slugRegister = register("slug");
@@ -39,189 +42,97 @@ function CreateProduct() {
 
   const onSubmit = async (value: ProductFormValues) => {
     try {
-      await createProduct({ ...value, ownerId: user?.id });
+      await createProduct({
+        ...value,
+        productTypeId: value.productTypeId ?? null,
+        originId: value.originId ?? null,
+        colorId: value.colorId ?? null,
+      });
     } catch (e) {
       console.error(e);
     }
   };
   const queryState = useQueryState(isLoading, isError, error);
 
+  const categoriesOptions = [
+    { value: "", label: t("common.selectPlaceholder") },
+    ...(categories?.map((category) => ({
+      value: category.id,
+      label: category.name,
+    })) ?? []),
+  ];
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mx-auto flex max-w-2xl flex-col gap-5 rounded-xl border bg-card p-6 shadow-sm"
+    <FormShell
+      title={t("admin.createProduct")}
+      onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+        console.log(validationErrors);
+      })}
+      isLoading={isLoading}
+      queryState={queryState}
+      submitText={t("admin.createProduct")}
     >
-      <h2 className="text-lg font-semibold text-foreground">
-        {t("product.create")}
-      </h2>
+      {
+        <FieldGroup>
+          <FormFields
+            fields={[
+              { name: "name", label: t("product.name") },
+              // { name: "slug", label: t("product.slug") },
+              {
+                name: "description",
+                label: t("product.description"),
+                type: "textarea",
+              },
+              { name: "price", label: t("product.price"), type: "number" },
+              { name: "stock", label: t("product.stock"), type: "number" },
+              // { name: "images", label: t("product.images"), type: "select" },
+              {
+                name: "categoryId",
+                label: t("product.categoryId"),
+                options: categoriesOptions,
+                type: "select",
+              },
+            ]}
+            errors={errors}
+            register={register}
+          />
 
-      <FieldGroup className="grid gap-4 sm:grid-cols-2">
-        <Field data-invalid={!!errors.name}>
-          <FieldLabel htmlFor="name">{t("product.name")}</FieldLabel>
-          <Input id="name" aria-invalid={!!errors.name} {...register("name")} />
-          {errors.name && <FieldError>{errors.name.message}</FieldError>}
-        </Field>
+          <Field data-invalid={!!errors.slug}>
+            <FieldLabel htmlFor="slug">{t("product.slug")}</FieldLabel>
+            <div className="flex items-center gap-2">
+              <Input
+                id="slug"
+                aria-invalid={!!errors.slug}
+                {...slugRegister}
+                onChange={(e) => {
+                  onSlugChange();
+                  slugRegister.onChange(e);
+                }}
+              />
+              {isSlugTouched && (
+                <Button type="button" onClick={resetSlug}>
+                  {t("product.resetSlug")}
+                </Button>
+              )}
+            </div>
+            {errors.slug && <FieldError>{errors.slug.message}</FieldError>}
+          </Field>
 
-        <Field data-invalid={!!errors.slug}>
-          <FieldLabel htmlFor="slug">{t("product.slug")}</FieldLabel>
-          <div className="flex items-center gap-2">
-            <Input
-              id="slug"
-              aria-invalid={!!errors.slug}
-              {...slugRegister}
-              onChange={(e) => {
-                onSlugChange();
-                slugRegister.onChange(e);
-              }}
-              className="flex-1"
+          <Field>
+            <FieldLabel htmlFor="images">{t("product.images")}</FieldLabel>
+            <Controller
+              control={control}
+              name="images"
+              render={({ field }) => (
+                <UploadImage value={field.value} onChange={field.onChange} />
+              )}
             />
-            {isSlugTouched && (
-              <button
-                type="button"
-                onClick={resetSlug}
-                className="whitespace-nowrap text-sm font-medium text-primary hover:underline"
-              >
-                {t("common.resetSlug")}
-              </button>
-            )}
-          </div>
-          {errors.slug && <FieldError>{errors.slug.message}</FieldError>}
-        </Field>
 
-        <Field data-invalid={!!errors.price}>
-          <FieldLabel htmlFor="price">{t("product.price")}</FieldLabel>
-          <Input
-            id="price"
-            type="number"
-            step="0.01"
-            aria-invalid={!!errors.price}
-            {...register("price")}
-          />
-          {errors.price && <FieldError>{errors.price.message}</FieldError>}
-        </Field>
-
-        <Field data-invalid={!!errors.stock}>
-          <FieldLabel htmlFor="stock">{t("product.stock")}</FieldLabel>
-          <Input
-            id="stock"
-            type="number"
-            aria-invalid={!!errors.stock}
-            {...register("stock")}
-          />
-          {errors.stock && <FieldError>{errors.stock.message}</FieldError>}
-        </Field>
-      </FieldGroup>
-
-      <Field data-invalid={!!errors.description}>
-        <FieldLabel htmlFor="description">
-          {t("product.description")}
-        </FieldLabel>
-        <textarea
-          id="description"
-          rows={4}
-          aria-invalid={!!errors.description}
-          {...register("description")}
-          className="w-full resize-none rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-        />
-        {errors.description && (
-          <FieldError>{errors.description.message}</FieldError>
-        )}
-      </Field>
-
-      <Field data-invalid={!!errors.categoryId}>
-        <FieldLabel htmlFor="categoryId">{t("product.category")}</FieldLabel>
-        <select
-          id="categoryId"
-          disabled={isCategoriesLoading}
-          defaultValue=""
-          aria-invalid={!!errors.categoryId}
-          {...register("categoryId")}
-          className="rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-        >
-          <option value="" disabled>
-            {isCategoriesLoading
-              ? t("common.loading", "Loading...")
-              : t("product.selectCategory", "Select a category")}
-          </option>
-          {categories?.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-        {errors.categoryId && (
-          <FieldError>{errors.categoryId.message}</FieldError>
-        )}
-      </Field>
-
-      <Field data-invalid={!!errors.images}>
-        <FieldLabel>{t("product.images")}</FieldLabel>
-        <Controller
-          name="images"
-          control={control}
-          defaultValue={[]}
-          render={({ field }) => {
-            const selectedIds: string[] = field.value ?? [];
-
-            const toggleImage = (id: string) => {
-              const next = selectedIds.includes(id)
-                ? selectedIds.filter((existingId) => existingId !== id)
-                : [...selectedIds, id];
-              field.onChange(next);
-            };
-
-            return (
-              <div className="grid grid-cols-4 gap-2">
-                {isInspirationsLoading && (
-                  <p className="col-span-4 text-sm text-muted-foreground">
-                    {t("common.loading", "Loading...")}
-                  </p>
-                )}
-
-                {inspirations?.map((inspiration) => {
-                  const isSelected = selectedIds.includes(inspiration.id);
-
-                  return (
-                    <button
-                      key={inspiration.id}
-                      type="button"
-                      onClick={() => toggleImage(inspiration.id)}
-                      className={`relative overflow-hidden rounded-lg border-2 transition-colors ${
-                        isSelected
-                          ? "border-primary"
-                          : "border-transparent hover:border-muted-foreground/30"
-                      }`}
-                    >
-                      <img
-                        src={inspiration.imageUrl}
-                        alt={inspiration.alt}
-                        className="h-24 w-full object-cover"
-                      />
-                      {isSelected && (
-                        <span className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
-                          ✓
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            );
-          }}
-        />
-        {errors.images && <FieldError>{errors.images.message}</FieldError>}
-      </Field>
-
-      {queryState}
-
-      <button
-        type="submit"
-        disabled={isLoading}
-        className="ml-auto rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:pointer-events-none disabled:opacity-50"
-      >
-        {t("product.create")}
-      </button>
-    </form>
+            {errors.images && <FieldError>{errors.images.message}</FieldError>}
+          </Field>
+        </FieldGroup>
+      }
+    </FormShell>
   );
 }
 

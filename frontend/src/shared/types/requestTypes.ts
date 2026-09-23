@@ -205,9 +205,9 @@ export interface IGetProductsQuery {
   page?: number; // min 1, default 1
   limit?: number; // min 1, max 100, default 20
 
-  productTypeId: string | null;
-  originId: string | null;
-  colorId: string | null;
+  productTypeId?: string | null;
+  originId?: string | null;
+  colorId?: string | null;
 }
 
 export interface ICreateProductRequest {
@@ -227,7 +227,7 @@ export interface ICreateProductRequest {
   productTypeId: string | null;
   originId: string | null;
   colorId: string | null;
-  ownerId: string | undefined; // uuid
+  // ownerId: string | undefined; // uuid
 }
 
 export interface IUpdateProductRequest {

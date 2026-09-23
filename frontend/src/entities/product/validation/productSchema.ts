@@ -62,5 +62,23 @@ export const productSchema = (t: TFunction) => {
     //   .string()
     //   .uuid(t("validation.uuid"))
     //   .required(t("validation.required")),
+
+    productTypeId: yup
+      .string()
+      .uuid(t("validation.uuid"))
+      .transform((value) => (value === "" ? undefined : value))
+      .optional(),
+
+    originId: yup
+      .string()
+      .uuid(t("validation.uuid"))
+      .transform((value) => (value === "" ? undefined : value))
+      .optional(),
+
+    colorId: yup
+      .string()
+      .uuid(t("validation.uuid"))
+      .transform((value) => (value === "" ? undefined : value))
+      .optional(),
   });
 };

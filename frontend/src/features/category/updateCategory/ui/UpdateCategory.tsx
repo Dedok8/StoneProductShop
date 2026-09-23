@@ -7,9 +7,9 @@ import { useChangeTracking, useQueryState } from "@/shared";
 import type { ICategoryResponse } from "@/shared/types";
 import { Field } from "@/shared/ui/components/field";
 import { Input } from "@/shared/ui/components/input";
-import FormerrorState from "@/shared/ui/form-parts/FormErrorState";
+import ActiveToggle from "@/shared/ui/form-parts/ActiveToggle";
+import FormErrorState from "@/shared/ui/form-parts/FormErrorState";
 import FormShell from "@/shared/ui/form-parts/FormShell";
-import SubmitButton from "@/shared/ui/form-parts/SubmitButton";
 
 function UpdateCategory() {
   const { id } = useParams<{ id: string }>();
@@ -58,30 +58,31 @@ function UpdateCategoryForm({ category }: { category: ICategoryResponse }) {
   return (
     <FormShell
       title={t("category.editTitle")}
-      isActive={state.isActive}
-      onActiveChange={(v) => setField("isActive", v)}
-      activeLabel={t("category.active")}
-    >
-      <form onSubmit={handleUpdateCategory} className="flex flex-col gap-5">
-        <Field aria-label={t("category.name")}>
-          <Input
-            value={state.name}
-            onChange={(e) => setField("name", e.target.value)}
-          />
-        </Field>
-        <Field aria-label={t("category.slug")}>
-          <Input
-            value={state.slug}
-            onChange={(e) => setField("slug", e.target.value)}
-          />
-        </Field>
-        <FormerrorState isError={isError} error={error} />
-        <SubmitButton
-          disabled={!isChanged || isLoading}
-          isLoading={isLoading}
-          label={t("save")}
+      onSubmit={handleUpdateCategory}
+      isLoading={isLoading}
+      submitText={t("save")}
+      queryState={<FormErrorState isError={isError} error={error} />}
+      headerRight={
+        <ActiveToggle
+          checked={state.isActive}
+          onChange={(v) => setField("isActive", v)}
+          label={t("category.active")}
         />
-      </form>
+      }
+      disabled={!isChanged || isLoading}
+    >
+      <Field aria-label={t("category.name")}>
+        <Input
+          value={state.name}
+          onChange={(e) => setField("name", e.target.value)}
+        />
+      </Field>
+      <Field aria-label={t("category.slug")}>
+        <Input
+          value={state.slug}
+          onChange={(e) => setField("slug", e.target.value)}
+        />
+      </Field>
     </FormShell>
   );
 }

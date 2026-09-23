@@ -10,7 +10,6 @@ import SearchProduct from "@/features/product/searchProduct/ui/SearchProduct";
 import { FRONT_ROUTES, useQueryState, useUser } from "@/shared";
 import type { IGetProductsQuery } from "@/shared/types";
 import { Button } from "@/shared/ui/components/button";
-import ProductFilterSidebar from "../../searchProduct/ui/ProductFilterAside";
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -64,7 +63,6 @@ function GetAllProduct() {
     <div className="min-h-screen bg-stone-50">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
         <SearchProduct value={searchTerm} onChange={setSearchTerm} />
-        <ProductFilterSidebar/>
 
         {fetching && (
           <p className="mb-4 text-xs font-medium uppercase tracking-wider text-stone-400">

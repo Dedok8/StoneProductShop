@@ -54,7 +54,7 @@ export class ProductService {
 
     return ProductMapper.toResponse(product);
   }
-  
+
   async search(query: string) {
     const products = await this.productRepository.search(query);
     return ProductMapper.toResponseList(products);

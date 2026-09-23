@@ -101,6 +101,21 @@ model Color {
   @@map("colors")
 }
 
+model ProductImage {
+  id        String   @id @default(uuid())
+  url       String
+  alt       String   @default("")
+  order     Int      @default(0)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@map("product_images")
+}
+
 model Product {
   id          String   @id @default(uuid())
   name        String   @unique
@@ -108,7 +123,7 @@ model Product {
   description String?
   price       Decimal  @db.Decimal(10, 2)
   stock       Int      @default(0)
-  images      InspirationImage[] @relation("ProductImages")
+  images      ProductImage[] 
 
   category    Category @relation(fields: [categoryId], references: [id])
   categoryId  String   @map("category_id")
@@ -227,8 +242,6 @@ model InspirationImage {
   alt       String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
-
-  products Product[] @relation("ProductImages")
 
   @@map("inspiration_images")
 }
