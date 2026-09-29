@@ -1,0 +1,32 @@
+{
+  "name": "stoneproductshop",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "shared"
+  ],
+  "scripts": {
+    "prepare": "husky",
+    "dev": "node scripts/dev.mjs",
+    "dev:shared": "npm run dev -w shared",
+    "dev:backend": "npm run start:dev -w backend",
+    "dev:frontend": "npm run dev -w frontend"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.1.0",
+    "prettier": "^3.9.6"
+  },
+  "lint-staged": {
+    "shared/**/*.ts": [
+      "prettier --write"
+    ]
+  },
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
