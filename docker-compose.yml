@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16
+    restart: always
+    container_name: stone_product_shop
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${DB_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:alpine
+    restart: always
+    container_name: stone_product_shop-redis
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT}:6379"
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a $$REDIS_PASSWORD ping | grep PONG"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: stone_product_shop-pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - "127.0.0.1:${PGADMIN_HOST_PORT}:${PGADMIN_CONTAINER_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

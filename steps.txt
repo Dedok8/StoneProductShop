@@ -1,1 +1,2 @@
 npx @nestjs/cli new backend --skip-install --skip-git --package-manager npm
+pnpm exec prisma init

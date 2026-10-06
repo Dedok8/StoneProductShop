@@ -9,10 +9,9 @@
   ],
   "scripts": {
     "prepare": "husky",
-    "dev": "node scripts/dev.mjs",
-    "dev:shared": "npm run dev -w shared",
-    "dev:backend": "npm run start:dev -w backend",
-    "dev:frontend": "npm run dev -w frontend"
+    "dev:shared": "pnpm --filter @stone-shop/shared dev",
+    "dev:backend": "pnpm --filter backend start:dev",
+    "dev:frontend": "pnpm --filter frontend dev"
   },
   "devDependencies": {
     "husky": "^9.1.7",

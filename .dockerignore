@@ -1,0 +1,14 @@
+**/node_modules
+**/dist
+.env
+.env.*
+.git
+!.env.example
+pgdata
+*.log
+test
+coverage
+.vscode
+.idea
+frontend
+!frontend/package.json
