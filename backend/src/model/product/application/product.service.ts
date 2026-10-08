@@ -1,0 +1,136 @@
+import { Inject, Injectable } from '@nestjs/common';
+
+import {
+  CATEGORY_REPOSITORY,
+  type ICategoryRepository,
+} from '@/model/category/domain/interfaces';
+import { PaginatedProductResponseDto } from '@/model/product/application/dto';
+import {
+  CreateProductDto,
+  ProductQueryDto,
+  UpdateProductDto,
+} from '@/model/product/application/dto/product.dto';
+import { ProductMapper } from '@/model/product/application/mapper';
+import {
+  PRODUCT_REPOSITORY,
+  type IProductRepository,
+} from '@/model/product/domain';
+import { assertFound, ensureUnique, PaginationMetaDto } from '@/shared';
+import { AppError } from '@/shared/error';
+
+@Injectable()
+export class ProductService {
+  constructor(
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepository: IProductRepository,
+    @Inject(CATEGORY_REPOSITORY)
+    private readonly categoryRepository: ICategoryRepository,
+  ) {}
+
+  async findById(id: string) {
+    const product = await this.productRepository.findById(id);
+
+    if (!product) throw AppError.notFound('Product not found');
+
+    return ProductMapper.toResponse(product);
+  }
+
+  async findByName(name: string) {
+    const product = await this.productRepository.findByName(name);
+
+    if (!product) throw AppError.notFound('Product not found');
+
+    return ProductMapper.toResponse(product);
+  }
+
+  async findBySlug(slug: string) {
+    const product = await this.productRepository.findBySlug(slug);
+
+    if (!product) throw AppError.notFound('Slug not found');
+
+    return ProductMapper.toResponse(product);
+  }
+
+  async search(query: string) {
+    const products = await this.productRepository.search(query);
+    return ProductMapper.toResponseList(products);
+  }
+
+  async findByIds(ids: string[]) {
+    const products = await this.productRepository.findByIds(ids);
+
+    return ProductMapper.toResponseList(products);
+  }
+
+  async findAll(query: ProductQueryDto): Promise<PaginatedProductResponseDto> {
+    const { items, total } = await this.productRepository.findAll(query);
+
+    return new PaginatedProductResponseDto({
+      items: ProductMapper.toResponseList(items),
+      meta: new PaginationMetaDto({
+        page: query.page ?? 1,
+        limit: query.limit ?? 20,
+        total,
+      }),
+    });
+  }
+
+  async create(dto: CreateProductDto, ownerId: string) {
+    await ensureUnique(
+      () => this.productRepository.findByName(dto.name),
+      undefined,
+      'Product name is already in use',
+    );
+    await ensureUnique(
+      () => this.productRepository.findBySlug(dto.slug),
+      undefined,
+      'Product slug is already in use',
+    );
+
+    const category = await this.categoryRepository.findById(dto.categoryId);
+    if (!category) {
+      throw AppError.validationFail(
+        `Category with id "${dto.categoryId}" does not exist`,
+      );
+    }
+
+    const created = await this.productRepository.create({ ...dto, ownerId });
+    return ProductMapper.toResponse(created);
+  }
+
+  async update(id: string, dto: UpdateProductDto) {
+    assertFound(
+      await this.productRepository.findById(id),
+      'Product id is not found',
+    );
+
+    const { name, slug } = dto;
+
+    if (name) {
+      await ensureUnique(
+        () => this.productRepository.findByName(name),
+        id,
+        'Product name is already in use',
+      );
+    }
+
+    if (slug) {
+      await ensureUnique(
+        () => this.productRepository.findBySlug(slug),
+        id,
+        'Product slug is already in use',
+      );
+    }
+
+    const updated = assertFound(
+      await this.productRepository.update(id, dto),
+      'Product not found',
+    );
+    return ProductMapper.toResponse(updated);
+  }
+
+  async delete(id: string) {
+    assertFound(await this.productRepository.findById(id), 'Product not found');
+    await this.productRepository.delete(id);
+  }
+}

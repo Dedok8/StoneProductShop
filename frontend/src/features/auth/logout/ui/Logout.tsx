@@ -1,0 +1,59 @@
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router";
+
+import { useLogout } from "@/features/auth/logout/model/useLogout";
+import { FRONT_ROUTES } from "@/shared";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/components/alert-dialog";
+import { Button } from "@/shared/ui/components/button";
+
+function Logout() {
+  const { logout, isLoading } = useLogout();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+
+  const handleConfirm = async () => {
+    await logout();
+    navigate(FRONT_ROUTES.pages.Login.path);
+  };
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        render={<Button variant="outline">{t("logout.submit")}</Button>}
+      />
+
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{t("logout.confirmTitle")}</AlertDialogTitle>
+          <AlertDialogDescription>
+            {t("logout.confirmMessage")}
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+
+        <AlertDialogFooter>
+          <AlertDialogTrigger
+            render={(props) => (
+              <Button {...props} variant="outline">
+                {t("logout.submit")}
+              </Button>
+            )}
+          />
+          <AlertDialogAction onClick={handleConfirm} disabled={isLoading}>
+            {t("logout.submit")}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+export default Logout;
