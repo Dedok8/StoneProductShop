@@ -15,5 +15,13 @@ export const UpdateCategorySchema = CreateCategorySchema.partial().extend({
   isActive: z.boolean().optional(),
 });
 
+export const CategoryQuerySchema = z.object({
+  isActive: z
+    .enum(["true", "false"], { error: "Invalid isActive value" })
+    .transform((v) => v === "true")
+    .optional(),
+});
+
 export type CreateCategoryInput = z.infer<typeof CreateCategorySchema>;
 export type UpdateCategoryInput = z.infer<typeof UpdateCategorySchema>;
+export type CategoryQueryInput = z.infer<typeof CategoryQuerySchema>;

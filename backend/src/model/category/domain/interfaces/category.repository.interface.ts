@@ -14,7 +14,7 @@ export interface ICategoryRepository {
   findById(id: string): Promise<CategoryEntity | null>;
   findBySlug(slug: string): Promise<CategoryEntity | null>;
   findByName(name: string): Promise<CategoryEntity | null>;
-  findAll(): Promise<CategoryEntity[]>;
+  findAll(query): Promise<CategoryEntity[]>;
   create(data: ICreateCategoryData): Promise<CategoryEntity>;
   update(id: string, data: IUpdateCategoryData): Promise<CategoryEntity | null>;
   delete(id: string): Promise<void>;
