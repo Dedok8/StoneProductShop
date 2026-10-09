@@ -3,13 +3,15 @@ import { z } from "zod";
 export const CreateInspirationImageSchema = z.object({
   imageUrl: z.url({
     protocol: /^https?$/,
-    error: "Invalid image URL",
+    error: "validation.inspiration.imageUrl.invalid",
   }),
-  alt: z.string().optional(),
+  alt: z.string({ error: "validation.string" }).optional(),
 });
 
 export const UpdateInspirationImageSchema =
   CreateInspirationImageSchema.partial();
+
+export const InspirationQuerySchema = z.object({});
 
 export type CreateInspirationImageInput = z.infer<
   typeof CreateInspirationImageSchema

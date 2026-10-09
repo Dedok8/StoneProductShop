@@ -6,21 +6,21 @@ import { SearchSchema } from "../common/searchSchema";
 import { BaseQuerySchema } from "../pagination/paginationSchema";
 
 const NameSchema = z
-  .string()
+  .string({ error: "validation.string" })
   .trim()
-  .min(2, { error: "Name must be at least 2 characters long" })
-  .max(60, { error: "Name must be at most 60 characters long" });
+  .min(2, { error: "validation.user.name.min" })
+  .max(60, { error: "validation.user.name.max" });
 
 export const ChangePasswordSchema = z
   .object({
     currentPassword: z
-      .string({ error: "Current password is required" })
-      .min(1, { error: "Current password is required" })
-      .max(64, { error: "Password must not exceed 64 characters" }),
+      .string({ error: "validation.user.currentPassword.required" })
+      .min(1, { error: "validation.user.currentPassword.required" })
+      .max(64, { error: "validation.user.currentPassword.max" }),
     newPassword: PasswordSchema,
   })
   .refine((v) => v.currentPassword !== v.newPassword, {
-    error: "New password must differ from the current one",
+    error: "validation.user.newPassword.sameAsCurrent",
     path: ["newPassword"],
   });
 
@@ -31,13 +31,13 @@ export const CreateUserSchema = z.object({
 });
 
 export const AdminCreateUserSchema = CreateUserSchema.extend({
-  role: z.enum(USER_ROLE, { error: "Invalid role" }).optional(),
+  role: z.enum(USER_ROLE, { error: "validation.user.role.invalid" }).optional(),
 });
 
 export const SearchUserSchema = SearchSchema;
 
 export const UpdateUserRoleSchema = z.object({
-  role: z.enum(USER_ROLE, { error: "Invalid role" }),
+  role: z.enum(USER_ROLE, { error: "validation.user.role.invalid" }),
 });
 
 export const UpdateUserSchema = z.object({
@@ -46,9 +46,9 @@ export const UpdateUserSchema = z.object({
 
 export const UserQuerySchema = BaseQuerySchema.extend({
   sortBy: z
-    .enum(SORT_USER, { error: "Invalid sort field" })
+    .enum(SORT_USER, { error: "validation.user.sortBy.invalid" })
     .default(SORT_USER.CREATED_AT),
-  role: z.enum(USER_ROLE, { error: "Invalid role" }).optional(),
+  role: z.enum(USER_ROLE, { error: "validation.user.role.invalid" }).optional(),
 });
 
 export type UserQueryInput = z.infer<typeof UserQuerySchema>;

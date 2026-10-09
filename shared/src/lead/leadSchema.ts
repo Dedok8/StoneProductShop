@@ -9,19 +9,21 @@ import {
 
 export const CreateLeadSchema = z.object({
   name: z
-    .string()
+    .string({ error: "validation.string" })
     .trim()
-    .min(1, { error: "Name is required" })
-    .max(100, { error: "Name must be at most 100 characters long" }),
+    .min(1, { error: "validation.lead.name.required" })
+    .max(100, { error: "validation.lead.name.max" }),
   phone: z
-    .string()
+    .string({ error: "validation.string" })
     .transform((v) => v.replace(/[\s()-]/g, ""))
-    .pipe(z.e164({ error: "Invalid phone number" })),
-  consent: z.literal(true, { error: "Consent is required" }),
+    .pipe(z.e164({ error: "validation.lead.phone.invalid" })),
+  consent: z.literal(true, { error: "validation.lead.consent.required" }),
 });
 
 export const LeadQuerySchema = BaseQuerySchema.extend({
-  status: z.enum(LEAD_STATUS, { error: "Invalid lead status" }).optional(),
+  status: z
+    .enum(LEAD_STATUS, { error: "validation.lead.status.invalid" })
+    .optional(),
   ...DateRangeSchema.shape,
 }).refine(isValidDateRange, dateRangeError);
 

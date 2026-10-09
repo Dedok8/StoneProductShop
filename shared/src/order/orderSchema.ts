@@ -8,24 +8,29 @@ import {
 } from "../pagination/paginationSchema";
 
 export const CreateOrderItemSchema = z.object({
-  productId: z.uuid({ error: "Invalid product id" }),
-  quantity: z.number().int().min(1, { error: "Quantity must be at least 1" }),
+  productId: z.uuid({ error: "validation.uuid" }),
+  quantity: z
+    .number({ error: "validation.number" })
+    .int({ error: "validation.integer" })
+    .min(1, { error: "validation.order.quantity.min" }),
 });
 
 export const CreateOrderSchema = z.object({
   items: z
-    .array(CreateOrderItemSchema, { error: "Items must be an array" })
-    .min(1, { error: "Order must contain at least one item" }),
+    .array(CreateOrderItemSchema, { error: "validation.order.items.array" })
+    .min(1, { error: "validation.order.items.min" }),
 });
 
 export const OrderQuerySchema = BaseQuerySchema.extend({
-  userId: z.uuid({ error: "Invalid user id" }).optional(),
-  status: z.enum(ORDER_STATUS, { error: "Invalid order status" }).optional(),
+  userId: z.uuid({ error: "validation.uuid" }).optional(),
+  status: z
+    .enum(ORDER_STATUS, { error: "validation.order.status.invalid" })
+    .optional(),
   ...DateRangeSchema.shape,
 }).refine(isValidDateRange, dateRangeError);
 
 export const UpdateOrderStatusSchema = z.object({
-  status: z.enum(ORDER_STATUS, { error: "Invalid order status" }),
+  status: z.enum(ORDER_STATUS, { error: "validation.order.status.invalid" }),
 });
 
 export type OrderQueryInput = z.infer<typeof OrderQuerySchema>;

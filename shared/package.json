@@ -26,6 +26,9 @@
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@stone-shop/shared": "workspace:*"
+  },
   "peerDependencies": {
     "zod": "^4.0.0"
   },

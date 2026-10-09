@@ -18,6 +18,7 @@ import { USER_ROLE } from '@stone-shop/shared';
 import {
   CreateProductColorDto,
   ProductColorResponseDto,
+  QueryProductColorDto,
   UpdateProductColorDto,
 } from '@/model/productColor/application';
 import { ProductColorService } from '@/model/productColor/application/product-color.service';
@@ -30,8 +31,10 @@ export class ProductColorController {
   constructor(private readonly productColorService: ProductColorService) {}
 
   @Get()
-  findAll(): Promise<ProductColorResponseDto[]> {
-    return this.productColorService.findAll();
+  findAll(
+    @Query() query: QueryProductColorDto,
+  ): Promise<ProductColorResponseDto[]> {
+    return this.productColorService.findAll(query);
   }
 
   @Get('search')

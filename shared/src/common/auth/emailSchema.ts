@@ -1,7 +1,7 @@
 import { email, z } from "zod";
 
 export const EmailSchema = z
-  .string()
+  .string({ error: "validation.required" })
   .trim()
   .toLowerCase()
-  .pipe(email({ error: "Invalid email format" }));
+  .pipe(email({ error: "validation.auth.email.invalid" }));

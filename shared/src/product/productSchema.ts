@@ -4,64 +4,68 @@ import { SORT_PRODUCT } from "../enums";
 import { SearchSchema } from "../common/searchSchema";
 
 export const ProductImageInputSchema = z.object({
-  url: z.url({ error: "" }),
-  alt: z.string().max(50, { error: "" }).optional(),
+  url: z.url({ error: "validation.url" }),
+  alt: z
+    .string({ error: "validation.string" })
+    .max(50, { error: "validation.product.image.alt.max" })
+    .optional(),
 });
 
 export const CreateProductSchema = z.object({
   name: z
-    .string()
+    .string({ error: "validation.string" })
     .trim()
-    .min(2, { error: "Name must be at least 2 characters long" })
-    .max(50, { error: "Name must be at most 50 characters long" }),
+    .min(2, { error: "validation.product.name.min" })
+    .max(50, { error: "validation.product.name.max" }),
   slug: z
-    .string()
-    .min(2, { error: "Slug must be at least 2 characters long" })
-    .max(60, { error: "Slug must be at most 60 characters long" })
+    .string({ error: "validation.string" })
+    .min(2, { error: "validation.product.slug.min" })
+    .max(60, { error: "validation.product.slug.max" })
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, {
-      error:
-        "Slug must be lowercase, contain only letters, numbers and hyphens",
+      error: "validation.product.slug.format",
     }),
   description: z
-    .string()
+    .string({ error: "validation.string" })
     .trim()
-    .min(5, { error: "Description must be at least 5 characters long" })
-    .max(200, { error: "Description must be at most 200 characters long" })
+    .min(5, { error: "validation.product.description.min" })
+    .max(200, { error: "validation.product.description.max" })
     .optional(),
   price: z.coerce
-    .number({ error: "Price must be a number" })
-    .min(0.01, { error: "Price must be at least 0.01" })
-    .max(1_000_000, { error: "Price must be at most 1 000 000" })
-    .multipleOf(0.01, { error: "Price must have at most 2 decimal places" }),
+    .number({ error: "validation.number" })
+    .min(0.01, { error: "validation.product.price.min" })
+    .max(1_000_000, { error: "validation.product.price.max" })
+    .multipleOf(0.01, { error: "validation.product.price.decimals" }),
   stock: z.coerce
-    .number({ error: "Stock must be a number" })
-    .int({ error: "Stock must be an integer" })
-    .min(0, { error: "Stock cannot be negative" })
-    .max(1_000_000, { error: "Stock must be at most 1 000 000" }),
-  categoryId: z.uuid({ error: "Invalid category id" }),
-  productTypeId: z.uuid({ error: "Invalid product type id" }).optional(),
-  originId: z.uuid({ error: "Invalid origin id" }).optional(),
-  colorId: z.uuid({ error: "Invalid color id" }).optional(),
+    .number({ error: "validation.number" })
+    .int({ error: "validation.integer" })
+    .min(0, { error: "validation.product.stock.min" })
+    .max(1_000_000, { error: "validation.product.stock.max" }),
+  categoryId: z.uuid({ error: "validation.uuid" }),
+  productTypeId: z.uuid({ error: "validation.uuid" }).optional(),
+  originId: z.uuid({ error: "validation.uuid" }).optional(),
+  colorId: z.uuid({ error: "validation.uuid" }).optional(),
   images: z
-    .array(ProductImageInputSchema, { error: "Images must be an array" })
-    .min(1, { error: "At least one image is required" })
-    .max(10, { error: "At most 10 images are allowed" }),
+    .array(ProductImageInputSchema, {
+      error: "validation.product.images.invalid",
+    })
+    .min(1, { error: "validation.product.images.min" })
+    .max(10, { error: "validation.product.images.max" }),
 });
 
 export const ProductQuerySchema = BaseQuerySchema.extend({
   sortBy: z
-    .enum(SORT_PRODUCT, { error: "Invalid sort field" })
+    .enum(SORT_PRODUCT, { error: "validation.sort.invalid" })
     .default(SORT_PRODUCT.CREATED_AT),
-  categoryId: z.uuid({ error: "Invalid category id" }).optional(),
-  productTypeId: z.uuid({ error: "Invalid product type id" }).optional(),
-  originId: z.uuid({ error: "Invalid origin id" }).optional(),
-  colorId: z.uuid({ error: "Invalid color id" }).optional(),
+  categoryId: z.uuid({ error: "validation.uuid" }).optional(),
+  productTypeId: z.uuid({ error: "validation.uuid" }).optional(),
+  originId: z.uuid({ error: "validation.uuid" }).optional(),
+  colorId: z.uuid({ error: "validation.uuid" }).optional(),
 });
 
 export const SearchProductSchema = SearchSchema;
 
 export const UpdateProductSchema = CreateProductSchema.partial().extend({
-  isActive: z.boolean().optional(),
+  isActive: z.boolean({ error: "validation.boolean" }).optional(),
 });
 
 export type SearchProductInput = z.infer<typeof SearchProductSchema>;

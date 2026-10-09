@@ -11,7 +11,7 @@ export interface IUpdateProductColorData {
 }
 
 export interface IProductColorRepository {
-  findAll(): Promise<ProductColorEntity[]>;
+  findAll(query): Promise<ProductColorEntity[]>;
   findById(id: string): Promise<ProductColorEntity | null>;
   findByName(name: string): Promise<ProductColorEntity | null>;
   create(data: ICreateProductColorData): Promise<ProductColorEntity>;

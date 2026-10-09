@@ -6,6 +6,7 @@ import {
   HttpCode,
   HttpStatus,
   Patch,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -13,6 +14,7 @@ import { UserResponseDto, UserService } from '@/model/user/application';
 import {
   ChangePasswordDto,
   UpdateUserDto,
+  UserQueryDto,
 } from '@/model/user/application/dto/user.dto';
 import { CurrentUser, JWTAuthGuard } from '@/shared';
 
@@ -22,7 +24,10 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('me')
-  getMe(@CurrentUser('sub') id: string): Promise<UserResponseDto> {
+  getMe(
+    @Query() query: UserQueryDto,
+    @CurrentUser('sub') id: string,
+  ): Promise<UserResponseDto> {
     return this.userService.findById(id);
   }
 

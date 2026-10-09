@@ -15,8 +15,8 @@ export class ProductColorService {
     private readonly productColorRepository: ProductColorRepository,
   ) {}
 
-  async findAll() {
-    const productColor = await this.productColorRepository.findAll();
+  async findAll(query) {
+    const productColor = await this.productColorRepository.findAll(query);
 
     return ProductColorMapper.toResponseList(productColor);
   }

@@ -17,12 +17,13 @@ import { USER_ROLE } from '@stone-shop/shared';
 
 import { CategoryService } from '@/model/category/application';
 import {
-  CategoryQueryDto,
   CategoryResponseDto,
+  CategorySearchDto,
   CreateCategoryDto,
   UpdateCategoryDto,
 } from '@/model/category/application/dto';
 import { JWTAuthGuard, Roles, RolesGuard } from '@/shared';
+import { AppError } from '@/shared/error';
 
 @Controller('category')
 @ApiTags('category')
@@ -30,19 +31,19 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Get()
-  findAll(@Query() query: CategoryQueryDto): Promise<CategoryResponseDto[]> {
-    return this.categoryService.findAll(query);
+  findAll(): Promise<CategoryResponseDto[]> {
+    return this.categoryService.findAll();
   }
 
-  // @Get('search')
-  // search(
-  //   @Query() query:
-  // ): Promise<CategoryResponseDto | CategoryResponseDto[]> {
+  @Get('search')
+  search(@Query() query: CategorySearchDto): Promise<CategoryResponseDto> {
+    if (query.slug) return this.categoryService.findBySlug(query.slug);
+    if (query.name) return this.categoryService.findByName(query.name);
 
-  //   throw AppError.validationFail(
-  //     'Provide either "slug" or "name" query parameter',
-  //   );
-  // }
+    throw AppError.validationFail(
+      'Provide either "slug" or "name" query parameter',
+    );
+  }
 
   @Get(':id')
   findById(

@@ -44,8 +44,8 @@ export class CategoryService {
     return CategoryMapper.toResponse(category);
   }
 
-  async findAll(query) {
-    const categories = await this.categoryRepository.findAll(query);
+  async findAll() {
+    const categories = await this.categoryRepository.findAll();
 
     return CategoryMapper.toResponseList(categories);
   }

@@ -1,11 +1,16 @@
 import { z } from "zod";
 
 export const AddToCartItemSchema = z.object({
-  productId: z.uuid({ error: "Invalid product id" }),
-  quantity: z.number().int().min(1, { error: "Quantity must be at least 1" }),
+  productId: z.uuid({ error: "validation.uuid" }),
+  quantity: z
+    .number({ error: "validation.number" })
+    .int({ error: "validation.integer" })
+    .min(1, { error: "validation.cart.quantity.min" }),
 });
 
-export const UpdateCartIteSchema = AddToCartItemSchema.pick({ quantity: true });
+export const UpdateCartItemSchema = AddToCartItemSchema.pick({
+  quantity: true,
+});
 
 export type AddToCartItemInput = z.infer<typeof AddToCartItemSchema>;
-export type UpdateCartIteInput = z.infer<typeof UpdateCartIteSchema>;
+export type UpdateCartItemInput = z.infer<typeof UpdateCartItemSchema>;

@@ -1,17 +1,20 @@
-import { email, z } from "zod";
+import { z } from "zod";
 import { PasswordSchema } from "../common/auth/passwordSchema";
 import { EmailSchema } from "../common/auth/emailSchema";
 
 export const LoginSchema = z.object({
   email: EmailSchema,
-  password: PasswordSchema,
+  password: z
+    .string({ error: "validation.required" })
+    .min(1, { error: "validation.required" }),
 });
 
 export const RegisterSchema = z.object({
   name: z
-    .string()
-    .toLowerCase()
-    .min(2, { error: "Name must be at most 50 characters long" }),
+    .string({ error: "validation.required" })
+    .trim()
+    .min(2, { error: "validation.auth.name.min" })
+    .max(50, { error: "validation.auth.name.max" }),
   email: EmailSchema,
   password: PasswordSchema,
 });
